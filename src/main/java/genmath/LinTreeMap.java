@@ -461,6 +461,46 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
         return resMap;
     }
 
+    
+    public void setNewRootByKey(K key) throws Exception{
+    
+        int level = 0;
+        int i = (int)Math.ceil(size / 2.0);
+        int step = (int)Math.ceil(size / 2.0);
+        int cmpRes = 0;
+
+        while(0 <= i && i < size && step > 0){
+
+            cmpRes = key.compareTo(container.get(i).key);
+
+            if(cmpRes == 0){
+            
+                step = (int)Math.ceil(step / 2.0);
+                
+                container = new ArrayList<Pair<K, V> >(
+                        container.subList(i - step, i + step));
+                
+                return;
+            }
+
+            if(cmpRes < 0){
+
+                step = (int)Math.ceil(step / 2.0);
+                i -= step;
+                ++level;
+            }
+            else{
+
+                step = (int)Math.floor(step / 2.0);
+                i += step;
+                ++level;
+            }
+        }
+        
+        // no item found, return the last element
+        throw new Exception("No key has been found.");
+    }
+    
     public ArrayList<Pair<K, V> > getContainer(){
 
         return container;
