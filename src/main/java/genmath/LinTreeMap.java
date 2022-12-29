@@ -124,6 +124,93 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
 
         add(entry.key, entry.value);
     }
+    
+    
+    public void setOrAddByKey(K key, V value) throws Exception{
+        
+        int cmpRes = 0;
+
+        if(size == 0){
+
+            container.add(new Pair<K, V>(key, value));
+            ++size;
+        }
+        else if(size == 1){
+
+            cmpRes = key.compareTo(container.get(0).key);
+            if(cmpRes == 0){
+            
+                // setting new value
+                Pair<K, V> modPair = container.get(0);
+                modPair.value = value;
+                container.set(0, modPair);
+                
+                return;
+            }
+            else if(cmpRes < 0){
+                
+                container.add(0, new Pair<K, V>(key, value));
+            }
+            else{
+                
+                container.add(new Pair<K, V>(key, value));
+            }
+
+            ++size;
+        }
+        else {
+
+            int higherKeyI = -1;// due to element shift mechanism of add function of container
+            int i = (int)Math.ceil(size / 2.0);
+            int step = (int)Math.ceil(size / 2.0);
+            K higherDiff = key.maxVal();
+            K tmpDiff = key.maxVal();
+
+            while(0 <= i && i < size && step > 0){
+
+                cmpRes = key.compareTo(container.get(i).key);
+
+                if(cmpRes == 0){
+                
+                    // setting new value
+                    Pair<K, V> modPair = container.get(i);
+                    modPair.value = value;
+                    container.set(i, modPair);
+                    
+                    return;
+                }
+
+                tmpDiff = key.subtract(container.get(i).key);
+
+                if(tmpDiff.sgn() > 0 && tmpDiff.compareTo(higherDiff) < 0){
+
+                    higherDiff = tmpDiff;
+                    higherKeyI = i;
+                }
+
+                if(cmpRes < 0){
+
+                    step = (int)Math.ceil(step / 2.0);
+                    i -= step;
+                }
+                else{
+
+                    step = (int)Math.floor(step / 2.0);
+                    i += step;
+                }
+            }
+
+            // balancing tree
+            //if(higherKeyI > 0)
+                container.add(higherKeyI + 1, new Pair<K, V>(key, value));
+            //else
+              //  container.add(0, new Pair<K, V>(key, value));
+
+            ++size;
+            // the order of the tree is balanced, it does not require any sort
+            //  due to preserved order by finding the higherKey
+        }
+    }
 
     public V getByInd(int i) throws Exception{
 
