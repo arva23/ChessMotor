@@ -42,12 +42,25 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
     // linearized AVL tree, all nodes are used for storage, not only leaves
     //  (augment all null leaves to fulfill the condition of logarithmic indexing)
     private ArrayList<Pair<K, V> > container;
+    
+    private boolean balanced;
+    private int firstItemInd;
 
 
     public LinTreeMap(){
 
         size = 0;
         container = new ArrayList<Pair<K, V> >();
+        balanced = true;
+        firstItemInd = 0;
+    }
+    
+    public LinTreeMap(boolean balanced){
+    
+        size = 0;
+        container = new ArrayList<Pair<K, V> >();
+        this.balanced = balanced;
+        firstItemInd = 0;
     }
 
 
@@ -63,12 +76,19 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
         else if(size == 1){
 
             cmpRes = key.compareTo(container.get(0).key);
-            if(cmpRes == 0)
+            if(cmpRes == 0){
+                
                 throw new Exception("The item has already been inserted earlier (redundancy is not allowed).");
-            else if(cmpRes < 0)
+            }
+            else if(cmpRes < 0){
+                
                 container.add(0, new Pair<K, V>(key, value));
-            else
+                ++firstItemInd;
+            }
+            else{
+                
                 container.add(new Pair<K, V>(key, value));
+            }
 
             ++size;
         }
@@ -108,11 +128,10 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
             }
 
             // balancing tree
-            //if(higherKeyI > 0)
-                container.add(higherKeyI + 1, new Pair<K, V>(key, value));
-            //else
-              //  container.add(0, new Pair<K, V>(key, value));
-
+            container.add(higherKeyI + 1, new Pair<K, V>(key, value));
+            
+            if(!balanced && higherKeyI < firstItemInd) ++firstItemInd;
+            
             ++size;
             // the order of the tree is balanced, it does not require any sort
             //  due to preserved order by finding the higherKey
@@ -150,6 +169,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
             else if(cmpRes < 0){
                 
                 container.add(0, new Pair<K, V>(key, value));
+                ++firstItemInd;
             }
             else{
                 
@@ -201,10 +221,9 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
             }
 
             // balancing tree
-            //if(higherKeyI > 0)
-                container.add(higherKeyI + 1, new Pair<K, V>(key, value));
-            //else
-              //  container.add(0, new Pair<K, V>(key, value));
+            container.add(higherKeyI + 1, new Pair<K, V>(key, value));
+            
+            if(!balanced && higherKeyI < firstItemInd) ++firstItemInd;
 
             ++size;
             // the order of the tree is balanced, it does not require any sort
@@ -479,6 +498,8 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
                 
                 container = new ArrayList<Pair<K, V> >(
                         container.subList(i - step, i + step));
+                
+                firstItemInd = i;
                 
                 return;
             }
