@@ -466,7 +466,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
         return container;
     }
 
-    public void RemoveAll(){
+    public void removeAll(){
 
         container.clear();
     }
