@@ -52,7 +52,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
         size = 0;
         container = new ArrayList<Pair<K, V>>();
     }
-
+    
     public int add(K key, V value) throws Exception {
 
         int cmpRes = 0;
@@ -427,6 +427,39 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
 
             throw new Exception("Container is empty.");
         }
+    }
+    
+    public int getLevelByKey(K key){
+    
+        int i = (int)Math.ceil(size / 2.0);
+        double step = size / 2.0;
+        int cmpRes = 0;
+        int level = 0;
+        
+        while(0 <= i && i < size && step > 0.5){
+        
+            cmpRes = key.compareTo(container.get(i).key);
+            
+            if(cmpRes == 0){
+            
+                return level;
+            }
+            
+            if(cmpRes < 0){
+            
+                step /= 2.0;
+                i -= (int)Math.ceil(step);
+                ++level;
+            }
+            else{
+            
+                step /= 2.0;
+                i += (int)Math.ceil(step);
+                ++level;
+            }
+        }
+        
+        return -1;// in case of non existent key
     }
 
     public int size() {
