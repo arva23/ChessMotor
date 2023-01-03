@@ -117,13 +117,13 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
                     lowerKeyI = i;
                 }
 
+                step /= 2.0;
+                
                 if (cmpRes < 0) {
 
-                    step /= 2.0;
                     i -= (int) Math.ceil(step);
                 } else {
 
-                    step /= 2.0;
                     i += (int) Math.ceil(step);
                 }
             }
@@ -211,13 +211,13 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
                     lowerKeyI = i;
                 }
 
+                step /= 2.0;
+                
                 if (cmpRes < 0) {
 
-                    step /= 2.0;
                     i -= (int) Math.ceil(step);
                 } else {
 
-                    step /= 2.0;
                     i += (int) Math.ceil(step);
                 }
             }
@@ -388,13 +388,13 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
                 break;
             }
 
+            step /= 2.0;
+            
             if (cmpRes < 0) {
 
-                step /= 2.0;
                 i -= (int) Math.ceil(step);
             } else {
 
-                step /= 2.0;
                 i += (int) Math.ceil(step);
             }
 
