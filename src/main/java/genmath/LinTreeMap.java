@@ -110,13 +110,13 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
                     lowerKeyI = i;
                 }
 
+                step /= 2.0;
+
                 if (cmpRes < 0) {
 
-                    step /= 2.0;
                     i -= (int) Math.ceil(step);
                 } else {
 
-                    step /= 2.0;
                     i += (int) Math.ceil(step);
                 }
             }
@@ -197,13 +197,13 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
                     lowerKeyI = i;
                 }
 
+                step /= 2.0;
+
                 if (cmpRes < 0) {
 
-                    step /= 2.0;
                     i -= (int) Math.ceil(step);
                 } else {
 
-                    step /= 2.0;
                     i += (int) Math.ceil(step);
                 }
             }
@@ -294,13 +294,16 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
             if (cmpRes == 0) {
                 return container.get(i).value;// equal
             }
+
+            step /= 2.0;
+
             if (cmpRes < 0) {
 
-                step /= 2.0;// less, left child node
+                // less, left child node
                 i -= (int) Math.ceil(step);
             } else {
 
-                step /= 2.0;// greater, right child node
+                // greater, right child node
                 i += (int) Math.ceil(step);
             }
         }
@@ -322,18 +325,18 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
                 return i;
             }
 
+            step /= 2.0;
+
             if (cmpRes < 0) {
 
-                step /= 2.0;
                 i -= (int) Math.ceil(step);
             } else {
 
-                step /= 2.0;
                 i += (int) Math.ceil(step);
             }
         }
 
-        return i;// no item found, return the last element
+        return -1;// no item found, return -1
     }
 
     public K getKeyByInd(int ind) throws Exception {
@@ -372,13 +375,13 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
                     lowerKeyI = i;
                 }
 
+                step /= 2.0;
+
                 if (cmpRes < 0) {
 
-                    step /= 2.0;
                     i -= (int) Math.ceil(step);// less, left child node
                 } else {
 
-                    step /= 2.0;
                     i += (int) Math.ceil(step);// greater, right child node
                 }
             }
@@ -417,13 +420,13 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
                     higherKeyI = i;
                 }
 
+                step /= 2.0;
+
                 if (cmpRes < 0) {
 
-                    step /= 2.0;
                     i -= (int) Math.ceil(step);// less, left child node
                 } else {
 
-                    step /= 2.0;
                     i += (int) Math.ceil(step);// greater, right child node
                 }
             }
@@ -451,17 +454,17 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
                 return level;
             }
 
+            step /= 2.0;
+
             if (cmpRes < 0) {
 
-                step /= 2.0;
                 i -= (int) Math.ceil(step);
-                ++level;
             } else {
 
-                step /= 2.0;
                 i += (int) Math.ceil(step);
-                ++level;
             }
+
+            ++level;
         }
 
         return -1;// in case of non existent key
@@ -472,6 +475,10 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
         return size;
     }
 
+    public boolean isEmpty() {
+
+        return size == 0;
+    }
 
     /* !@brief Creates a submap from the actual map using lower and upper bound keys.
     *          If the lower bound, upper bound or both do not exist, it finds the higher key of lower
@@ -532,17 +539,17 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
                 return;
             }
 
+            step /= 2.0;
+
             if (cmpRes < 0) {
 
-                step /= 2.0;
                 i -= (int) Math.ceil(step);
-                ++level;
             } else {
 
-                step /= 2.0;
                 i += (int) Math.ceil(step);
-                ++level;
             }
+
+            ++level;
         }
 
         // no item found, return the last element
