@@ -71,8 +71,88 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     */
     public int add(K key, ArrayList<Pair<K, V>> values) throws Exception{
     
-        // todo
-        return 0;
+        if(values.isEmpty())
+            throw new Exception("Values parameter is empty.");
+        
+        int sizeOfValues = values.size() - 1;
+        for(int i = 0; i < sizeOfValues; ++i){
+        
+            if(values.get(i).key.compareTo(values.get(i + 1).key) > 0){
+            
+                throw new Exception("Values are not in order.");
+            }
+        }
+        
+        // Only partially ordered keys are placed into nodes. The keys are ordered according to one 
+        //  level upper. Multilevel upleveled checks are not available.
+        
+        int cmpRes = 0;
+        
+        if(size == 0){
+        
+            nodeRegistry.set(0, sizeOfValues);
+            
+            for(int j = 0; j < sizeOfValues; ++j){
+            
+                container.add(values.get(j));
+                // initialize key range
+                nodeRegistry.add(0);
+                ++size;
+            }
+            return 0;
+        } else{
+
+            int insertionInd = 0;
+            int prevShift = 1;
+            int i = 0;
+            boolean found = false;
+            int j = 0;
+            
+            while(nodeRegistry.get(i) != 0){
+            
+                found = false;
+                prevShift = insertionInd;
+                
+                // finding upper bound split key
+                for(j = 0; j < nodeRegistry.get(i); ++j){
+                    
+                    if(!found 
+                        && key.compareTo(container.get(prevShift + j).key) <= 0
+                        && nodeRegistry.get(prevShift + j) != -1){
+                    
+                        // it also includes case of 0 elements due to -1 offset
+                        
+                        insertionInd += nodeRegistry.get(prevShift + j);
+                        i = prevShift + j;
+                    }
+                    else if(!found
+                            && key.compareTo(container.get(prevShift + j).key) <= 0
+                            && nodeRegistry.get(prevShift + j) == -1){
+                        
+                        // insertion point in leaf levle has been found
+                        break;
+                    }
+                    else if(!found
+                            && key.compareTo(container.get(prevShift + j).key) > 0){
+                    
+                        found = true;
+                    }
+                    
+                    ++insertionInd;
+                }
+            }
+            
+            // inserting new child node
+            nodeRegistry.set(prevShift + j, sizeOfValues);
+            int insertionOffset = 0;
+            
+            for(j = 0; j < sizeOfValues; ++j){
+                    
+                container.add(insertionInd + j, values.get(i));
+            }
+        
+            return insertionInd;            
+        }
     }
     
     public int setOrAddByKey(K key, ArrayList<Pair<K, V>> values){
