@@ -71,10 +71,13 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     */
     public int add(K key, ArrayList<Pair<K, V>> values) throws Exception{
     
-        if(values.isEmpty())
+        if(values.isEmpty()){
+            
             throw new Exception("Values parameter is empty.");
+        }
         
         int sizeOfValues = values.size() - 1;
+        
         for(int i = 0; i < sizeOfValues; ++i){
         
             if(values.get(i).key.compareTo(values.get(i + 1).key) > 0){
@@ -97,8 +100,10 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
                 container.add(values.get(j));
                 // initialize key range
                 nodeRegistry.add(0);
-                ++size;
             }
+            
+            size = container.size();
+            
             return 0;
         } else{
 
@@ -116,20 +121,25 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
                 // finding upper bound split key
                 for(j = 0; j < nodeRegistry.get(i); ++j){
                     
+                    if(key.compareTo(container.get(prevShift + j).key) == 0){
+                    
+                        throw new Exception("Key already exists.");
+                    }
+                    
                     if(!found 
                         && key.compareTo(container.get(prevShift + j).key) <= 0
-                        && nodeRegistry.get(prevShift + j) != -1){
+                        && nodeRegistry.get(prevShift + j) != 0){
                     
-                        // it also includes case of 0 elements due to -1 offset
+                        // it also includes case of 0 elements due to 0 offset
                         
                         insertionInd += nodeRegistry.get(prevShift + j);
                         i = prevShift + j;
                     }
                     else if(!found
                             && key.compareTo(container.get(prevShift + j).key) <= 0
-                            && nodeRegistry.get(prevShift + j) == -1){
+                            && nodeRegistry.get(prevShift + j) == 0){
                         
-                        // insertion point in leaf levle has been found
+                        // insertion point in leaf level has been found
                         break;
                     }
                     else if(!found
@@ -144,12 +154,13 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             
             // inserting new child node
             nodeRegistry.set(prevShift + j, sizeOfValues);
-            int insertionOffset = 0;
             
             for(j = 0; j < sizeOfValues; ++j){
                     
                 container.add(insertionInd + j, values.get(i));
             }
+            
+            size = container.size();
         
             return insertionInd;            
         }
