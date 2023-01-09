@@ -166,16 +166,19 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         }
     }
     
-    public int setOrAddByKey(K key, ArrayList<Pair<K, V>> values){
-    
-        // todo
-        return 0;
-    }
-    
-    public V getByOrdInd(){
-    
-        // todo
-        return null;
+    public V getByLevelOrdInd(int i) throws Exception{
+        
+        if (i >= size) {
+
+            throw new Exception("Index out of bounds.");
+        }
+
+        if (container.get(i).key.isPlaceholder()) {
+
+            throw new Exception("Item is placeholder.");
+        }
+
+        return container.get(i).value;
     }
     
     public V getByInd(){
@@ -184,48 +187,150 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return null;
     }
     
-    public void setValByOrdInd(int i, V value){
+    public void setValByLevelOrdInd(int i, V value) throws Exception{
     
-        // todo
+        if (i >= size) {
+
+            throw new Exception("Index out of bounds.");
+        }
+
+        if (container.get(i).key.isPlaceholder()) {
+
+            throw new Exception("Item is placeholder.");
+        }
+
+        Pair<K, V> modPair = container.get(i);
+        modPair.value = value;
+        container.set(i, modPair);
     }
     
     public void setValByInd(int i, V value){
     
-        // todo
+        // todo, recursive procedure, computation heavy
     }
     
-    public V getByKey(K key){
+    public V getByKey(K key) throws Exception{
     
-        // todo
-        return null;
+        int insertionInd = 0;
+        int prevShift = 1;
+        int i = 0;
+        boolean found = false;
+        int j = 0;
+        
+        while(nodeRegistry.get(i) != 0){
+        
+            found = false;
+            prevShift = insertionInd;
+            
+            for(j = 0; j < nodeRegistry.get(i); ++j){
+            
+                if(key.compareTo(container.get(prevShift + j).key) == 0){
+                
+                    return container.get(prevShift + j).value;
+                }
+                
+                if(!found
+                    && key.compareTo(container.get(prevShift + j).key) <= 0
+                    && nodeRegistry.get(prevShift + j) != 0){
+                
+                    // it also includes case of 0 elements due to 0 offset
+                    
+                    insertionInd += nodeRegistry.get(prevShift + j);
+                    i = prevShift + j;
+                } 
+                else if(!found
+                    && key.compareTo(container.get(prevShift + j).key) <= 0
+                    && nodeRegistry.get(prevShift + j) == 0){
+                
+                    // negative result of key comparison among chained key dependences
+                    break;
+                }
+                else if(!found
+                        && key.compareTo(container.get(prevShift + j).key) > 0){
+                
+                    found = true;
+                }
+             
+                ++insertionInd;
+            }
+        }
+        
+        throw new Exception("Given key has not been found.");
     }
     
-    public int getOrdIndByKey(K key){
+    public int getOrdIndByKey(K key) throws Exception{
     
-        // todo
-        return 0;
+        int insertionInd = 0;
+        int prevShift = 1;
+        int i = 0;
+        boolean found = false;
+        int j = 0;
+        
+        while(nodeRegistry.get(i) != 0){
+        
+            found = false;
+            prevShift = insertionInd;
+            
+            for(j = 0; j < nodeRegistry.get(i); ++j){
+            
+                if(key.compareTo(container.get(prevShift + j).key) == 0){
+                
+                    return prevShift + j;
+                }
+                
+                if(!found
+                    && key.compareTo(container.get(prevShift + j).key) <= 0
+                    && nodeRegistry.get(prevShift + j) != 0){
+                
+                    // it also includes case of 0 elements due to 0 offset
+                    
+                    insertionInd += nodeRegistry.get(prevShift + j);
+                    i = prevShift + j;
+                } 
+                else if(!found
+                    && key.compareTo(container.get(prevShift + j).key) <= 0
+                    && nodeRegistry.get(prevShift + j) == 0){
+                
+                    // negative result of key comparison among chained key dependences
+                    break;
+                }
+                else if(!found
+                        && key.compareTo(container.get(prevShift + j).key) > 0){
+                
+                    found = true;
+                }
+             
+                ++insertionInd;
+            }
+        }
+        
+        throw new Exception("Given key has not been found.");
     }
     
     public int getIndByKey(K key){
     
-        // todo
+        // todo, recursive procedure, computation heavy
         return 0;
     }
     
-    public K getKeyByOrdInd(int ind){
+    public K getKeyByOrdInd(int ind) throws Exception{
     
-        // todo
-        return null;
+        if (ind >= size) {
+            throw new Exception("Index out of bounds.");
+        }
+
+        return container.get(ind).key;
     }
     
     public K getKeyByInd(int ind){
     
-        // todo
+        // todo, recursive procedure, computation heavy
         return null;
     }
     
     public K lowerKey(K key){
     
+        
         // todo
         return null;
     }
