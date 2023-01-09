@@ -15,7 +15,8 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
     private ArrayList<Boolean> stepDirHist;
     private ArrayList<Double> stepHist;
     private ArrayList<Integer> stepIndHist;
-
+    private int numOfCumulatedStepBacks;
+    
     public IncBinTree() {
 
         super();
@@ -30,6 +31,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
         stepDirHist = new ArrayList<Boolean>();
         stepHist = new ArrayList<Double>();
         stepIndHist = new ArrayList<Integer>();
+        numOfCumulatedStepBacks = 0;
     }
 
     public IncBinTree(IncBinTree<K, V> orig) {
@@ -46,6 +48,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
         this.stepDirHist = orig.stepDirHist;
         this.stepHist = orig.stepHist;
         this.stepIndHist = orig.stepIndHist;
+        this.numOfCumulatedStepBacks = orig.numOfCumulatedStepBacks;
     }
 
     private void increaseCapacity() {
@@ -459,6 +462,8 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
         stepDirHist.add(true);
         stepHist.add(travStep);
         stepIndHist.add(travI);
+        
+        numOfCumulatedStepBacks = 0;
     }
 
     public Pair<K, V> getNextItemDFS() {
@@ -473,6 +478,8 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
 
         if (container.get(travI).key.isPlaceholder()) {
 
+            numOfCumulatedStepBacks = 0;
+            
             while (travLen > 0 && !stepDirHist.get(travLen - 1)) {
 
                 stepDirHist.remove(travLen - 1);
@@ -481,6 +488,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
                 --travLen;
 
                 wasStepBack = true;
+                ++numOfCumulatedStepBacks;
             }
 
             if (travLen == 0) {
@@ -524,5 +532,10 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
     public boolean wasRecentLeaf() {
 
         return wasStepBack;
+    }
+    
+    public int getNumOfRecentStepBacks(){
+    
+        return numOfCumulatedStepBacks;
     }
 }
