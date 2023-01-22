@@ -110,7 +110,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             int j = 0;
             ArrayList<Integer> nodeShiftIndTrace = new ArrayList<Integer>();
             
-            while(nodeRegistry.get(i) != 0){
+            while(nodeRegistry.get(i) > 0){
             
                 found = false;
                 
@@ -238,7 +238,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         boolean found = false;
         int j = 0;
         
-        while(nodeRegistry.get(i) != 0){
+        while(nodeRegistry.get(i) > 0){
         
             found = false;
             prevShift = insertionInd;
@@ -287,7 +287,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         boolean found = false;
         int j = 0;
         
-        while(nodeRegistry.get(i) != 0){
+        while(nodeRegistry.get(i) > 0){
         
             found = false;
             prevShift = insertionInd;
