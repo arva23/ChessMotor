@@ -4,20 +4,17 @@ import genmath.LinTreeMap.Pair;
 import java.util.ArrayList;
 
 public class IncArbTree<K extends ComparableKey<K>, V> {
-
-    private int prevStep;
-    private int leafLevel;
     
     // traversal
+    private ArrayList<Integer> nodeIndHist;// node identifier for relative child indexing limit
+    private ArrayList<Integer> childNodeIndHist;// incremental child node identifier
     private int travI;
-    private double travStep;
-    private int travLen;
-    private boolean wasStepBack;
-    private ArrayList<Boolean> stepDirHist;
-    private ArrayList<Double> stepHist;
-    private ArrayList<Integer> stepIndHist;
+    private int travJ;
+    private int prevIndShift;
+    private int retI;
+    private boolean wasStepBack;// recently reached leaf level
     private int numOfCumulatedStepBacks;
-
+    
     
     private ArrayList<Integer> cumulativeNodeRegistry;
     
@@ -36,16 +33,13 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         nodeRegistry.add(0);
         container = new ArrayList<Pair<K, V>>();
         
-        prevStep = 0;
-        leafLevel = 0;
-        
+        nodeIndHist = new ArrayList<Integer>();
+        childNodeIndHist = new ArrayList<Integer>();
         travI = 0;
-        travStep = 0.0;
-        travLen = 0;
+        travJ = 0;
+        prevIndShift = 1;
+        retI = 0;
         wasStepBack = false;
-        stepDirHist = new ArrayList<Boolean>();
-        stepHist = new ArrayList<Double>();
-        stepIndHist = new ArrayList<Integer>();
         numOfCumulatedStepBacks = 0;
     }
     
@@ -56,16 +50,13 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         this.nodeRegistry = orig.nodeRegistry;
         this.container = orig.container;
         
-        this.prevStep = orig.prevStep;
-        this.leafLevel = orig.leafLevel;
-
+        this.nodeIndHist = orig.nodeIndHist;
+        this.childNodeIndHist = orig.childNodeIndHist;
         this.travI = orig.travI;
-        this.travStep = orig.travStep;
-        this.travLen = orig.travLen;
+        this.travJ = orig.travJ;
+        this.prevIndShift = orig.prevIndShift;
+        this.retI = orig.retI;
         this.wasStepBack = orig.wasStepBack;
-        this.stepDirHist = orig.stepDirHist;
-        this.stepHist = orig.stepHist;
-        this.stepIndHist = orig.stepIndHist;
         this.numOfCumulatedStepBacks = orig.numOfCumulatedStepBacks;
     }
     
@@ -407,18 +398,110 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     // DFS methods
     public void initDFS(){
     
-        // todo
+        nodeIndHist = new ArrayList<Integer>();
+        childNodeIndHist = new ArrayList<Integer>();
+
+        if(size > 0){
+        
+            nodeIndHist.add(0);
+            childNodeIndHist.add(0);
+        }
+        
+        travI = 0;
+        travJ = 0;
+        prevIndShift = 1;
+        retI = 0;
+        wasStepBack = false;
+        numOfCumulatedStepBacks = 0;
     }
     
-    public Pair<K, V> getNextItemDFS(){
     
-        // todo
-        return null;
+    public Pair<K, V> getNextItemDFS(){
+
+        if(size == 0){
+        
+            return new Pair<K, V>();
+        }
+        
+        retI = travI;
+        
+        // posteriori node evaluation in aspect of child nodes
+        if(nodeRegistry.get(travI) > 0){
+        
+            // priori child selection
+            // traversal on child elements
+            
+            if(!wasStepBack){
+            
+                travJ = 0;
+            }
+            
+            if(travJ < nodeRegistry.get(travI)){
+            
+                // level ordered linearized node sequence cumulative index shift maintenance
+                prevIndShift += cumulativeNodeRegistry.get(prevIndShift + travJ);
+                
+                // nodes with empty child node list are going to filtered, 
+                //  step backs are going to be handled
+                // step forward to next child node
+                nodeIndHist.add(travI);
+                childNodeIndHist.add(travJ);
+                travI = prevIndShift + travJ;
+                
+                wasStepBack = false;
+            }
+            else{
+                
+                // all child has been processed, going to next child of 2nd level upper parent child
+                //  using step back
+                if(nodeIndHist.isEmpty()){
+                
+                     // returned to root, DFS has been ended
+                    return container.get(travI);
+                }
+                
+                travI = nodeIndHist.get(nodeIndHist.size() - 1);
+                nodeIndHist.remove(nodeIndHist.size() - 1);
+                travJ = childNodeIndHist.get(childNodeIndHist.size() - 1);
+                childNodeIndHist.remove(childNodeIndHist.size() - 1);
+                prevIndShift -= cumulativeNodeRegistry.get(travJ);
+                ++travJ;
+                
+                if(wasStepBack) ++numOfCumulatedStepBacks;
+                else numOfCumulatedStepBacks = 1;
+                
+                wasStepBack = true;
+            }
+        }
+        else if(nodeRegistry.get(travI) == 0){
+        
+            // leaf level has been reached, step back occurs
+            // (termination condition of traversal is at the beginning of this stepping method)
+            if(nodeIndHist.isEmpty()) {
+            
+                // returned to root, DFS has been ended
+                return container.get(travI);
+            }
+            
+            travI = nodeIndHist.get(nodeIndHist.size() - 1);
+            nodeIndHist.remove(nodeIndHist.size() - 1);
+            travJ = childNodeIndHist.get(childNodeIndHist.size() - 1);
+            childNodeIndHist.remove(childNodeIndHist.size() - 1);
+            prevIndShift -= cumulativeNodeRegistry.get(travJ);
+            ++travJ;
+            
+            if(wasStepBack) ++numOfCumulatedStepBacks;
+            else numOfCumulatedStepBacks = 1;
+            
+            wasStepBack = true;
+        }
+        
+        return container.get(retI);
     }
     
     public boolean hasNextDFS(){
     
-        return travLen > 0 && stepDirHist.get(0);
+        return !nodeIndHist.isEmpty();
     }
     
     public boolean wasRecentLeaf(){
