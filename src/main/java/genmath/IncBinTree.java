@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> {
 
-    private int prevStep;
     private int leafLevel;
 
     // traversal
@@ -21,7 +20,6 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
 
         super();
         
-        prevStep = 0;
         leafLevel = 0;
 
         travI = 0;
@@ -38,7 +36,6 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
 
         super(orig);
         
-        this.prevStep = orig.prevStep;
         this.leafLevel = orig.leafLevel;
 
         this.travI = orig.travI;
