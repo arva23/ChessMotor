@@ -10,9 +10,9 @@ public class Pawn extends GenPiece{
         super();
     }
     
-    public Pawn(double value){
+    public Pawn(double value, int file, int rank){
     
-        super(value);
+        super(value, file, rank);
     }
     
     @Override

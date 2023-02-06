@@ -10,9 +10,9 @@ public class Knight extends GenPiece{
         super();
     }
     
-    public Knight(double value){
+    public Knight(double value, int file, int rank){
     
-        super(value);
+        super(value, file, rank);
     }
     
     @Override

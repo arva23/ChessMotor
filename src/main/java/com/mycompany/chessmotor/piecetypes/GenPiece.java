@@ -10,14 +10,18 @@ import java.util.ArrayList;
 public class GenPiece {
     
     private double value;
+    private int file;
+    private int rank;
     
     public GenPiece(){
     
     }
     
-    public GenPiece(double value) {
+    public GenPiece(double value, int file, int rank) {
     
         this.value = value;
+        this.file = file;
+        this.rank = rank;
     }
     
     public ArrayList<Pair> generateSteps(int gameBoard[][]){
@@ -45,5 +49,25 @@ public class GenPiece {
     public double getValue(){
     
         return value;
+    }
+    
+    public int getFile(){
+    
+        return file;
+    }
+    
+    public int getRank(){
+    
+        return rank;
+    }
+    
+    public void setFile(int file){
+    
+        this.file = file;
+    }
+    
+    public void setRank(int rank){
+    
+        this.rank = rank;
     }
 }

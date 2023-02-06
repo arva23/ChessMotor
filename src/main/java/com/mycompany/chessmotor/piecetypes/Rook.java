@@ -10,9 +10,9 @@ public class Rook extends GenPiece{
         super();
     }
     
-    public Rook(double value){
+    public Rook(double value, int file, int rank){
     
-        super(value);
+        super(value, file, rank);
     }
     
     @Override

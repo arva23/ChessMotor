@@ -10,9 +10,9 @@ public class Queen extends GenPiece{
         super();
     }
     
-    public Queen(double value){
+    public Queen(double value, int file, int rank){
     
-        super(value);
+        super(value, file, rank);
     }
 
     @Override

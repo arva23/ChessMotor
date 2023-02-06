@@ -10,9 +10,9 @@ public class Bishop extends GenPiece{
         super();
     }
     
-    public Bishop(double value){
+    public Bishop(double value, int file, int rank){
     
-        super(value);
+        super(value, file, rank);
     }
     
     @Override
