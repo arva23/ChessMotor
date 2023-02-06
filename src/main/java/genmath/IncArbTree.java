@@ -349,6 +349,24 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return null;
     }
     
+    public K getKeyByVal(V val) throws Exception{
+    
+        if(size == 0){
+        
+            throw new Exception("Container is empty.");
+        }
+        
+        for(int i = 0; i < size; ++i){
+        
+            if(container.get(i).value == val){
+
+                return container.get(i).key;
+            }
+        }
+        
+        throw new Exception("No key has been found with given value.");
+    }
+    
     public K lowerKey(K key){
     
         
