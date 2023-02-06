@@ -342,6 +342,43 @@ public class Game extends Thread{
             selectedPiece.setRank(selectedRank);
             gameBoard[selectedFile][selectedRank] = pieceNames.indexOf(params[0]);
         }
+        
+        Step selectedStep;
+        
+        if(stepSequences.size() > 0){
+        
+            // finding step node with given position
+            ArrayList<GenStepKey> levelKeys = stepSequences.getLevelKeys(1);
+
+            int sizeOfLevelKeys = levelKeys.size();
+
+            int i = 0;
+
+            for(; i < sizeOfLevelKeys; ++i){
+
+                selectedStep = ((Step)(stepSequences.getByKey(levelKeys.get(i))));
+
+                if(selectedStep.file == selectedFile && selectedStep.rank == selectedRank){
+
+                    break;
+                }
+            }
+
+            stepSequences.setNewRootByKey(levelKeys.get(i));
+        }
+        else{
+        
+            ArrayList<IncBinTree.Pair<GenStepKey, GenStep> > param =
+                    new ArrayList<IncBinTree.Pair<GenStepKey, GenStep> >();
+            
+            selectedStep = new Step(gameBoard[selectedFile][selectedRank], 
+                    selectedFile, selectedRank, selectedPiece.getValue());
+            
+            param.add(new IncBinTree.Pair<GenStepKey, GenStep>(
+                    new GenStepKey("a"), selectedStep));
+            
+            stepSequences.add(new GenStepKey("a"), param);
+        }
     }
     
     public void buildStepSequences(boolean initGen) throws Exception{
