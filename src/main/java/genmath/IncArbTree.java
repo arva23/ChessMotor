@@ -531,4 +531,22 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         
         return numOfCumulatedStepBacks;
     }
+
+    public ArrayList<K> getLevelKeys(int levelId){
+
+        ArrayList<K> levelKeys = new ArrayList<K>();
+
+        // todo
+
+        return levelKeys;
+    }
+
+    public ArrayList<K> getLeafLevelKeys(){
+    
+        ArrayList<K> leafLevelKeys = new ArrayList<K>();
+        
+        // todo
+        
+        return leafLevelKeys;
+    }
 }
