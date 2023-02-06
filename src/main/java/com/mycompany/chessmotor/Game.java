@@ -11,6 +11,9 @@ import genmath.GenStepKey;
 import genmath.IncArbTree;
 import genmath.IncBinTree;
 import genmath.LinTreeMultiMap;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 // evolution of engine
@@ -100,6 +103,9 @@ public class Game extends Thread{
     // active in game piece container
     private GenPiece pieces[];
     
+    // piece name resolution array
+    private ArrayList<String> pieceNames;
+    
     // the actual game board to operate with
     private int gameBoard[][];
     
@@ -132,6 +138,7 @@ public class Game extends Thread{
         this.depth = stepsToLookAhead;
         
         pieces = new GenPiece[32];
+        pieceNames = new ArrayList<String>();
         gameBoard = new int[8][8];
         stepSequences = new IncArbTree<GenStepKey, GenStep>();
         
@@ -272,10 +279,69 @@ public class Game extends Thread{
         this.depth = depth;
     }
     
-    public void requestPlayerAction(){
+    public void requestPlayerAction() throws Exception{
     
         // TODO listen for player action within a determined timeout, validate 
-        //      action and return control to machine player 
+        //      action and return control to machine player
+        
+        BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in)); 
+        
+        String action;
+        action = inputReader.readLine();
+        
+        if(action.isEmpty()){
+        
+            throw new Exception("Provided input is not acceptable.");
+        }
+        
+        String[] params = action.split("|");
+        
+        if(params[0].isEmpty()){
+        
+            throw new Exception("Piece has not been provided.");
+        }
+        
+        if(!pieceNames.contains(params[0])){
+        
+            throw new Exception("Piece name resolution is unsuccessful.");
+        }
+        
+        int selectedFile = 0;
+        
+        if(params[1].charAt(0) < 'a' || params[1].charAt(0) > 'h'){
+        
+            throw new Exception("File is out of range.");
+        }
+        
+        selectedFile = (int)params[1].charAt(0);
+        int selectedRank = 0;
+        
+        if(params[1].charAt(1) < 1 || params[1].charAt(1) > 8){
+        
+            throw new Exception("Rank is out of range.");
+        }
+        
+        selectedRank = (int)params[1].charAt(1);
+        
+        GenPiece selectedPiece = pieces[pieceNames.indexOf(params[0])];
+        
+        if(!(selectedPiece.generateSteps(gameBoard).contains(
+                new Pair(selectedFile, selectedRank)))){
+        
+            throw new Exception("Illegal selected step by chosen piece.");
+        }
+        
+        if(gameBoard[selectedFile][selectedRank] != -1){
+            
+            // hit occurs
+            pieceNames.set(gameBoard[selectedFile][selectedRank], "");
+        }
+        else{
+        
+            selectedPiece.setFile(selectedFile);
+            selectedPiece.setRank(selectedRank);
+            gameBoard[selectedFile][selectedRank] = pieceNames.indexOf(params[0]);
+        }
     }
     
     public void buildStepSequences(boolean initGen) throws Exception{
