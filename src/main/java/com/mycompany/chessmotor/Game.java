@@ -389,8 +389,16 @@ public class Game extends Thread{
                     break;
                 }
             }
-
+            
+            // TASK) shift tree with one level, throw root away (root displacement)
             stepSequences.setNewRootByKey(levelKeys.get(i));
+            
+            stepHistory.add(stepSequences.getByKey(levelKeys.get(i)));
+            
+            // TASK) TODO rename step node keys/identifiers (cyclic renaming)
+            //       in order to limit the key length (comparison optimization)
+            trimKeys();
+            
         }
         else{
         
@@ -398,12 +406,15 @@ public class Game extends Thread{
                     new ArrayList<IncBinTree.Pair<GenStepKey, Step> >();
             
             selectedStep = new Step(gameBoard[selectedFile][selectedRank], 
-                    selectedFile, selectedRank, selectedPiece.getValue());
+                    selectedFile, selectedRank, selectedPiece.getValue(), 
+                    0, selectedPiece.getValue());
             
             param.add(new IncBinTree.Pair<GenStepKey, Step>(
                     new GenStepKey("a"), selectedStep));
             
             stepSequences.add(new GenStepKey("a"), param);
+            
+            stepHistory.add(selectedStep);
         }
     }
     
