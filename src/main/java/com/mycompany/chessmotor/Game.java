@@ -29,16 +29,8 @@ import java.util.ArrayList;
 //    for maximizing the most n valuable pieces.
 
 public class Game extends Thread{
-
-    private static class GenStep{
     
-        public boolean isStep(){
-        
-            return false;
-        }
-    }
-    
-    private static class Step extends GenStep{
+    private static class Step{
     
         private int pieceId;
         private int rank;
@@ -67,7 +59,6 @@ public class Game extends Thread{
             this.file = file;
         }
         
-        @Override
         public boolean isStep(){
         
             return true;
@@ -115,7 +106,7 @@ public class Game extends Thread{
     
     // recent status of generated (arbirary incomplete n-ary tree) step sequences 
     // for further step decisions
-    private IncArbTree<GenStepKey, GenStep> stepSequences;
+    private IncArbTree<GenStepKey, Step> stepSequences;
 
     // Negative tendency threshold in step sequences. If difference of two opponent 
     // score values are greater than a threshold, drop step sequence.
@@ -140,7 +131,7 @@ public class Game extends Thread{
         pieces = new GenPiece[32];
         pieceNames = new ArrayList<String>();
         gameBoard = new int[8][8];
-        stepSequences = new IncArbTree<GenStepKey, GenStep>();
+        stepSequences = new IncArbTree<GenStepKey, Step>();
         
         // initializing ally pieces
         
@@ -356,7 +347,7 @@ public class Game extends Thread{
 
             for(; i < sizeOfLevelKeys; ++i){
 
-                selectedStep = ((Step)(stepSequences.getByKey(levelKeys.get(i))));
+                selectedStep = stepSequences.getByKey(levelKeys.get(i));
 
                 if(selectedStep.file == selectedFile && selectedStep.rank == selectedRank){
 
@@ -368,13 +359,13 @@ public class Game extends Thread{
         }
         else{
         
-            ArrayList<IncBinTree.Pair<GenStepKey, GenStep> > param =
-                    new ArrayList<IncBinTree.Pair<GenStepKey, GenStep> >();
+            ArrayList<IncBinTree.Pair<GenStepKey, Step> > param =
+                    new ArrayList<IncBinTree.Pair<GenStepKey, Step> >();
             
             selectedStep = new Step(gameBoard[selectedFile][selectedRank], 
                     selectedFile, selectedRank, selectedPiece.getValue());
             
-            param.add(new IncBinTree.Pair<GenStepKey, GenStep>(
+            param.add(new IncBinTree.Pair<GenStepKey, Step>(
                     new GenStepKey("a"), selectedStep));
             
             stepSequences.add(new GenStepKey("a"), param);
