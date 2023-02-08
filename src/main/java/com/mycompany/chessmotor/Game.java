@@ -36,6 +36,9 @@ public class Game extends Thread{
         private int rank;
         private int file;
         private double value;
+        // counting changes in tendency for certain number of steps
+        private int cumulativeChangeCount;
+        private double cumulativeValue;
         
         public Step(){
         
@@ -44,7 +47,8 @@ public class Game extends Thread{
             file = -1;
         }
         
-        public Step(int pieceId, int rank, int file, double value) throws Exception{
+        public Step(int pieceId, int rank, int file, double value, 
+                int cumulativeChangeCount, double cumulativeValue) throws Exception{
         
             this.pieceId = pieceId;
             
@@ -57,6 +61,10 @@ public class Game extends Thread{
                 throw new Exception("File is out of range.");
             
             this.file = file;
+            
+            this.cumulativeChangeCount = cumulativeChangeCount;
+            
+            this.cumulativeValue = cumulativeValue;
         }
         
         public boolean isStep(){
@@ -82,6 +90,16 @@ public class Game extends Thread{
         public double getValue(){
         
             return value;
+        }
+        
+        public int getCumulativeChangeCount(){
+        
+            return cumulativeChangeCount;
+        }
+        
+        public double getCumulativeValue(){
+        
+            return cumulativeValue;
         }
     }
     
