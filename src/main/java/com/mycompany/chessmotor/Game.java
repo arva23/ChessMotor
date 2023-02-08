@@ -129,6 +129,8 @@ public class Game extends Thread{
     // Negative tendency threshold in step sequences. If difference of two opponent 
     // score values are greater than a threshold, drop step sequence.
     private double minConvThreshold;
+    
+    private ArrayList<Step> stepHistory;
 
     public Game(){
     
@@ -153,6 +155,7 @@ public class Game extends Thread{
         pieceNames = new ArrayList<String>();
         gameBoard = new int[8][8];
         stepSequences = new IncArbTree<GenStepKey, Step>();
+        stepHistory = new ArrayList<Step>();
         
         // initializing ally pieces
         
@@ -247,11 +250,13 @@ public class Game extends Thread{
         
             // build step decision tree for the first time
             buildStepSequences(true);
+            selectNextStep();
             
             // waiting for player action
             requestPlayerAction();
             
             buildStepSequences(false);
+            selectNextStep();
         }
         else{
         
@@ -260,12 +265,14 @@ public class Game extends Thread{
             
             // build step decision tree for the first time
             buildStepSequences(true);
+            selectNextStep();
         }
         
         while(playGame){
         
             requestPlayerAction();
             buildStepSequences(false);
+            selectNextStep();
         }
 
         if(gameStatus < 0){
@@ -417,6 +424,43 @@ public class Game extends Thread{
             
             stepSequences.setKeyByInd(i, new GenStepKey(prefixTrimmedKeyValue));
         }
+    }
+    
+    // TODO it could be integrated in step decision tree builder
+    private void selectNextStep() throws Exception{
+    
+        // TASK) select the best option - max search, and apply to the game using 
+        //       posteriori update(perform update after execution of further subroutines 
+        //       of this method)
+        int sizeOfLeafSteps = stepSequences.size();
+        int maxI = 0;
+        double currCumulativeValue = 0.0;
+        double maxCumulativeValue = stepSequences.getByKey(
+                levelKeys.get(maxI)).getCumulativeValue();
+        
+        for(int i = 1; i < sizeOfLeafSteps; ++i){
+            
+            currCumulativeValue = stepSequences.getByKey(
+                levelKeys.get(i)).getCumulativeValue();
+            
+            if(maxCumulativeValue < currCumulativeValue){
+            
+                maxCumulativeValue = currCumulativeValue;
+                maxI = i;
+            }
+        }
+        
+        // TASK) shift tree with one level, throw root away (root displacement)
+        stepSequences.setNewRootByKey(levelKeys.get(maxI));
+        
+        stepHistory.add(stepSequences.getByKey(levelKeys.get(maxI)));
+        
+        // TASK) TODO rename step node keys/identifiers (cyclic renaming)
+        //       in order to limit the key length (comparison optimization)
+        trimKeys();
+        
+        
+        // TASK) TODO yield control to opponent player (asynchronous tasks)
     }
     
     // TODO count check status too
