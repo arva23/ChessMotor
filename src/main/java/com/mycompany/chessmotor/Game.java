@@ -400,7 +400,27 @@ public class Game extends Thread{
         }
     }
     
-    public void buildStepSequences(boolean initGen) throws Exception{
+    private void trimKeys(){
+    
+        // infinite node indexing resolution due to root diplacement 
+        //  (root level removal)
+        
+        // simple prefix trimming
+        int sizeOfStepSequences = stepSequences.size();
+        int trimEndInd = stepHistory.size() - 1 - 1;
+        String prefixTrimmedKeyValue; 
+        
+        for(int i = 0; i < sizeOfStepSequences; ++i){
+        
+            prefixTrimmedKeyValue = stepSequences.getKeyByInd(i).val.substring(
+                    0, trimEndInd);
+            
+            stepSequences.setKeyByInd(i, new GenStepKey(prefixTrimmedKeyValue));
+        }
+    }
+    
+    // TODO count check status too
+    private void buildStepSequences(boolean initGen) throws Exception{
     
         // TODO: modify gameTable for further steps
         // TODO: optimize Game.GenStep, Pair, LinTreeMap.Pair
