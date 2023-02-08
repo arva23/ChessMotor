@@ -135,7 +135,8 @@ public class Game extends Thread{
         initialized = false;
     }
     
-    public Game(boolean allyBegins, int stepsToLookAhead, double minConvThreshold) throws Exception{
+    public Game(boolean allyBegins, int stepsToLookAhead, double minConvThreshold, 
+            int cumulativeNegativeChangeThreshold) throws Exception{
     
         initialized = true;
         
@@ -144,6 +145,8 @@ public class Game extends Thread{
         
         this.minConvThreshold = minConvThreshold;
         this.allyBegins = allyBegins;
+        
+        // +1 for 0th start step, initiate board positions
         this.depth = stepsToLookAhead;
         
         pieces = new GenPiece[32];
@@ -155,29 +158,29 @@ public class Game extends Thread{
         
         for(int i = 0; i < 8; ++i){
         
-            pieces[i] = new Pawn(1.0, 1, i);
+            pieces[i] = new Pawn(-1.0, 1, i);
             gameBoard[1][i] = i;
             pieceNames.add("" + (i + 1) + "pawn");
 
-            pieces[16 + i] = new Pawn(-1.0, 6, i);
+            pieces[16 + i] = new Pawn(1.0, 6, i);
             gameBoard[6][i] = 16 + i;
         }
 
-        pieces[8] = new Rook(14.0, 0, 0);
+        pieces[8] = new Rook(-14.0, 0, 0);
         pieceNames.add("lrook");
-        pieces[9] = new Knight( 8.0, 0, 1);
+        pieces[9] = new Knight( -8.0, 0, 1);
         pieceNames.add("lknight");
-        pieces[10] = new Bishop(14.0, 0, 2);
+        pieces[10] = new Bishop(-14.0, 0, 2);
         pieceNames.add("lbishop");
-        pieces[11] = new King(8.0, 0, 3);
+        pieces[11] = new King(-8.0, 0, 3);
         pieceNames.add("king");
-        pieces[12] = new Queen(28.0, 0, 4);
+        pieces[12] = new Queen(-28.0, 0, 4);
         pieceNames.add("queen");
-        pieces[13] = new Bishop(14.0, 0, 5);
+        pieces[13] = new Bishop(-14.0, 0, 5);
         pieceNames.add("rbishop");
-        pieces[14] = new Knight(8.0, 0, 6);
+        pieces[14] = new Knight(-8.0, 0, 6);
         pieceNames.add("rknight");
-        pieces[15] = new Rook(14.0, 0, 7);
+        pieces[15] = new Rook(-14.0, 0, 7);
         pieceNames.add("rrook");
         
         gameBoard[0][0] = 8;
@@ -191,14 +194,14 @@ public class Game extends Thread{
 
         // initializing opponent pieces
         
-        pieces[16 + 8] = new Rook(-14.0, 7, 0);
-        pieces[16 + 9] = new Knight(-8.0, 7, 1);
-        pieces[16 + 10] = new Bishop(-14.0, 7, 2);
-        pieces[16 + 11] = new King(-8.0, 7, 3);
-        pieces[16 + 12] = new Queen(-28.0, 7, 4);
-        pieces[16 + 13] = new Bishop(-14.0, 7, 5);
-        pieces[16 + 14] = new Knight(-8.0, 7, 6);
-        pieces[16 + 15] = new Rook(-14.0, 7, 7);
+        pieces[16 + 8] = new Rook(14.0, 7, 0);
+        pieces[16 + 9] = new Knight(8.0, 7, 1);
+        pieces[16 + 10] = new Bishop(14.0, 7, 2);
+        pieces[16 + 11] = new King(8.0, 7, 3);
+        pieces[16 + 12] = new Queen(28.0, 7, 4);
+        pieces[16 + 13] = new Bishop(14.0, 7, 5);
+        pieces[16 + 14] = new Knight(8.0, 7, 6);
+        pieces[16 + 15] = new Rook(14.0, 7, 7);
 
         gameBoard[7][0] = 16 + 8;
         gameBoard[7][1] = 16 + 9;
@@ -217,6 +220,13 @@ public class Game extends Thread{
                 gameBoard[fileInd][rankInd] = -1;
             }
         }
+        
+        if(cumulativeNegativeChangeThreshold < 1){
+        
+            throw new Exception("Consequent cumulative negative change limit is under 1.");
+        }
+        
+        this.cumulativeNegativeChangeThreshold = cumulativeNegativeChangeThreshold;
     }
     
     public void runGame() throws Exception{
