@@ -208,6 +208,13 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return null;
     }
     
+    public void setKeyByInd(int i, K key){
+    
+        IncBinTree.Pair<K, V> modPair = container.get(i);
+        modPair.key = key;
+        container.set(i, modPair);
+    }
+    
     public void setValByLevelOrdInd(int i, V value) throws Exception{
     
         if (i >= size) {
