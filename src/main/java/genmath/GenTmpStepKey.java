@@ -46,6 +46,20 @@ public class GenTmpStepKey extends ComparableKey<GenTmpStepKey> {
         return val.compareTo(key.val);
     }
 
+    
+    @Override
+    public int len(){
+    
+        return val.toString().length();
+    }
+    
+    
+    @Override
+    public int at(int pos){
+    
+        return val.toString().charAt(pos);
+    }
+    
 
     @Override
     public GenTmpStepKey add(GenTmpStepKey key) {
