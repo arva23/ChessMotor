@@ -382,7 +382,7 @@ public class Game extends Thread{
         if(stepSequences.size() > 0){
         
             // finding step node with given position
-            ArrayList<GenStepKey> levelKeys = stepSequences.getLevelKeys(1);
+            ArrayList<GenStepKey> levelKeys = stepSequences.getLeafLevelKeys();
 
             int sizeOfLevelKeys = levelKeys.size();
 
@@ -567,6 +567,7 @@ public class Game extends Thread{
             
             for(int i = 0; i < sizeOfLevelKeys; ++i){
             
+                if(stepSequences.)
                 generatedLevelNodeSteps.get(0).add(
                         stepSequences.getByKey(levelKeys.get(i)));
             }
@@ -649,6 +650,13 @@ public class Game extends Thread{
 
                             // skip step (negative tendency continues after reaching
                             //  tendency threshold)
+                            
+                            // TODO prevent generation of prunned sequence multiple times
+                            //      node with negative tendency is evaluated at each 
+                            //       additional step generation in in-game mode
+                            //      These cuts are evaluated proportionally in time 
+                            //       with the missing number of nodes to fulfill 
+                            //       the depth condition
                         }
                     }
                     else{
