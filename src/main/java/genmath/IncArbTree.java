@@ -16,11 +16,11 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     private int numOfCumulatedStepBacks;
     
     
-    private ArrayList<Integer> cumulativeNodeRegistry;
+    private ArrayList<Integer> cumulativeChildNodeOffsetRegistry;
     
     // stores node division quantity, the number hash keys to be stored in a node, these 
     //  quantites/nubmbers can be different from each oter
-    private ArrayList<Integer> nodeRegistry;
+    private ArrayList<Integer> nodeSizeChildRegistry;
     
     private ArrayList<Pair<K, V>> container;// level ordered list, starting from root
     private int size;
@@ -28,9 +28,10 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     public IncArbTree(){
 
         size = 0;
-        cumulativeNodeRegistry = new ArrayList<Integer>();
-        nodeRegistry = new ArrayList<Integer>();
-        nodeRegistry.add(0);
+        cumulativeChildNodeOffsetRegistry = new ArrayList<Integer>();
+        cumulativeChildNodeOffsetRegistry.add(0);
+        nodeSizeChildRegistry = new ArrayList<Integer>();
+        nodeSizeChildRegistry.add(0);
         container = new ArrayList<Pair<K, V>>();
         
         nodeIndHist = new ArrayList<Integer>();
@@ -46,8 +47,8 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     public IncArbTree(IncArbTree<K, V> orig){
     
         this.size = orig.size;
-        this.cumulativeNodeRegistry = orig.cumulativeNodeRegistry;
-        this.nodeRegistry = orig.nodeRegistry;
+        this.cumulativeChildNodeOffsetRegistry = orig.cumulativeChildNodeOffsetRegistry;
+        this.nodeSizeChildRegistry = orig.nodeSizeChildRegistry;
         this.container = orig.container;
         
         this.nodeIndHist = orig.nodeIndHist;
@@ -86,22 +87,23 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         
         if(size == 0){
         
-            cumulativeNodeRegistry.add(sizeOfValues);
-            nodeRegistry.add(sizeOfValues);
+            cumulativeChildNodeOffsetRegistry.set(0, sizeOfValues);
+            nodeSizeChildRegistry.set(0, sizeOfValues);
             
             for(int j = 0; j < sizeOfValues; ++j){
             
                 container.add(values.get(j));
             
-                cumulativeNodeRegistry.add(0);
+                cumulativeChildNodeOffsetRegistry.add(0);
                 // initialize key range            
-                nodeRegistry.add(0);
+                nodeSizeChildRegistry.add(0);
             }
             
             size = container.size();
             
             return 0;
-        } else{
+        } 
+        else{
 
             int insertionInd = 0;
             int prevShift = 1;
@@ -110,7 +112,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             int j = 0;
             ArrayList<Integer> nodeShiftIndTrace = new ArrayList<Integer>();
             
-            while(nodeRegistry.get(i) > 0){
+            while(nodeSizeChildRegistry.get(i) > 0){
             
                 found = false;
                 
@@ -128,7 +130,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
                         && nodeRegistry.get(prevShift + j) != 0){
                     
                         // it also includes case of 0 elements due to 0 offset
-                        insertionInd += cumulativeNodeRegistry.get(prevShift + j);
+                        insertionInd += cumulativeChildNodeOffsetRegistry.get(prevShift + j);
                         nodeShiftIndTrace.set(nodeShiftIndTrace.size() - 1, i);
                         i = prevShift + j;// priori index assignment
                     }
@@ -155,15 +157,22 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             // inserting new child node
             int sizeOfShiftIndTrace = nodeShiftIndTrace.size();
 
-            if(prevShift + j < nodeRegistry.size()){
+            // case of insertion of new nodes
+            if(i < nodeSizeChildRegistry.size()){
                 
-                cumulativeNodeRegistry.set(prevShift + j, sizeOfValues);
-                nodeRegistry.set(prevShift + j, sizeOfValues);
+                // adding new nodes next to existing ones (not only leaf level)
+                cumulativeChildNodeOffsetRegistry.set(i,
+                        cumulativeChildNodeOffsetRegistry.get(i) + sizeOfValues);
+                
+                nodeSizeChildRegistry.set(i, 
+                        nodeSizeChildRegistry.get(i) + sizeOfValues);
             }
             else{
                 
-                cumulativeNodeRegistry.add(prevShift + j, sizeOfValues);
-                nodeRegistry.add(prevShift + j, sizeOfValues);
+                // increasing capacity of storage
+                // adding new nodes next to existing ones (not only leaf level)
+                cumulativeChildNodeOffsetRegistry.add(prevShift + j, sizeOfValues);
+                nodeSizeChildRegistry.add(prevShift + j, sizeOfValues);
             }
             
             // trace length is according to traversal depth
@@ -172,8 +181,8 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             for(j = 0; j <sizeOfShiftIndTrace; ++j){
             
                 cumulativeInd = nodeShiftIndTrace.get(j);
-                cumulativeNodeRegistry.set(cumulativeInd, 
-                    cumulativeNodeRegistry.get(cumulativeInd) + sizeOfValues);
+                cumulativeChildNodeOffsetRegistry.set(cumulativeInd, 
+                    cumulativeChildNodeOffsetRegistry.get(cumulativeInd) + sizeOfValues);
             }
             
             for(j = 0; j < sizeOfValues; ++j){
@@ -245,12 +254,9 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         boolean found = false;
         int j = 0;
         
-        while(nodeRegistry.get(i) > 0){
-        
-            found = false;
-            prevShift = insertionInd;
+        while(nodeSizeChildRegistry.get(i) > 0){
             
-            for(j = 0; j < nodeRegistry.get(i); ++j){
+            for(j = 0; j < nodeSizeChildRegistry.get(i); ++j){
             
                 if(key.compareTo(container.get(prevShift + j).key) == 0){
                 
@@ -294,12 +300,9 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         boolean found = false;
         int j = 0;
         
-        while(nodeRegistry.get(i) > 0){
-        
-            found = false;
-            prevShift = insertionInd;
+        while(nodeSizeChildRegistry.get(i) > 0){
             
-            for(j = 0; j < nodeRegistry.get(i); ++j){
+            for(j = 0; j < nodeSizeChildRegistry.get(i); ++j){
             
                 if(key.compareTo(container.get(prevShift + j).key) == 0){
                 
@@ -415,8 +418,8 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     
     public void removeAll(){
     
-        cumulativeNodeRegistry.clear();
-        nodeRegistry.clear();
+        cumulativeChildNodeOffsetRegistry.clear();
+        nodeSizeChildRegistry.clear();
         container.clear();
     }
     
@@ -451,7 +454,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         retI = travI;
         
         // posteriori node evaluation in aspect of child nodes
-        if(nodeRegistry.get(travI) > 0){
+        if(nodeSizeChildRegistry.get(travI) > 0){
         
             // priori child selection
             // traversal on child elements
@@ -461,10 +464,10 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
                 travJ = 0;
             }
             
-            if(travJ < nodeRegistry.get(travI)){
+            if(travJ < nodeSizeChildRegistry.get(travI)){
             
                 // level ordered linearized node sequence cumulative index shift maintenance
-                prevIndShift += cumulativeNodeRegistry.get(prevIndShift + travJ);
+                prevIndShift += cumulativeChildNodeOffsetRegistry.get(prevIndShift + travJ);
                 
                 // nodes with empty child node list are going to filtered, 
                 //  step backs are going to be handled
@@ -489,7 +492,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
                 nodeIndHist.remove(nodeIndHist.size() - 1);
                 travJ = childNodeIndHist.get(childNodeIndHist.size() - 1);
                 childNodeIndHist.remove(childNodeIndHist.size() - 1);
-                prevIndShift -= cumulativeNodeRegistry.get(travJ);
+                prevIndShift -= cumulativeChildNodeOffsetRegistry.get(travJ);
                 ++travJ;
                 
                 if(wasStepBack) ++numOfCumulatedStepBacks;
@@ -498,7 +501,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
                 wasStepBack = true;
             }
         }
-        else if(nodeRegistry.get(travI) == 0){
+        else if(nodeSizeChildRegistry.get(travI) == 0){
         
             // leaf level has been reached, step back occurs
             // (termination condition of traversal is at the beginning of this stepping method)
@@ -512,7 +515,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             nodeIndHist.remove(nodeIndHist.size() - 1);
             travJ = childNodeIndHist.get(childNodeIndHist.size() - 1);
             childNodeIndHist.remove(childNodeIndHist.size() - 1);
-            prevIndShift -= cumulativeNodeRegistry.get(travJ);
+            prevIndShift -= cumulativeChildNodeOffsetRegistry.get(travJ);
             ++travJ;
             
             if(wasStepBack) ++numOfCumulatedStepBacks;
