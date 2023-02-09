@@ -62,6 +62,116 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     }
     
     
+    /* !@brief adds single element to one node (arbitrary n-ary key-value pair on one node) */
+    public int addOne(K key, K nKey, V value) throws Exception{
+    
+        if(value == null || nKey == null || value == null){
+        
+            throw new Exception("Value parameter is null.");
+        }
+        
+        if(size == 0){
+        
+            cumulativeChildNodeOffsetRegistry.set(0, 1);
+            nodeSizeChildRegistry.set(0, 1);
+            
+            container.add(new Pair<K, V>(nKey, value));
+            cumulativeChildNodeOffsetRegistry.add(0);
+            nodeSizeChildRegistry.add(0);
+            
+            size = 1;
+        
+            return 0;
+        }
+        else{
+        
+            int insertionInd = 0;
+            int prevShift = 1;
+            int i = 0;
+            int j = 0;
+            int level = 0;
+            ArrayList<Integer> nodeShiftIndTrace = new ArrayList<Integer>();
+            
+            while(nodeSizeChildRegistry.get(i) > 0){
+            
+                nodeShiftIndTrace.add(i);
+                // finding upper bound split key
+                for(j = 0; j < nodeSizeChildRegistry.get(i); ++j){
+                
+                    // keys are on the same level (hierachical classification)
+                    // keeping container ordered by < operator on keys
+                    if(key.at(level) < container.get(prevShift + j).key.at(level)){
+                    
+                        // it also includes case of 0 elements due to 0 offset
+                        insertionInd += cumulativeChildNodeOffsetRegistry.get(prevShift + j);
+                        nodeShiftIndTrace.set(nodeShiftIndTrace.size() - 1, i);
+                    }
+                    else if(key.at(level) == container.get(prevShift + j).key.at(level)){
+                    
+                        i = prevShift + j;
+                        ++level;// go down to next level
+                        break;
+                    }
+                    
+                    ++insertionInd;
+                }
+                
+                prevShift = insertionInd;
+                
+                if(key.len() == container.get(prevShift + j).key.at(level)){
+                
+                    // insert new node onto selected level
+                    break;
+                }
+                else{
+                
+                    throw new Exception("No parent key has been found and key" 
+                            + "length differs from terminated level key length.");
+                }
+            }
+            
+            
+            // insertion new child node
+
+            int sizeOfShiftIndTrace = nodeShiftIndTrace.size();
+
+            if(i < nodeSizeChildRegistry.size()){
+
+                // adding new node next to existing ones (not only leaf level)
+                cumulativeChildNodeOffsetRegistry.set(i,
+                        cumulativeChildNodeOffsetRegistry.get(i) + 1);
+                
+                nodeSizeChildRegistry.set(i,
+                        nodeSizeChildRegistry.get(i) + 1);
+            }
+            else{
+            
+                // increasing capacity of stroage
+                // adding new node next to existing ones (not only leaf level)
+                cumulativeChildNodeOffsetRegistry.add(prevShift + j, 1);
+                nodeSizeChildRegistry.add(prevShift + j, 1);
+            }
+            
+            // trace length is according to traversal depth
+            int cumulativeInd = 0;
+            
+            for(j = 0; j < sizeOfShiftIndTrace; ++j){
+            
+                cumulativeInd = nodeShiftIndTrace.get(j);
+                cumulativeChildNodeOffsetRegistry.set(cumulativeInd,
+                    cumulativeChildNodeOffsetRegistry.get(cumulativeInd) + 1);
+            }
+            
+            container.add(insertionInd, new Pair<K, V>(nKey, value));
+            nodeSizeChildRegistry.add(insertionInd, 0);
+            cumulativeChildNodeOffsetRegistry.add(insertionInd, 0);
+            
+            size = container.size();
+            
+            return insertionInd;
+        }
+    }
+    
     /* !@brief adds multiple elements to one node (arbitrary n-ary key-value pairs on one node) */
     public int add(K key, ArrayList<Pair<K, V>> values) throws Exception{
     
