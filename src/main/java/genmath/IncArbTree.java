@@ -637,7 +637,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     public ArrayList<K> getLevelKeys(int levelId){
 
         ArrayList<K> levelKeys = new ArrayList<K>();
-
+        
         // todo
 
         return levelKeys;
@@ -647,7 +647,14 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     
         ArrayList<K> leafLevelKeys = new ArrayList<K>();
         
-        // todo
+        // it also includes leaf nodes on different tree levels
+        for(int i = 0; i < size; ++i){
+        
+            if(nodeSizeChildRegistry.get(i) > 0){
+            
+                leafLevelKeys.add(container.get(i).key);
+            }
+        }
         
         return leafLevelKeys;
     }
