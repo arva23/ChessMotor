@@ -483,7 +483,8 @@ public class Game extends Thread{
         boolean wasStepBack = false;
         
         int lvl = 0;
-
+        int lvlLimit = depth;
+        
         if(!initGen){
             
             // continuing generation by generator
@@ -499,6 +500,7 @@ public class Game extends Thread{
                         stepSequences.getByKey(levelKeys.get(i)));
             }
             
+            lvlLimit = 1;
             wasStepBack = true;
         }
         
@@ -618,7 +620,7 @@ public class Game extends Thread{
             }
             
 
-            if(generatedLevelNodeSteps.get(lvl).isEmpty() || lvl >= depth){
+            if(generatedLevelNodeSteps.get(lvl).isEmpty() || lvl >= lvlLimit){
             
                 // no further seps to take with currently selected piece, stepback
                 stepHistoryStack.remove(lvl);
