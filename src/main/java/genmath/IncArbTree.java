@@ -108,53 +108,50 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             int insertionInd = 0;
             int prevShift = 1;
             int i = 0;
-            boolean found = false;
             int j = 0;
+            int level = 0;
             ArrayList<Integer> nodeShiftIndTrace = new ArrayList<Integer>();
             
             while(nodeSizeChildRegistry.get(i) > 0){
             
-                found = false;
-                
                 nodeShiftIndTrace.add(i);
-                // finding upper bound split key
-                for(j = 0; j < nodeRegistry.get(i); ++j){
+                // finding parent key
+                for(j = 0; j < nodeSizeChildRegistry.get(i); ++j){
                     
-                    if(key.compareTo(container.get(prevShift + j).key) == 0){
-                    
-                        throw new Exception("Key already exists.");
-                    }
-                    
-                    if(!found 
-                        && key.compareTo(container.get(prevShift + j).key) <= 0
-                        && nodeRegistry.get(prevShift + j) != 0){
+                    // keys are on the same level (hierachical classification)
+                    // keeping container ordered by < operator on keys
+                    if(key.at(level) < container.get(prevShift + j).key.at(level)){
                     
                         // it also includes case of 0 elements due to 0 offset
                         insertionInd += cumulativeChildNodeOffsetRegistry.get(prevShift + j);
                         nodeShiftIndTrace.set(nodeShiftIndTrace.size() - 1, i);
+                    }
+                    else if(key.at(level) == container.get(prevShift + j).key.at(level)){
+                        
                         i = prevShift + j;// priori index assignment
-                    }
-                    else if(!found
-                            && key.compareTo(container.get(prevShift + j).key) <= 0
-                            && nodeRegistry.get(prevShift + j) == 0){
-                        
-                        // insertion point in leaf level has been found
+                        ++level;// go down to next level
                         break;
-                    }
-                    else if(!found
-                            && key.compareTo(container.get(prevShift + j).key) > 0){
-                    
-                        
-                        found = true;
                     }
                     
                     ++insertionInd;
                 }
                 
                 prevShift = insertionInd;
+                
+                if(key.len() == container.get(prevShift + j).key.at(level)){
+                
+                    // insert new node onto selected level
+                    break;
+                }
+                else{
+                
+                    throw new Exception("No parent key has been found and key " 
+                            + "length differs from terminated level key length.");
+                }
             }
             
-            // inserting new child node
+            // inserting new child nodes
+
             int sizeOfShiftIndTrace = nodeShiftIndTrace.size();
 
             // case of insertion of new nodes
@@ -188,6 +185,8 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             for(j = 0; j < sizeOfValues; ++j){
                 
                 container.add(insertionInd + j, values.get(i));
+                nodeSizeChildRegistry.add(insertionInd + j, 0);
+                cumulativeChildNodeOffsetRegistry.add(insertionInd + j, 0);
             }
             
             size = container.size();
@@ -251,8 +250,8 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         int insertionInd = 0;
         int prevShift = 1;
         int i = 0;
-        boolean found = false;
         int j = 0;
+        int level = 0;
         
         while(nodeSizeChildRegistry.get(i) > 0){
             
@@ -263,30 +262,21 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
                     return container.get(prevShift + j).value;
                 }
                 
-                if(!found
-                    && key.compareTo(container.get(prevShift + j).key) <= 0
-                    && nodeRegistry.get(prevShift + j) != 0){
+                if(key.at(level) < container.get(prevShift + j).key.at(level)){
                 
-                    // it also includes case of 0 elements due to 0 offset
-                    
-                    insertionInd += cumulativeNodeRegistry.get(prevShift + j);
+                    insertionInd += cumulativeChildNodeOffsetRegistry.get(prevShift + j);
+                }
+                else if(key.at(level) == container.get(prevShift + j).key.at(level)){
+                
                     i = prevShift + j;
-                } 
-                else if(!found
-                    && key.compareTo(container.get(prevShift + j).key) <= 0
-                    && nodeRegistry.get(prevShift + j) == 0){
-                
-                    // negative result of key comparison among chained key dependences
+                    ++level;
                     break;
                 }
-                else if(!found
-                        && key.compareTo(container.get(prevShift + j).key) > 0){
                 
-                    found = true;
-                }
-             
                 ++insertionInd;
             }
+            
+            prevShift = insertionInd;
         }
         
         throw new Exception("Given key has not been found.");
@@ -297,8 +287,8 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         int insertionInd = 0;
         int prevShift = 1;
         int i = 0;
-        boolean found = false;
         int j = 0;
+        int level = 0;
         
         while(nodeSizeChildRegistry.get(i) > 0){
             
@@ -309,30 +299,21 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
                     return prevShift + j;
                 }
                 
-                if(!found
-                    && key.compareTo(container.get(prevShift + j).key) <= 0
-                    && nodeRegistry.get(prevShift + j) != 0){
+                if(key.at(level) < container.get(prevShift + j).key.at(level)){
                 
-                    // it also includes case of 0 elements due to 0 offset
-                    
-                    insertionInd += cumulativeNodeRegistry.get(prevShift + j);
+                    insertionInd += cumulativeChildNodeOffsetRegistry.get(prevShift + j);
+                }
+                else if(key.at(level) == container.get(prevShift + j).key.at(level)){
+                
                     i = prevShift + j;
-                } 
-                else if(!found
-                    && key.compareTo(container.get(prevShift + j).key) <= 0
-                    && nodeRegistry.get(prevShift + j) == 0){
-                
-                    // negative result of key comparison among chained key dependences
+                    ++level;
                     break;
                 }
-                else if(!found
-                        && key.compareTo(container.get(prevShift + j).key) > 0){
                 
-                    found = true;
-                }
-             
                 ++insertionInd;
             }
+            
+            prevShift = insertionInd;
         }
         
         throw new Exception("Given key has not been found.");
@@ -366,6 +347,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             throw new Exception("Container is empty.");
         }
         
+        // O(n) complexity
         for(int i = 0; i < size; ++i){
         
             if(container.get(i).value == val){
