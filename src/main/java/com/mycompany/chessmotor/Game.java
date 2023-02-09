@@ -54,9 +54,6 @@ public class Game extends Thread{
     
     private int cumulativeNegativeChangeThreshold;
 
-    // for tree building, also used for finding local optimal next step
-    ArrayList<GenStepKey> levelKeys;
-
     // recent status of generated (arbirary incomplete n-ary tree) step sequences 
     // for further step decisions
     private IncArbTree<GenStepKey, Step> stepSequences;
@@ -379,7 +376,10 @@ public class Game extends Thread{
         // TASK) select the best option - max search, and apply to the game using 
         //       posteriori update(perform update after execution of further subroutines 
         //       of this method)
-        int sizeOfLeafSteps = stepSequences.size();
+        
+        ArrayList<GenStepKey> levelKeys = stepSequences.getLeafLevelKeys();
+        
+        int sizeOfLeafSteps = levelKeys.size();
         int maxI = 0;
         double currCumulativeValue = 0.0;
         double maxCumulativeValue = stepSequences.getByKey(
@@ -488,7 +488,7 @@ public class Game extends Thread{
         if(!initGen){
             
             // continuing generation by generator
-            ArrayList<GenStepKey> levelKeys = stepSequences.getLevelKeys(lvl);
+            ArrayList<GenStepKey> levelKeys = stepSequences.getLeafLevelKeys();
             
             int sizeOfLevelKeys = levelKeys.size();
             
