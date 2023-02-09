@@ -498,9 +498,33 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return size == 0;
     }
     
-    public void setNewRootByKey(K key){
+    public void setNewRootByKey(K key) throws Exception{
     
-        // todo
+        // removing prefix subtrees and suffix subtrees
+        
+        int rootInd = getOrdIndByKey(key);
+
+        // getting new size of container
+        int newSize = cumulativeChildNodeOffsetRegistry.get(rootInd);
+        
+        for(int i = 0; i < newSize; ++i){
+        
+            container.set(
+                    i, container.get(rootInd + i));
+            nodeSizeChildRegistry.set(
+                    i, nodeSizeChildRegistry.get(rootInd + i));
+            cumulativeChildNodeOffsetRegistry.set(
+                    i, cumulativeChildNodeOffsetRegistry.get(rootInd + i));
+        }
+        
+        for(int i = newSize + 1; i < size; ++i){
+        
+            container.remove(i);
+            nodeSizeChildRegistry.remove(i);
+            cumulativeChildNodeOffsetRegistry.remove(i);
+        }
+        
+        size = newSize;
     }
     
     public ArrayList<Pair<K, V>> getContainer(){
