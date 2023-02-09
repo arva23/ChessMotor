@@ -319,7 +319,8 @@ public class Game extends Thread{
 
                 selectedStep = stepSequences.getByKey(levelKeys.get(i));
 
-                if(selectedStep.file == selectedFile && selectedStep.rank == selectedRank){
+                if(selectedStep.getFile() == selectedFile 
+                        && selectedStep.getRank() == selectedRank){
 
                     break;
                 }
@@ -464,7 +465,7 @@ public class Game extends Thread{
             keyHistoryStack.add("a");
             
             // modify game table status
-            gameBoard[step.getFile()][step.getRank()] = step.pieceId;
+            gameBoard[step.getFile()][step.getRank()] = step.getPieceId();
         }
         
         
@@ -494,7 +495,6 @@ public class Game extends Thread{
             
             for(int i = 0; i < sizeOfLevelKeys; ++i){
             
-                if(stepSequences.)
                 generatedLevelNodeSteps.get(0).add(
                         stepSequences.getByKey(levelKeys.get(i)));
             }
@@ -528,7 +528,7 @@ public class Game extends Thread{
                 generatedLevelNodeSteps.add(new ArrayList<Step>());
                 
                 ArrayList<Pair> generatedSteps = 
-                        pieces[step.pieceId].generateSteps(gameBoard);
+                        pieces[step.getPieceId()].generateSteps(gameBoard);
                 
                 sortedGeneratedSteps.removeAll();
                 
@@ -554,7 +554,7 @@ public class Game extends Thread{
 
                         // opponent score addition comes
                         if(opponentSide &&
-                            (-1.0) * step.value + minConvThreshold < pieces[pieceInd].getValue()){
+                            (-1.0) * step.getValue() + minConvThreshold < pieces[pieceInd].getValue()){
 
                             ++cumulativeNegativeChange;
                         }
@@ -563,7 +563,7 @@ public class Game extends Thread{
                         if(cumulativeNegativeChange <= cumulativeNegativeChangeThreshold){
 
                             allocatedGeneratedStep = new Step(
-                                step.pieceId, generatedStep.file, 
+                                step.getPieceId(), generatedStep.file, 
                                 generatedStep.rank, pieces[pieceInd].getValue(),
                                 cumulativeNegativeChange,  
                                 cumulativeValue + pieces[pieceInd].getValue());
@@ -589,7 +589,7 @@ public class Game extends Thread{
                     else{
 
                         allocatedGeneratedStep = new Step(
-                            step.pieceId, generatedStep.file,
+                            step.getPieceId(), generatedStep.file,
                             generatedStep.rank, pieces[pieceInd].getValue(), 
                             cumulativeNegativeChange, 
                             cumulativeValue + 0.0);
@@ -623,7 +623,7 @@ public class Game extends Thread{
                 // no further seps to take with currently selected piece, stepback
                 stepHistoryStack.remove(lvl);
                 keyHistoryStack.remove(lvl);
-                gameBoard[step.file][step.rank] = gameBoardHistory.get(lvl);
+                gameBoard[step.getFile()][step.getRank()] = gameBoardHistory.get(lvl);
                 gameBoardHistory.remove(lvl);
                 generatedLevelNodeSteps.remove(lvl);
                 --lvl;
@@ -636,7 +636,7 @@ public class Game extends Thread{
                 // savign previous level status
                 stepHistoryStack.add(selectedStep);
                 keyHistoryStack.add(key);
-                gameBoardHistory.add(gameBoard[selectedStep.file][selectedStep.rank]);
+                gameBoardHistory.add(gameBoard[selectedStep.getFile()][selectedStep.getRank()]);
                 
                 // TASK) update computation tree
                 // insert step into decision tree
@@ -646,7 +646,7 @@ public class Game extends Thread{
                 // modify game table status
                 // in case of piece hit by an opponent piece, access of to that 
                 //  piece is going to be forbidden by the removal its id from the board
-                gameBoard[selectedStep.file][selectedStep.rank] = step.pieceId;
+                gameBoard[selectedStep.getFile()][selectedStep.getRank()] = step.getPieceId();
                 
                 generatedLevelNodeSteps.get(lvl).remove(0);
                 
