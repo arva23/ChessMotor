@@ -8,12 +8,7 @@ import com.mycompany.chessmotor.piecetypes.Pawn;
 import com.mycompany.chessmotor.piecetypes.Queen;
 import com.mycompany.chessmotor.piecetypes.Rook;
 import genmath.GenStepKey;
-import genmath.GenTmpStepKey;
-import genmath.IncArbTree;
-import genmath.IncBinTree;
-import genmath.LinTreeMultiMap;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
@@ -29,7 +24,7 @@ import java.util.ArrayList;
 //  > Improved version of the above along width piece type strength weight seeking
 //    for maximizing the most n valuable pieces.
 
-public class Game extends Thread{
+public class Game{
     
     // initialization of game is required
     private boolean initialized;
@@ -46,21 +41,11 @@ public class Game extends Thread{
     private ArrayList<String> pieceNames;
     
     // the actual game board to operate with
-    private int gameBoard[][];
+    private int[][] gameBoard;
     
-    // number of steps to be generated (look ahead with N steps), as an upper 
-    // bound of step sequence generation
-    private int depth;
-    
-    private int cumulativeNegativeChangeThreshold;
-
     // recent status of generated (arbirary incomplete n-ary tree) step sequences 
     // for further step decisions
-    private IncArbTree<GenStepKey, Step> stepSequences;
-
-    // Negative tendency threshold in step sequences. If difference of two opponent 
-    // score values are greater than a threshold, drop step sequence.
-    private double minConvThreshold;
+    StepDecisionTree stepSequences;
     
     private ArrayList<Step> stepHistory;
 
@@ -74,19 +59,14 @@ public class Game extends Thread{
     
         initialized = true;
         
-        if(minConvThreshold < 0)
-            throw new Exception("Opponent score increase slope must be positive.");
-        
-        this.minConvThreshold = minConvThreshold;
         this.allyBegins = allyBegins;
         
-        // +1 for 0th start step, initiate board positions
-        this.depth = stepsToLookAhead;
         
         pieces = new GenPiece[32];
         pieceNames = new ArrayList<String>();
         gameBoard = new int[8][8];
-        stepSequences = new IncArbTree<GenStepKey, Step>();
+        stepSequences = new StepDecisionTree(allyBegins, pieces, stepHistory, gameBoard, 
+            stepsToLookAhead, cumulativeNegativeChangeThreshold, minConvThreshold);
         stepHistory = new ArrayList<Step>();
         
         // initializing ally pieces
@@ -154,14 +134,7 @@ public class Game extends Thread{
             
                 gameBoard[fileInd][rankInd] = -1;
             }
-        }
-        
-        if(cumulativeNegativeChangeThreshold < 1){
-        
-            throw new Exception("Consequent cumulative negative change limit is under 1.");
-        }
-        
-        this.cumulativeNegativeChangeThreshold = cumulativeNegativeChangeThreshold;
+        }   
     }
     
     public void runGame() throws Exception{
@@ -181,13 +154,13 @@ public class Game extends Thread{
         if(allyBegins){
         
             // build step decision tree for the first time
-            buildStepSequences(true);
+            stepSequences.buildStepSequences(true, 0);
             selectNextStep();
             
             // waiting for player action
             requestPlayerAction();
             
-            buildStepSequences(false);
+            stepSequences.buildStepSequences(false, 0);
             selectNextStep();
         }
         else{
@@ -196,14 +169,14 @@ public class Game extends Thread{
             requestPlayerAction();
             
             // build step decision tree for the first time
-            buildStepSequences(true);
+            stepSequences.buildStepSequences(true, 0);
             selectNextStep();
         }
         
         while(playGame){
         
             requestPlayerAction();
-            buildStepSequences(false);
+            stepSequences.buildStepSequences(false, 0);
             selectNextStep();
         }
 
@@ -229,12 +202,9 @@ public class Game extends Thread{
         }
     }
     
-    // improvement: dynamic depth variation according to recent game status scores
     public void setDepth(int depth) throws Exception{
     
-        if(depth < 1) throw new Exception("Step sequence depth is less than 1.");
-        
-        this.depth = depth;
+        stepSequences.setDepth(depth);
     }
     
     public void requestPlayerAction() throws Exception{
@@ -330,43 +300,18 @@ public class Game extends Thread{
             
             // TASK) TODO rename step node keys/identifiers (cyclic renaming)
             //       in order to limit the key length (comparison optimization)
-            trimKeys();
+            stepSequences.trimKeys();
             
         }
         else{
-        
-            ArrayList<IncBinTree.Pair<GenStepKey, Step> > param =
-                    new ArrayList<IncBinTree.Pair<GenStepKey, Step> >();
             
             selectedStep = new Step(gameBoard[selectedFile][selectedRank], 
                     selectedFile, selectedRank, selectedPiece.getValue(), 
                     0, selectedPiece.getValue());
             
-            param.add(new IncBinTree.Pair<GenStepKey, Step>(
-                    new GenStepKey("a"), selectedStep));
-            
-            stepSequences.add(new GenStepKey("a"), param);
+            stepSequences.addOne(new GenStepKey("a"), new GenStepKey("a"), selectedStep);
             
             stepHistory.add(selectedStep);
-        }
-    }
-    
-    private void trimKeys(){
-    
-        // infinite node indexing resolution due to root diplacement 
-        //  (root level removal)
-        
-        // simple prefix trimming
-        int sizeOfStepSequences = stepSequences.size();
-        int trimEndInd = stepHistory.size() - 1 - 1;
-        String prefixTrimmedKeyValue; 
-        
-        for(int i = 0; i < sizeOfStepSequences; ++i){
-        
-            prefixTrimmedKeyValue = stepSequences.getKeyByInd(i).val.substring(
-                    0, trimEndInd);
-            
-            stepSequences.setKeyByInd(i, new GenStepKey(prefixTrimmedKeyValue));
         }
     }
     
@@ -404,256 +349,9 @@ public class Game extends Thread{
         
         // TASK) TODO rename step node keys/identifiers (cyclic renaming)
         //       in order to limit the key length (comparison optimization)
-        trimKeys();
+        stepSequences.trimKeys();
         
         
         // TASK) TODO yield control to opponent player (asynchronous tasks)
-    }
-    
-    // TODO count check status too
-    private void buildStepSequences(boolean initGen) throws Exception{
-    
-        // TODO: optimize, refactor Game.GenStep, Pair, LinTreeMap.Pair
-        
-        // It always starts from root node due to root removal at each step 
-        //      of ally decision
-        
-        // TODO Generate these treebuilding utilizing the available concurrent 
-        //      threads using mutexes
-        
-        // generating steps for levels
-        
-        LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps =
-                new LinTreeMultiMap<GenTmpStepKey, Step>();
-        
-        Step step;
-        
-        // in order to restore consistency for peer (by level) steps
-        ArrayList<Step> stepHistoryStack = new ArrayList<Step>();
-        
-        ArrayList<String> keyHistoryStack = new ArrayList<String>();
-
-        // first step
-        if(initGen && allyBegins){
-        
-            for(int i = 0; i < 16; ++i){
-            
-                if(pieces[i].generateSteps(gameBoard).size() > 0){
-                
-                    step = new Step(i, (int)Math.floor(i / 8), i % 8,
-                    pieces[i].getValue(), 0,
-                    pieces[i].getValue());
-                
-                    sortedGeneratedSteps.add(new GenTmpStepKey(pieces[i].getValue()), step);
-                }
-            }
-            
-            // suboptimal strategy of initial step
-            //  (strategies can be added by weighthening graph later)
-            int selectedPieceInd = 
-                (int)(Math.random() * (double)(sortedGeneratedSteps.size() - 1));
-            
-            sortedGeneratedSteps.getByInd(selectedPieceInd);
-            
-            step = sortedGeneratedSteps.getByInd(selectedPieceInd);
-            
-            stepSequences.addOne(new GenStepKey("a"), 
-                    new GenStepKey("a"), step);
-            
-            // saving previous level status
-            stepHistoryStack.add(step);
-            keyHistoryStack.add("a");
-            
-            // modify game table status
-            gameBoard[step.getFile()][step.getRank()] = step.getPieceId();
-        }
-        
-        
-        // TASK) iterate through available further lookAhead(depth) steps according to
-        //       collision states collect available steps
-        
-        // alternate piece strength scores by ally-opponent oscillating scheme
-        boolean opponentSide = true;
-        
-        ArrayList<ArrayList<Step> > generatedLevelNodeSteps =
-            new ArrayList<ArrayList<Step> >();
-        
-        ArrayList<Integer> gameBoardHistory = new ArrayList<Integer>();
-        
-        boolean wasStepBack = false;
-        
-        int lvl = 0;
-        int lvlLimit = depth;
-        
-        if(!initGen){
-            
-            // continuing generation by generator
-            ArrayList<GenStepKey> levelKeys = stepSequences.getLeafLevelKeys();
-            
-            int sizeOfLevelKeys = levelKeys.size();
-            
-            generatedLevelNodeSteps.add(new ArrayList<Step>());
-            
-            for(int i = 0; i < sizeOfLevelKeys; ++i){
-            
-                generatedLevelNodeSteps.get(0).add(
-                        stepSequences.getByKey(levelKeys.get(i)));
-            }
-            
-            lvlLimit = 1;
-            wasStepBack = true;
-        }
-        
-        double cumulativeValue = 0.0;
-        int cumulativeNegativeChange = 0;
-        String key;
-        char incKey = 'a';
-        Step selectedStep;
-        
-        while(stepHistoryStack.size() > 1){
-            
-            opponentSide = !opponentSide;
-            
-            if(generatedLevelNodeSteps.isEmpty() && wasStepBack){
-            
-                // terminate generation, DFS ended
-                break;
-            }
-            
-            step = stepHistoryStack.get(lvl);
-            key = keyHistoryStack.get(lvl);
-            
-            if(!wasStepBack){
-                
-                // TASK) sort generated steps
-                
-                generatedLevelNodeSteps.add(new ArrayList<Step>());
-                
-                ArrayList<Pair> generatedSteps = 
-                        pieces[step.getPieceId()].generateSteps(gameBoard);
-                
-                sortedGeneratedSteps.removeAll();
-                
-                int pieceInd;
-                int sizeOfGeneratedSteps = generatedSteps.size();
-                
-                Pair generatedStep;
-                Step allocatedGeneratedStep;
-                double value;
-                
-                // TASK) iterate through available further lookAhead(1) steps according to 
-                //    collision states collect available steps
-                // TASK) sort these possible steps by a penalty function (heuristics)
-                for(int stepI = 0; stepI < sizeOfGeneratedSteps; ++stepI){
-                
-                    generatedStep = generatedSteps.get(stepI);
-                    pieceInd = gameBoard[generatedStep.file][generatedStep.rank];
-
-                    // ordered insertion is quasi nlogn
-
-                    // ally pieces are filtered out at step generation
-                    if(pieceInd != -1){
-
-                        // opponent score addition comes
-                        if(opponentSide &&
-                            (-1.0) * step.getValue() + minConvThreshold < pieces[pieceInd].getValue()){
-
-                            ++cumulativeNegativeChange;
-                        }
-
-                        // TASK) use alpha-beta pruning to throw/cut negative tendency subtrees away                        
-                        if(cumulativeNegativeChange <= cumulativeNegativeChangeThreshold){
-
-                            allocatedGeneratedStep = new Step(
-                                step.getPieceId(), generatedStep.file, 
-                                generatedStep.rank, pieces[pieceInd].getValue(),
-                                cumulativeNegativeChange,  
-                                cumulativeValue + pieces[pieceInd].getValue());
-
-                            // 1000 - vlaue due to reversed order (decreasing values)
-                            value = 1000.0 - pieces[pieceInd].getValue();
-                            sortedGeneratedSteps.add(new GenTmpStepKey(value), 
-                                allocatedGeneratedStep);
-                        }
-                        else{
-
-                            // skip step (negative tendency continues after reaching
-                            //  tendency threshold)
-                            
-                            // TODO prevent generation of prunned sequence multiple times
-                            //      node with negative tendency is evaluated at each 
-                            //       additional step generation in in-game mode
-                            //      These cuts are evaluated proportionally in time 
-                            //       with the missing number of nodes to fulfill 
-                            //       the depth condition
-                        }
-                    }
-                    else{
-
-                        allocatedGeneratedStep = new Step(
-                            step.getPieceId(), generatedStep.file,
-                            generatedStep.rank, pieces[pieceInd].getValue(), 
-                            cumulativeNegativeChange, 
-                            cumulativeValue + 0.0);
-
-                        sortedGeneratedSteps.add(new GenTmpStepKey(1000.0), 
-                            allocatedGeneratedStep);
-                    }
-                }
-                
-                // converting ordered step list into decision tree favored form
-                //  inserting steps into buffer array
-                int sizeOfSortedGeneratedSteps = sortedGeneratedSteps.size();
-                
-                // step identifier/key conversion
-                for(int sortedI = 0; sortedI < sizeOfSortedGeneratedSteps; ++sortedI){
-                
-                    generatedLevelNodeSteps.get(lvl).add(
-                        sortedGeneratedSteps.getByInd(sortedI));
-                }
-                
-                incKey = 'a';
-            }
-            else{
-            
-                wasStepBack = false;
-            }
-            
-
-            if(generatedLevelNodeSteps.get(lvl).isEmpty() || lvl >= lvlLimit){
-            
-                // no further seps to take with currently selected piece, stepback
-                stepHistoryStack.remove(lvl);
-                keyHistoryStack.remove(lvl);
-                gameBoard[step.getFile()][step.getRank()] = gameBoardHistory.get(lvl);
-                gameBoardHistory.remove(lvl);
-                generatedLevelNodeSteps.remove(lvl);
-                --lvl;
-                wasStepBack = true;
-            }
-            else{
-                
-                selectedStep = generatedLevelNodeSteps.get(lvl).get(0);
-                
-                // savign previous level status
-                stepHistoryStack.add(selectedStep);
-                keyHistoryStack.add(key);
-                gameBoardHistory.add(gameBoard[selectedStep.getFile()][selectedStep.getRank()]);
-                
-                // TASK) update computation tree
-                // insert step into decision tree
-                stepSequences.addOne(new GenStepKey(key), 
-                        new GenStepKey(key + (++incKey)), selectedStep);
-                
-                // modify game table status
-                // in case of piece hit by an opponent piece, access of to that 
-                //  piece is going to be forbidden by the removal its id from the board
-                gameBoard[selectedStep.getFile()][selectedStep.getRank()] = step.getPieceId();
-                
-                generatedLevelNodeSteps.get(lvl).remove(0);
-                
-                ++lvl;
-            }
-        }
     }
 }
