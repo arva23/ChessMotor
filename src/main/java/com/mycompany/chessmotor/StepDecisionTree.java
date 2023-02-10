@@ -144,7 +144,7 @@ public class StepDecisionTree extends Thread{
         Step step;
         
         // in order to restore consistency for peer (by level) steps
-        ArrayList<Step> stepHistoryRefStack = new ArrayList<Step>();
+        ArrayList<Step> stepHistoryStack = new ArrayList<Step>();
         
         ArrayList<String> keyHistoryStack = new ArrayList<String>();
 
@@ -177,7 +177,7 @@ public class StepDecisionTree extends Thread{
                     new GenStepKey("a"), step);
             
             // saving previous level status
-            stepHistoryRefStack.add(step);
+            stepHistoryStack.add(step);
             keyHistoryStack.add("a");
             
             // modify game table status
@@ -226,7 +226,7 @@ public class StepDecisionTree extends Thread{
         char incKey = 'a';
         Step selectedStep;
         
-        while(stepHistoryRefStack.size() > 1){
+        while(stepHistoryStack.size() > 1){
             
             opponentSide = !opponentSide;
             
@@ -236,7 +236,7 @@ public class StepDecisionTree extends Thread{
                 break;
             }
             
-            step = stepHistoryRefStack.get(lvl);
+            step = stepHistoryStack.get(lvl);
             key = keyHistoryStack.get(lvl);
             
             if(!wasStepBack){
@@ -338,7 +338,7 @@ public class StepDecisionTree extends Thread{
             if(generatedLevelNodeSteps.get(lvl).isEmpty() || lvl >= lvlLimit){
             
                 // no further seps to take with currently selected piece, stepback
-                stepHistoryRefStack.remove(lvl);
+                stepHistoryStack.remove(lvl);
                 keyHistoryStack.remove(lvl);
                 gameBoardRef[step.getFile()][step.getRank()] = gameBoardHistory.get(lvl);
                 gameBoardHistory.remove(lvl);
@@ -351,7 +351,7 @@ public class StepDecisionTree extends Thread{
                 selectedStep = generatedLevelNodeSteps.get(lvl).get(0);
                 
                 // savign previous level status
-                stepHistoryRefStack.add(selectedStep);
+                stepHistoryStack.add(selectedStep);
                 keyHistoryStack.add(key);
                 gameBoardHistory.add(gameBoardRef[selectedStep.getFile()][selectedStep.getRank()]);
                 
