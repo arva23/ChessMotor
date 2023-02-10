@@ -256,6 +256,8 @@ public class StepDecisionTree extends Thread{
                 Pair generatedStep;
                 Step allocatedGeneratedStep;
                 double value;
+                cumulativeNegativeChange = step.getCumulativeChangeCount();
+                cumulativeValue = step.getCumulativeValue();
                 
                 // TASK) iterate through available further lookAhead(1) steps according to 
                 //    collision states collect available steps
