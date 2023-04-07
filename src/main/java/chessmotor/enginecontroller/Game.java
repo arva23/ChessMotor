@@ -36,6 +36,8 @@ public class Game{
     private boolean allyBegins;
     
     
+    private boolean allyIsInCheck;
+    private boolean opponentIsInCheck;
     private boolean playGame;
     private int gameStatus;
     // active in game piece container
@@ -357,6 +359,15 @@ public class Game{
             throw new Exception("Provided input is not acceptable.");
         }
         
+        if(opponentIsInCheck && action.compareTo("giveup") == 0){
+        
+            playGame = false;
+            gameStatus = -1;
+            
+            gameUI.updateGameStatus(gameStatus);
+            return;
+        }
+        
         String[] params = action.split("|");
         
         if(params[0].isEmpty()){
@@ -385,6 +396,11 @@ public class Game{
         }
         
         selectedRank = (int)params[1].charAt(1);
+        
+        if(opponentIsInCheck && pieceNames.indexOf(params[0]) != 11){
+        
+            throw new Exception("Player is in check. Resolve check.");
+        }
         
         GenPiece selectedPiece = pieces[pieceNames.indexOf(params[0])];
         
@@ -447,7 +463,33 @@ public class Game{
             stepSequences.addOne(new GenStepKey("a"), new GenStepKey("a"), selectedStep);
             
             stepHistory.add(selectedStep);
+    private void validatePlayerStatus() throws Exception{
+    
+        // looking for check mate on opponent king piece
+        
+        ArrayList<GenStepKey> levelKeys = stepSequences.getLeafLevelKeys();
+
+        int sizeOfLevelKeys = levelKeys.size();
+
+        Step step;
+        for(int i = 0; i < sizeOfLevelKeys; ++i){
+
+            step = stepSequences.getByKey(levelKeys.get(i));
+
+            if(gameBoard[step.getFile()][step.getRank()] == 11){
+
+                // ally king is in check
+                opponentIsInCheck = true;
+            }
         }
+        
+        if(opponentIsInCheck && pieces[11].generateSteps(gameBoard).isEmpty()){
+        
+            playGame = false;
+            gameStatus = -1;
+            
+            gameUI.updateGameStatus(gameStatus);
+        }        
     }
     
     // TODO it could be integrated in step decision tree builder
