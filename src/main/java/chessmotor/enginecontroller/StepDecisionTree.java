@@ -416,7 +416,6 @@ public class StepDecisionTree implements Runnable{
                 // step identifier/key conversion
                 for(int sortedI = 0; sortedI < sizeOfSortedGeneratedSteps; ++sortedI){
                 
-                    generatedLevelNodeSteps.get(lvl).add(
                     try{
                     
                         generatedLevelNodeSteps.get(lvl).add(
@@ -457,7 +456,6 @@ public class StepDecisionTree implements Runnable{
                 
                 // TASK) update computation tree
                 // insert step into decision tree
-                stepDecisionTree.addOne(new GenStepKey(key), 
                 try{
                 
                     stepDecisionTree.addOne(new GenStepKey(key), 
