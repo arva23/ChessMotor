@@ -133,12 +133,17 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     }
     
     
+    public int addOne(K key, Pair<K, V> values) throws Exception{
+    
+        return addOne(key, values.key, values.value);
+    }
+    
     /* !@brief adds single element to one node (arbitrary n-ary key-value pair on one node) */
     public int addOne(K key, K nKey, V value) throws Exception{
     
-        if(value == null || nKey == null || value == null){
+        if(nKey == null || value == null){
         
-            throw new Exception("Value parameter is null.");
+            throw new Exception("Key-value parameter is null.");
         }
         
         if(size == 0){
@@ -155,17 +160,16 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             return 0;
         }
         else{
-        
+            
             int insertionInd = 0;
-            int prevShift = 1;
+            int prevShift = 0;
             int i = 0;
             int j = 0;
             int level = 0;
             ArrayList<Integer> nodeShiftIndTrace = new ArrayList<Integer>();
             
             while(nodeSizeChildRegistry.get(i) > 0){
-            
-                nodeShiftIndTrace.add(i);
+                
                 // finding upper bound split key
                 for(j = 0; j < nodeSizeChildRegistry.get(i); ++j){
                 
@@ -175,10 +179,10 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
                     
                         // it also includes case of 0 elements due to 0 offset
                         insertionInd += cumulativeChildNodeOffsetRegistry.get(prevShift + j);
-                        nodeShiftIndTrace.set(nodeShiftIndTrace.size() - 1, i);
                     }
                     else if(key.at(level) == container.get(prevShift + j).key.at(level)){
                     
+                        nodeShiftIndTrace.add(i);// traversal tracking for cumulative offsets
                         i = prevShift + j;
                         ++level;// go down to next level
                         break;
@@ -189,53 +193,68 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
                 
                 prevShift = insertionInd;
                 
-                if(key.len() == container.get(prevShift + j).key.at(level)){
+                int res = key.compareTo(container.get(prevShift + j).key);
+                if(res == 0){
                 
+                    // parent key match (including middle levels as well)
                     // insert new node onto selected level
                     break;
                 }
-                else{
+                else if(res > 0 && key.len() == level + 1){
                 
                     throw new Exception("No parent key has been found and key" 
                             + "length differs from terminated level key length.");
                 }
             }
             
-            
             // insertion new child node
-
-            int sizeOfShiftIndTrace = nodeShiftIndTrace.size();
-
-            if(i < nodeSizeChildRegistry.size()){
-
-                // adding new node next to existing ones (not only leaf level)
-                cumulativeChildNodeOffsetRegistry.set(i,
-                        cumulativeChildNodeOffsetRegistry.get(i) + 1);
+            // order preservation among child
+            boolean redundancy = false;
+            
+            int nodeSizeChildRegistryI = nodeSizeChildRegistry.get(i);
+            
+            j = cumulativeChildNodeOffsetRegistry.get(i);
+            ++level;
+            
+            for(; j < nodeSizeChildRegistryI; 
+                j += (1 + cumulativeChildNodeOffsetRegistry.get(j))){
+            
+                if(key.at(level) > container.get(j).key.at(level)){
                 
-                nodeSizeChildRegistry.set(i,
-                        nodeSizeChildRegistry.get(i) + 1);
-            }
-            else{
-            
-                // increasing capacity of stroage
-                // adding new node next to existing ones (not only leaf level)
-                cumulativeChildNodeOffsetRegistry.add(prevShift + j, 1);
-                nodeSizeChildRegistry.add(prevShift + j, 1);
+                    break;
+                }
+                else if(key.at(level) == container.get(j).key.at(level)){
+                    
+                    redundancy = true;
+                    break;
+                }
             }
             
-            // trace length is according to traversal depth
+            if(redundancy){
+            
+                throw new Exception("Key duplication is not allowed.");
+            }
+            
+            // increasing capacity of stroage
+            // adding new node next to existing ones (not only leaf level)
+            container.add(j, new Pair<K, V>(nKey, value));
+            nodeSizeChildRegistry.add(j, 0);
+            cumulativeChildNodeOffsetRegistry.add(j, 0);
+            
+            nodeSizeChildRegistry.set(i, 
+                nodeSizeChildRegistry.get(i) + 1);
+            
+            // trace length changes according to traversal depth
+            int sizeOfShiftIndTrace = nodeShiftIndTrace.size();
             int cumulativeInd = 0;
             
-            for(j = 0; j < sizeOfShiftIndTrace; ++j){
+            // backpropagating index offset change
+            for(j = sizeOfShiftIndTrace - 1; j >= 0; --j){
             
                 cumulativeInd = nodeShiftIndTrace.get(j);
                 cumulativeChildNodeOffsetRegistry.set(cumulativeInd,
                     cumulativeChildNodeOffsetRegistry.get(cumulativeInd) + 1);
             }
-            
-            container.add(insertionInd, new Pair<K, V>(nKey, value));
-            nodeSizeChildRegistry.add(insertionInd, 0);
-            cumulativeChildNodeOffsetRegistry.add(insertionInd, 0);
             
             size = container.size();
             
