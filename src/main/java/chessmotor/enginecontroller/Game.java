@@ -339,15 +339,18 @@ public class Game{
         stepSequences.setDepth(depth);
     }
     
-    public void requestPlayerAction() throws Exception{
     
+    private void requestPlayerAction() throws Exception{
+    
+        // TODO refactor method by a from-to square position pair
+        
         // TODO listen for player action within a determined timeout, validate 
         //      action and return control to machine player
         
-        BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in)); 
+        //BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in)); 
         
         String action;
-        action = inputReader.readLine();
+        action = gameUI.readPlayerAction();
         
         if(action.isEmpty()){
         
