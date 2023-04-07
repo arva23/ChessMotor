@@ -783,4 +783,19 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         
         return leafLevelKeys;
     }
+    
+    public int getLeafLevelSize(){
+    
+        int leafLevelSize = 0;
+        
+        for(int i = 0; i < size; ++i){
+        
+            if(nodeSizeChildRegistry.get(i) == 0){
+            
+                ++leafLevelSize;
+            }
+        }
+        
+        return leafLevelSize;
+    }
 }
