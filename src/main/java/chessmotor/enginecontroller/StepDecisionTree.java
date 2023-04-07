@@ -6,6 +6,7 @@ import genmath.GenTmpStepKey;
 import genmath.IncArbTree;
 import genmath.LinTreeMultiMap;
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class StepDecisionTree implements Runnable{
     
@@ -204,41 +205,27 @@ public class StepDecisionTree implements Runnable{
         stepDecisionTree.addOne(whereKey, key, step);
     }
     
-    // TODO count check status too
-    public void buildStepSequences(boolean initGen, int dataCut) throws Exception{
     
-        // TODO: optimize, refactor Game.GenStep, Pair, LinTreeMap.Pair
-        
-        // It always starts from root node due to root removal at each step 
-        //      of ally decision
-        
-        // TODO Generate these treebuilding utilizing the available concurrent 
-        //      threads using mutexes
-        
-        // generating steps for levels
-        
-        LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps =
     public void reserveMem(int resMemSize) throws Exception{
     
         stepDecisionTree.reserve(resMemSize);
     }
+    
+    
+    public void generateFirstStep() throws Exception{
+    
+        LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps = 
                 new LinTreeMultiMap<GenTmpStepKey, Step>();
         
         Step step;
         
-        // in order to restore consistency for peer (by level) steps
-        ArrayList<Step> stepHistoryStack = new ArrayList<Step>();
-        
-        ArrayList<String> keyHistoryStack = new ArrayList<String>();
-
-        // first step
-        if(initGen && allyBeginsRef){
+        if(allyBegins){
         
             for(int i = 0; i < 16; ++i){
             
                 if(piecesRef[i].generateSteps(gameBoardRef).size() > 0){
                 
-                    step = new Step(i, (int)Math.floor(i / 8), i % 8,
+                    step = new Step(i, 1 - (int)Math.floor(i / 8), i % 8,
                     piecesRef[i].getValue(), 0,
                     piecesRef[i].getValue());
                 
@@ -250,9 +237,7 @@ public class StepDecisionTree implements Runnable{
             // suboptimal strategy of initial step
             //  (strategies can be added by weighthening graph later)
             int selectedPieceInd = 
-                (int)(Math.random() * (double)(sortedGeneratedSteps.size() - 1));
-            
-            sortedGeneratedSteps.getByInd(selectedPieceInd);
+                (int)((double)Math.random() * (double)(sortedGeneratedSteps.size() - 1));
             
             step = sortedGeneratedSteps.getByInd(selectedPieceInd);
             
@@ -266,6 +251,7 @@ public class StepDecisionTree implements Runnable{
             // modify game table status
             gameBoardRef[step.getFile()][step.getRank()] = step.getPieceId();
         }
+    }
         
         
         // TASK) iterate through available further lookAhead(depth) steps according to
