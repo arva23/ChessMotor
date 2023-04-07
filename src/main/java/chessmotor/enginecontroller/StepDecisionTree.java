@@ -271,6 +271,10 @@ public class StepDecisionTree implements Runnable{
         
         // generating steps for levels
         
+        LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps =
+                new LinTreeMultiMap<GenTmpStepKey, Step>();
+        
+        Step step;
         
         // TASK) iterate through available further lookAhead(depth) steps according to
         //       collision states collect available steps
@@ -347,10 +351,16 @@ public class StepDecisionTree implements Runnable{
                             ++cumulativeNegativeChange;
                         }
 
-                        // TASK) use alpha-beta pruning to throw/cut negative tendency subtrees away                        
+                        // TASK) use alpha-beta pruning to throw/cut negative tendency subtrees away
+                        // suboptimal: this is evaluated multiple times during 
+                        //  execution until the current parent node is actively 
+                        //  contribute at node generation (not removed from the tree)
+                        //  See else case
                         if(cumulativeNegativeChange <= cumulativeNegativeChangeThreshold){
 
                             allocatedGeneratedStep = new Step(
+                            try{
+                            
                                 step.getPieceId(), generatedStep.file, 
                                 generatedStep.rank, piecesRef[pieceInd].getValue(),
                                 cumulativeNegativeChange,  
@@ -360,6 +370,11 @@ public class StepDecisionTree implements Runnable{
                             value = 1000.0 - piecesRef[pieceInd].getValue();
                             sortedGeneratedSteps.add(new GenTmpStepKey(value), 
                                 allocatedGeneratedStep);
+                            }
+                            catch(Exception e){
+                            
+                                System.out.println("Could not insert step (" + e.getMessage() + ")");
+                            }
                         }
                         else{
 
@@ -377,6 +392,8 @@ public class StepDecisionTree implements Runnable{
                     else{
 
                         allocatedGeneratedStep = new Step(
+                        try{
+                        
                             step.getPieceId(), generatedStep.file,
                             generatedStep.rank, piecesRef[pieceInd].getValue(), 
                             cumulativeNegativeChange, 
@@ -384,6 +401,11 @@ public class StepDecisionTree implements Runnable{
 
                         sortedGeneratedSteps.add(new GenTmpStepKey(1000.0), 
                             allocatedGeneratedStep);
+                        }
+                        catch(Exception e){
+                        
+                            System.out.println("Could not insert step (" + e.getMessage() + ")");
+                        }
                     }
                 }
                 
@@ -395,7 +417,14 @@ public class StepDecisionTree implements Runnable{
                 for(int sortedI = 0; sortedI < sizeOfSortedGeneratedSteps; ++sortedI){
                 
                     generatedLevelNodeSteps.get(lvl).add(
+                    try{
+                    
                         sortedGeneratedSteps.getByInd(sortedI));
+                    }
+                    catch(Exception e){
+                    
+                        System.out.println("Could not obtain node (" + e.getMessage() + ")");
+                    }
                 }
                 
                 incKey = 'a';
@@ -428,7 +457,15 @@ public class StepDecisionTree implements Runnable{
                 // TASK) update computation tree
                 // insert step into decision tree
                 stepDecisionTree.addOne(new GenStepKey(key), 
+                try{
+                
                         new GenStepKey(key + (++incKey)), selectedStep);
+                }
+                catch(Exception e){
+                
+                    System.out.println("Could not add generated step to step sequences (" 
+                        + e.getMessage() + ")");
+                }
                 
                 // modify game table status
                 // in case of piece hit by an opponent piece, access of to that 
