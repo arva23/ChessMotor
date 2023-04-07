@@ -583,6 +583,16 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return size;
     }
     
+    public void reserve(int resSize) throws Exception{
+    
+        if(size >= resSize){
+        
+            throw new Exception("New reserved size is less than current size of container.");
+        }
+        
+        container.ensureCapacity(resSize);
+    }
+    
     public boolean isEmpty(){
     
         return size == 0;
