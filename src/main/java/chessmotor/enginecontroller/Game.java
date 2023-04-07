@@ -182,9 +182,24 @@ public class Game{
     
         int numberOfThreads = Runtime.getRuntime().availableProcessors();
         
+        if(numberOfThreads == 0){
         
+            throw new Exception("Unable to detect number of available " 
+                    + "concurrent threads for execution.");
+        }
         
+        // executor service is only used at parallel generation
+        ExecutorService generatorMgr = Executors.newFixedThreadPool(numberOfThreads);
+        StepDecisionTree initStepSequences = new StepDecisionTree(stepSequences);
+        ArrayList<StepDecisionTree> stepSequencesChunks = new ArrayList<StepDecisionTree>();
+       
+        // build step decision tree in parallel mode for the first time
+            
+        // the number of possible steps is much higher than the number of 
+        //  concurrent threads
+        if(allyBegins){
 
+            initStepSequences.generateFirstStep();
         }
 
         int memReq = 10000;// for the first time to avoid frequent allocations
@@ -205,6 +220,7 @@ public class Game{
         }
     }
     
+    
     public void runGame() throws Exception{
     
         // TODO get to know the number of concurrent theads
@@ -222,6 +238,7 @@ public class Game{
         
         if(allyBegins){
             
+            intervalStartAlly = LocalDateTime.now();
             
             buildStrategy();
             selectNextStep();
