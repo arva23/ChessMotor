@@ -288,25 +288,6 @@ public class StepDecisionTree implements Runnable{
         int lvl = 0;
         int lvlLimit = depth;
         
-        if(!initGen){
-            
-            // continuing generation by generator
-            ArrayList<GenStepKey> levelKeys = stepDecisionTree.getLeafLevelKeys();
-            
-            int sizeOfLevelKeys = levelKeys.size();
-            
-            generatedLevelNodeSteps.add(new ArrayList<Step>());
-            
-            for(int i = 0; i < sizeOfLevelKeys; ++i){
-            
-                generatedLevelNodeSteps.get(0).add(
-                        stepDecisionTree.getByKey(levelKeys.get(i)));
-            }
-            
-            lvlLimit = 1;
-            wasStepBack = true;
-        }
-        
         double cumulativeValue = 0.0;
         int cumulativeNegativeChange = 0;
         String key;
