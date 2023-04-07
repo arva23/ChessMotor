@@ -169,6 +169,12 @@ public class StepDecisionTree implements Runnable{
     }
     
     
+    public IncArbTree<GenStepKey, Step> getContainer(){
+    
+        return stepDecisionTree;
+    }
+    
+    
     // improvement: dynamic depth variation according to recent game status scores
     public void setDepth(int depth) throws Exception{
     
