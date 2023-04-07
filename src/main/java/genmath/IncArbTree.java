@@ -588,6 +588,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return size == 0;
     }
     
+    // suboptimal, optimization is needed
     public void setNewRootByKey(K key) throws Exception{
     
         // removing prefix subtrees and suffix subtrees
@@ -762,11 +763,11 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         ArrayList<K> leafLevelKeys = new ArrayList<K>();
         
         // it also includes leaf nodes on different tree levels
-        for(int i = 0; i < size; ++i){
+        for(int i = size - 1; i >= 0; --i){
         
-            if(nodeSizeChildRegistry.get(i) > 0){
+            if(nodeSizeChildRegistry.get(i) == 0){
             
-                leafLevelKeys.add(container.get(i).key);
+                leafLevelKeys.add(0, container.get(i).key);
             }
         }
         
