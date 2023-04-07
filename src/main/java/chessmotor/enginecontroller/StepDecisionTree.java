@@ -395,7 +395,7 @@ public class StepDecisionTree implements Runnable{
                         
                             allocatedGeneratedStep = new Step(
                             step.getPieceId(), generatedStep.file,
-                            generatedStep.rank, piecesRef[pieceInd].getValue(), 
+                            generatedStep.rank, 0, 
                             cumulativeNegativeChange, 
                             cumulativeValue + 0.0);
 
