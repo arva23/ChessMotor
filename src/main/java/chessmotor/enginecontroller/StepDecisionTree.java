@@ -298,7 +298,7 @@ public class StepDecisionTree implements Runnable{
         char incKey = 'a';
         Step selectedStep;
         
-        while(stepHistoryStack.size() > 1){
+        while(stepHistoryStack.size() > 0){
             
             opponentSide = !opponentSide;
             
