@@ -196,7 +196,7 @@ public class StepDecisionTree implements Runnable{
         for(int i = 0; i < sizeOfStepSequences; ++i){
         
             prefixTrimmedKeyValue = stepDecisionTree.getKeyByInd(i).val.substring(
-                    0, trimEndInd);
+                    1, trimEndInd);
             
             stepDecisionTree.setKeyByInd(i, new GenStepKey(prefixTrimmedKeyValue));
         }
