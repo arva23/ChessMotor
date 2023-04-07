@@ -436,6 +436,14 @@ public class StepDecisionTree implements Runnable{
             
             if(generatedLevelNodeSteps.get(lvl).isEmpty() || lvl >= lvlLimit){
             
+                // saving trace for further continuation
+                if(!generatedLevelNodeSteps.isEmpty() && lvl >= lvlLimit){
+                
+                    leafSteps.add(generatedLevelNodeSteps.get(lvl).get(0));
+                    leafKeys.add(key);
+                    gameBoardHistoryContinuation.add(gameBoardHistory);
+                }
+                
                 // no further seps to take with currently selected piece, stepback
                 stepHistoryStack.remove(lvl);
                 keyHistoryStack.remove(lvl);
