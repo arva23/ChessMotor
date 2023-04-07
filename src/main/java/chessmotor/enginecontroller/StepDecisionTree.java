@@ -252,6 +252,24 @@ public class StepDecisionTree implements Runnable{
             gameBoardRef[step.getFile()][step.getRank()] = step.getPieceId();
         }
     }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // TODO generate subsection multiple root based tree
+    
+    // TODO count check status too
+    @Override
+    public void run(){
+        
+        // TODO: optimize, refactor Game.GenStep, Pair, LinTreeMap.Pair
+        
+        // It always starts from root node due to root removal at each step 
+        //      of ally decision
+        
+        // TODO Generate these treebuilding utilizing the available concurrent 
+        //      threads using mutexes
+        
+        // generating steps for levels
         
         
         // TASK) iterate through available further lookAhead(depth) steps according to
