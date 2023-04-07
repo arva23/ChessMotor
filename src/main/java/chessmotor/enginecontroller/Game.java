@@ -11,7 +11,11 @@ import genmath.GenStepKey;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import chessmotor.view.IGameUI;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Stack;
 
 // evolution of engine
@@ -35,6 +39,13 @@ public class Game{
     // which player begins with the white pieces
     private boolean allyBegins;
     
+    
+    private Duration timeLimit;
+    private Duration allyTime;
+    private Duration opponentTime;
+
+    private LocalDateTime intervalStartAlly;
+    private LocalDateTime intervalStartOpponent;
     
     private boolean allyIsInCheck;
     private boolean opponentIsInCheck;
@@ -245,6 +256,8 @@ public class Game{
             buildStrategy();
             selectNextStep();
         
+            allyTime.plus(LocalDateTime.now().until(
+            intervalStartAlly, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
             validatePlayerStatus();
 
@@ -252,17 +265,45 @@ public class Game{
             gameUI.updateTablePiece(
             step.getPieceId(), step.getFile(), step.getRank());    
             
+            if(timeLimit.compareTo(allyTime) <= 0){
+            
+                playGame = false;
+                gameStatus = 1;
+                
+                gameUI.updateGameStatus(gameStatus);
+            }
+            
+            gameUI.updateTime(true, allyTime);
             
             // waiting for player action
+            intervalStartOpponent = LocalDateTime.now();
+            
             requestPlayerAction();
+            
+            opponentTime.plus(LocalDateTime.now().until(
+            intervalStartOpponent, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
             step = stepHistory.lastElement();
             gameUI.updateTablePiece(
             step.getPieceId(), step.getFile(), step.getRank());
             
+            if(timeLimit.compareTo(opponentTime) <= 0){
+            
+                playGame = false;
+                gameStatus = -1;
+                
+                gameUI.updateGameStatus(gameStatus);
+            }
+            
+            gameUI.updateTime(false, opponentTime);
+            
+            intervalStartAlly = LocalDateTime.now();
             
             stepSequences.continueStepSequences();
             selectNextStep();
+            
+            allyTime.plus(LocalDateTime.now().until(
+            intervalStartAlly, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
             validatePlayerStatus();
 
@@ -270,46 +311,110 @@ public class Game{
             gameUI.updateTablePiece(
             step.getPieceId(),step.getFile(), step.getRank());
             
+            if(timeLimit.compareTo(allyTime) <= 0){
+            
+                playGame = false;
+                gameStatus = 1;
+                gameUI.updateGameStatus(gameStatus);
+            }
+            
+            gameUI.updateTime(true, allyTime);
         }
         else{
-        
+            
             // waiting for player action
+            intervalStartOpponent = LocalDateTime.now();
+            
             requestPlayerAction();
             
+            opponentTime.plus(LocalDateTime.now().until(
+            intervalStartOpponent, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
             step = stepHistory.lastElement();
             gameUI.updateTablePiece(
             step.getPieceId(), step.getFile(), step.getRank());
             
+            if(timeLimit.compareTo(opponentTime) <= 0){
+            
+                playGame = false;
+                gameStatus = -1;
+                
+                gameUI.updateGameStatus(gameStatus);
+            }
+            
+            gameUI.updateTime(false, opponentTime);
+            
+            intervalStartAlly = LocalDateTime.now();
+            
             buildStrategy();
             selectNextStep();
+            
+            allyTime.plus(LocalDateTime.now().until(
+            intervalStartAlly, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
             validatePlayerStatus();
             
             step = stepHistory.lastElement();
             gameUI.updateTablePiece(
             step.getPieceId(), step.getFile(), step.getRank());
+            
+            if(timeLimit.compareTo(allyTime) <= 0){
+            
+                playGame = false;
+                gameStatus = 1;
+                
+                gameUI.updateGameStatus(gameStatus);
+            }
+            
+            gameUI.updateTime(true, allyTime);
         }
         
         while(playGame){
         
+            intervalStartOpponent = LocalDateTime.now();
+            
             requestPlayerAction();
+
+            opponentTime.plus(LocalDateTime.now().until(
+            intervalStartOpponent, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
             step = stepHistory.lastElement();
             gameUI.updateTablePiece(
             step.getPieceId(), step.getFile(), step.getRank());
+            
+            if(timeLimit.compareTo(opponentTime) <= 0){
+            
+                playGame = false;
+                gameStatus = -1;
+                gameUI.updateGameStatus(gameStatus);
+                break;
+            }
+            
+            gameUI.updateTime(false, opponentTime);
             
             intervalStartAlly = LocalDateTime.now();
             
             stepSequences.continueStepSequences();
             selectNextStep();
             
+            allyTime.plus(LocalDateTime.now().until(
+            intervalStartAlly, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            
             validatePlayerStatus();
         
             step = stepHistory.lastElement();
             gameUI.updateTablePiece(
             step.getPieceId(), step.getFile(), step.getRank());
             
+            if(timeLimit.compareTo(allyTime) <= 0){
+            
+                playGame = false;
+                gameStatus = 1;
+                gameUI.updateGameStatus(gameStatus);
+                break;
+            }
+            
+            gameUI.updateTime(true, allyTime);
         }
 
         if(gameStatus < 0){
@@ -335,6 +440,7 @@ public class Game{
             //  It only means the the recent status (step based) is equal with each other
         }
     }
+    
     
     public void setDepth(int depth) throws Exception{
     
