@@ -7,7 +7,7 @@ import genmath.IncArbTree;
 import genmath.LinTreeMultiMap;
 import java.util.ArrayList;
 
-public class StepDecisionTree extends Thread{
+public class StepDecisionTree implements Runnable{
     
     private IncArbTree<GenStepKey, Step> stepDecisionTree;
     
@@ -27,6 +27,8 @@ public class StepDecisionTree extends Thread{
     private double minConvThreshold;
     
     StepDecisionTree(boolean allyBegins, GenPiece[] pieces, ArrayList<Step> stepHistory, 
+    private int fracs;
+    private int no;
             int[][] gameBoard, int depth, int cumulativeNegativeChangeThreshold, 
             double minConvThreshold) throws Exception{
     
@@ -60,6 +62,21 @@ public class StepDecisionTree extends Thread{
         }
         
         this.cumulativeNegativeChangeThreshold = cumulativeNegativeChangeThreshold;
+    
+        if(fracs < 0){
+        
+            throw new Exception("Negative fractional value.");
+        }
+        
+        this.fracs = fracs;
+        
+        if(no >= fracs){
+        
+            throw new Exception("Number of fractions are less than the provided fractional identifier.");
+        }
+    
+        this.no = no;
+        
     }
     
     public void StepDecisionTree(StepDecisionTree orig){
@@ -91,6 +108,17 @@ public class StepDecisionTree extends Thread{
     public void setNewRootByKey(GenStepKey key) throws Exception{
     
         stepDecisionTree.setNewRootByKey(key);
+    }
+    
+    
+    public void setFracNo(int newNo) throws Exception{
+    
+        if(newNo < 0 || newNo >= fracs){
+    
+            throw new Exception("Fraction identifier is out of range.");
+        }
+        
+        this.no = newNo;
     }
     
     // improvement: dynamic depth variation according to recent game status scores
