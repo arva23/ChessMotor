@@ -358,18 +358,18 @@ public class StepDecisionTree implements Runnable{
                         //  See else case
                         if(cumulativeNegativeChange <= cumulativeNegativeChangeThreshold){
 
-                            allocatedGeneratedStep = new Step(
                             try{
                             
+                                allocatedGeneratedStep = new Step(
                                 step.getPieceId(), generatedStep.file, 
                                 generatedStep.rank, piecesRef[pieceInd].getValue(),
                                 cumulativeNegativeChange,  
                                 cumulativeValue + piecesRef[pieceInd].getValue());
-
-                            // 1000 - vlaue due to reversed order (decreasing values)
-                            value = 1000.0 - piecesRef[pieceInd].getValue();
-                            sortedGeneratedSteps.add(new GenTmpStepKey(value), 
-                                allocatedGeneratedStep);
+                            
+                                // 1000 - vlaue due to reversed order (decreasing values)
+                                value = 1000.0 - piecesRef[pieceInd].getValue();
+                                sortedGeneratedSteps.add(new GenTmpStepKey(value), 
+                                    allocatedGeneratedStep);
                             }
                             catch(Exception e){
                             
@@ -391,15 +391,15 @@ public class StepDecisionTree implements Runnable{
                     }
                     else{
 
-                        allocatedGeneratedStep = new Step(
                         try{
                         
+                            allocatedGeneratedStep = new Step(
                             step.getPieceId(), generatedStep.file,
                             generatedStep.rank, piecesRef[pieceInd].getValue(), 
                             cumulativeNegativeChange, 
                             cumulativeValue + 0.0);
 
-                        sortedGeneratedSteps.add(new GenTmpStepKey(1000.0), 
+                            sortedGeneratedSteps.add(new GenTmpStepKey(1000.0), 
                             allocatedGeneratedStep);
                         }
                         catch(Exception e){
@@ -419,6 +419,7 @@ public class StepDecisionTree implements Runnable{
                     generatedLevelNodeSteps.get(lvl).add(
                     try{
                     
+                        generatedLevelNodeSteps.get(lvl).add(
                         sortedGeneratedSteps.getByInd(sortedI));
                     }
                     catch(Exception e){
@@ -459,6 +460,7 @@ public class StepDecisionTree implements Runnable{
                 stepDecisionTree.addOne(new GenStepKey(key), 
                 try{
                 
+                    stepDecisionTree.addOne(new GenStepKey(key), 
                         new GenStepKey(key + (++incKey)), selectedStep);
                 }
                 catch(Exception e){
