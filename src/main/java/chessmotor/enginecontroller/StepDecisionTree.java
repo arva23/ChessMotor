@@ -162,6 +162,13 @@ public class StepDecisionTree implements Runnable{
         this.no = newNo;
     }
     
+    
+    public int getDepth(){
+    
+        return depth;
+    }
+    
+    
     // improvement: dynamic depth variation according to recent game status scores
     public void setDepth(int depth) throws Exception{
     
