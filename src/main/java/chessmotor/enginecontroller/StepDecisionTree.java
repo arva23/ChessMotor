@@ -486,4 +486,185 @@ public class StepDecisionTree implements Runnable{
             }
         }
     }
+    
+    // needs to be optimized
+    public void continueStepSequences() throws Exception{
+    
+        if(stepDecisionTree.size() < 1){
+        
+            throw new Exception("Decision tree has not been generated.");
+        }
+        
+        // TODO place leaf level generation after root node offset displacement
+        
+        // continuing generation by generator
+        
+        boolean opponentSide = true;
+        
+        LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps =
+            new LinTreeMultiMap<GenTmpStepKey, Step>();
+        
+        Step step;
+        
+        ArrayList<Step> generatedLevelNodeSteps = new ArrayList<Step>();
+        ArrayList<Integer> gameBoardHistory = new ArrayList<Integer>();
+        
+        boolean wasStepBack = false;
+        
+        int lvl = depth - 2;// -1 for ally and opponent
+        int lvlLimit = depth;
+        
+        double cumulativeValue = 0.0;
+        int cumulativeNegativeChange = 0;
+        String key = new String();
+        char incKey = 'a';
+        Step selectedStep = new Step();
+        
+        // no validation is needed for zero number of elements (upper level evaluation)
+        
+        int sizeOfLeafLevel = leafSteps.size();
+        
+        ArrayList<Step> recentLeafSteps = new ArrayList<Step>();
+        ArrayList<String> recentLeafKeys = new ArrayList<String>();
+        ArrayList<ArrayList<Integer>> recentGameBoardHistoryContinuation =
+            new ArrayList<ArrayList<Integer>>();
+        
+        //if(gameBoardHistoryContinuation.size() > 0)
+        for(; lvl < lvlLimit; ++lvl){
+            
+            for(int i = 0; i < sizeOfLeafLevel; ++i){
+
+                step = leafSteps.get(i);
+                key = leafKeys.get(i);
+
+                int[][] gameBoardCopy = gameBoardRef;
+                int sizeOfTakenSteps = gameBoardHistoryContinuation.get(i).size();
+
+                // conditioning game table according to selected step sequence
+                for(int j = 0; j < sizeOfTakenSteps; ++j){
+
+                    gameBoardCopy[step.getFile()][step.getRank()] = 
+                        gameBoardHistoryContinuation.get(i).get(j);
+                }
+
+                ArrayList<Pair> generatedSteps =
+                        piecesRef[step.getPieceId()].generateSteps(gameBoardCopy);
+
+                sortedGeneratedSteps.removeAll();
+
+                int pieceInd;
+                int sizeOfGeneratedSteps = generatedSteps.size();
+
+                Pair generatedStep;
+                Step allocatedGeneratedStep;
+                double value;
+                cumulativeNegativeChange = step.getCumulativeChangeCount();
+                cumulativeValue = step.getCumulativeValue();
+
+                for(int stepI = 0; stepI < sizeOfGeneratedSteps; ++stepI){
+
+                    generatedStep = generatedSteps.get(stepI);
+                    pieceInd = gameBoardCopy[generatedStep.file][generatedStep.rank];
+
+                    if(pieceInd != -1){
+
+                        if(opponentSide &&
+                            (-1.0) * step.getValue() + minConvThreshold < piecesRef[pieceInd].getValue()){
+
+                            ++cumulativeNegativeChange;
+                        }
+
+                        if(cumulativeNegativeChange <= cumulativeNegativeChangeThreshold){
+
+                            try{
+
+                                allocatedGeneratedStep = new Step(
+                                step.getPieceId(), generatedStep.file, 
+                                generatedStep.rank, piecesRef[pieceInd].getValue(),
+                                cumulativeNegativeChange,  
+                                cumulativeValue + piecesRef[pieceInd].getValue());
+
+                                value = 1000.0 - piecesRef[pieceInd].getValue();
+                                sortedGeneratedSteps.add(new GenTmpStepKey(value), 
+                                    allocatedGeneratedStep);
+                            }
+                            catch(Exception e){
+
+                                System.out.println("Could not insert step (" + e.getMessage() + ")");
+                            }
+                        }
+                    }
+                    else{
+
+                        try{
+
+                            allocatedGeneratedStep = new Step(
+                            step.getPieceId(), generatedStep.file,
+                            generatedStep.rank, piecesRef[pieceInd].getValue(), 
+                            cumulativeNegativeChange, 
+                            cumulativeValue + 0.0);
+
+                            sortedGeneratedSteps.add(new GenTmpStepKey(1000.0), 
+                            allocatedGeneratedStep);
+                        }
+                        catch(Exception e){
+
+                            System.out.println("Could not insert step (" + e.getMessage() + ")");
+                        }
+                    }
+                }
+
+                int sizeOfSortedGeneratedSteps = sortedGeneratedSteps.size();
+
+                for(int sortedI = 0; sortedI < sizeOfSortedGeneratedSteps; ++sortedI){
+
+                    try{
+
+                        generatedLevelNodeSteps.add(sortedGeneratedSteps.getByInd(sortedI));
+                    }
+                    catch(Exception e){
+
+                        System.out.println("Could not obtain node (" + e.getMessage() + ")");
+                    }
+                }
+
+                int sizeOfGeneratedLevelNodeSteps = generatedLevelNodeSteps.size();
+
+                try{
+
+                    String  newKey = new String();
+                    
+                    for(int j  = 0; j < sizeOfGeneratedLevelNodeSteps; ++j){
+
+                        newKey = key + (++incKey);
+                        
+                        stepDecisionTree.addOne(new GenStepKey(key), 
+                            new GenStepKey(newKey), generatedLevelNodeSteps.get(j));
+                        
+                        recentLeafSteps.add(generatedLevelNodeSteps.get(j));
+                        recentLeafKeys.add(newKey);
+                        recentGameBoardHistoryContinuation.add(
+                        gameBoardHistoryContinuation.get(i));
+                        recentGameBoardHistoryContinuation.get(i).add(
+                            gameBoardCopy[selectedStep.getFile()][selectedStep.getRank()]);
+                    }
+                }
+                catch(Exception e){
+
+                    System.out.println("Could not add generated step to step sequences (" 
+                        + e.getMessage() + ")");
+                }
+
+                incKey = 'a';
+            }
+            
+            leafSteps = recentLeafSteps;
+            leafKeys = recentLeafKeys;
+            gameBoardHistoryContinuation = recentGameBoardHistoryContinuation;
+            
+            recentLeafSteps.clear();
+            recentLeafKeys.clear();
+            recentGameBoardHistoryContinuation.clear();
+        }
+    }
 }
