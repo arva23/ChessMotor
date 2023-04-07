@@ -1,8 +1,8 @@
-package com.mycompany.chessmotor.piecetypes;
+package chessmotor.enginecontroller.piecetypes;
 
 // ecapsulate square pieces for further improvements
 
-import com.mycompany.chessmotor.Pair;
+import chessmotor.enginecontroller.Pair;
 import java.util.ArrayList;
 
 

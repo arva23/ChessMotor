@@ -1,16 +1,16 @@
-package com.mycompany.chessmotor.piecetypes;
+package chessmotor.enginecontroller.piecetypes;
 
-import com.mycompany.chessmotor.Pair;
+import chessmotor.enginecontroller.Pair;
 import java.util.ArrayList;
 
-public class King extends GenPiece{
+public class Rook extends GenPiece{
     
-    public King(){
+    public Rook(){
     
         super();
     }
     
-    public King(double value, int file, int rank){
+    public Rook(double value, int file, int rank){
     
         super(value, file, rank);
     }
@@ -25,6 +25,7 @@ public class King extends GenPiece{
         return steps;
     }
     
+    @Override
     public ArrayList<Pair> testForCollisions(int gameBoard[][]){
     
         ArrayList<Pair> collisions = new ArrayList<Pair>();

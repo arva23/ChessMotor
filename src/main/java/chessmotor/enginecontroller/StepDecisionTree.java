@@ -1,6 +1,6 @@
-package com.mycompany.chessmotor;
+package chessmotor.enginecontroller;
 
-import com.mycompany.chessmotor.piecetypes.GenPiece;
+import chessmotor.enginecontroller.piecetypes.GenPiece;
 import genmath.GenStepKey;
 import genmath.GenTmpStepKey;
 import genmath.IncArbTree;

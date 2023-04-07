@@ -1,12 +1,12 @@
-package com.mycompany.chessmotor;
+package chessmotor.enginecontroller;
 
-import com.mycompany.chessmotor.piecetypes.Bishop;
-import com.mycompany.chessmotor.piecetypes.GenPiece;
-import com.mycompany.chessmotor.piecetypes.King;
-import com.mycompany.chessmotor.piecetypes.Knight;
-import com.mycompany.chessmotor.piecetypes.Pawn;
-import com.mycompany.chessmotor.piecetypes.Queen;
-import com.mycompany.chessmotor.piecetypes.Rook;
+import chessmotor.enginecontroller.piecetypes.Bishop;
+import chessmotor.enginecontroller.piecetypes.GenPiece;
+import chessmotor.enginecontroller.piecetypes.King;
+import chessmotor.enginecontroller.piecetypes.Knight;
+import chessmotor.enginecontroller.piecetypes.Pawn;
+import chessmotor.enginecontroller.piecetypes.Queen;
+import chessmotor.enginecontroller.piecetypes.Rook;
 import genmath.GenStepKey;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

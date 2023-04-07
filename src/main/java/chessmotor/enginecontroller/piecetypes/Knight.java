@@ -1,16 +1,16 @@
-package com.mycompany.chessmotor.piecetypes;
+package chessmotor.enginecontroller.piecetypes;
 
-import com.mycompany.chessmotor.Pair;
+import chessmotor.enginecontroller.Pair;
 import java.util.ArrayList;
 
-public class Bishop extends GenPiece{
+public class Knight extends GenPiece{
     
-    public Bishop(){
+    public Knight(){
     
         super();
     }
     
-    public Bishop(double value, int file, int rank){
+    public Knight(double value, int file, int rank){
     
         super(value, file, rank);
     }

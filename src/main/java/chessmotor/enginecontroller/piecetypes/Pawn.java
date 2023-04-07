@@ -1,20 +1,20 @@
-package com.mycompany.chessmotor.piecetypes;
+package chessmotor.enginecontroller.piecetypes;
 
-import com.mycompany.chessmotor.Pair;
+import chessmotor.enginecontroller.Pair;
 import java.util.ArrayList;
 
-public class Queen extends GenPiece{
+public class Pawn extends GenPiece{
     
-    public Queen(){
+    public Pawn(){
     
         super();
     }
     
-    public Queen(double value, int file, int rank){
+    public Pawn(double value, int file, int rank){
     
         super(value, file, rank);
     }
-
+    
     @Override
     public ArrayList<Pair> generateSteps(int gameBoard[][]){
     

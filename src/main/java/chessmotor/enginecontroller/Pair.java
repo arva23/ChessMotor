@@ -1,4 +1,4 @@
-package com.mycompany.chessmotor;
+package chessmotor.enginecontroller;
 
 // position pair type for squares
 public class Pair {

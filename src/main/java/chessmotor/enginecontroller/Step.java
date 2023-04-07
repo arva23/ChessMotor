@@ -1,4 +1,4 @@
-package com.mycompany.chessmotor;
+package chessmotor.enginecontroller;
 
 public class Step{
 
