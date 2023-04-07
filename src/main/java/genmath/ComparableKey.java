@@ -11,6 +11,4 @@ public abstract class ComparableKey<K>{
     public abstract K subtract(K key);
 
     public abstract K maxVal();
-
-    public abstract boolean isPlaceholder();
 }
