@@ -527,7 +527,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     
     public K getKeyByOrdInd(int ind) throws Exception{
     
-        if (ind >= size) {
+        if (ind >= size || ind < 0) {
             throw new Exception("Index out of bounds.");
         }
 
