@@ -9,9 +9,9 @@ import java.util.ArrayList;
 // neutral empty piece
 public class GenPiece {
     
-    private double value;
-    private int file;
-    private int rank;
+    private double value;// penalty value for ally (machine)
+    protected int file;
+    protected int rank;
     
     public GenPiece(){
     
@@ -26,12 +26,13 @@ public class GenPiece {
     
     public ArrayList<Pair> generateSteps(int gameBoard[][]){
     
-        // It generates steps according to the limitations of other piece barriers.
+        // It generates steps according to the limitations of other piece barriers 
+        //  and gamefield boundaries.
         // Hit steps are also included.
         // It can only detect empty squares or occupied squares.
         ArrayList<Pair> steps = new ArrayList<Pair>();
 
-        // todo
+        // todo, generate routes in aware of different sign of value of opponent pieces
         
         return steps;
     }

@@ -20,7 +20,84 @@ public class Pawn extends GenPiece{
     
         ArrayList<Pair> steps = new ArrayList<Pair>();
 
-        // todo
+        // pawn steps are symmetric comparing to opponent pawn steps
+        
+        if(gameBoard[file][rank] < 16){
+        
+            // ally pawn
+            
+            // from initial position in order to include double jump
+            if(file == 1
+                    && gameBoard[file + 1][rank] == -1 
+                    && (gameBoard[file + 2][rank] == -1 
+                    || gameBoard[file + 2][rank] >= 16
+                    && gameBoard[file + 2][rank] < 32)){
+            
+                steps.add(new Pair(file + 2, rank));
+            }
+            
+            // forward
+            if(file + 1 < 8 && (gameBoard[file + 1][rank] == -1 
+                    || gameBoard[file + 1][rank] >= 16 
+                    && gameBoard[file + 1][rank] < 32)){
+
+                steps.add(new Pair(file + 1, rank));
+            }
+
+            // forward left
+            if(file + 1 < 8 && rank - 1 >= 0 
+                    && (gameBoard[file + 1][rank - 1] >= 16
+                    && gameBoard[file + 1][rank - 1] < 32)){
+
+                steps.add(new Pair(file + 1, rank - 1));
+            }
+
+            // forward right
+            if(file + 1 < 8 && rank + 1 < 8 
+                    && (gameBoard[file + 1][rank + 1] >= 16
+                    && gameBoard[file + 1][rank + 1] < 32)){
+
+                steps.add(new Pair(file + 1, rank + 1));
+            }
+        }
+        else{
+        
+            // opponent pawn
+            
+            // from initial position in order to include double jump
+            if(file == 6 
+                    && gameBoard[file - 1][rank] == -1
+                    && (gameBoard[file - 2][rank] == -1 
+                    || gameBoard[file - 2][rank] >= 0 
+                    && gameBoard[file - 2][rank] < 16)){
+            
+                steps.add(new Pair(file - 2, rank));
+            }
+            
+            // forward
+            if(file - 1 >= 0 && gameBoard[file - 1][rank] == -1
+                    || (gameBoard[file - 1][rank] >= 0 
+                    && gameBoard[file - 1][rank] < 16)){
+            
+                steps.add(new Pair(file - 1, rank));
+            }
+            
+            // forward left
+            if(file - 1 >= 0 && rank - 1 >= 0 
+                    && (gameBoard[file - 1][rank - 1] >= 0 
+                    && gameBoard[file - 1][rank - 1] < 16)){
+            
+                steps.add(new Pair(file - 1, rank - 1));
+            }
+            
+            // forward right
+            if(file - 1 >= 0 && rank + 1 < 8
+                    && (gameBoard[file - 1][rank + 1] >= 0 
+                    && gameBoard[file - 1][rank + 1] < 16)){
+            
+                steps.add(new Pair(file - 1, rank + 1));
+            }
+        }
         
         return steps;
     }
