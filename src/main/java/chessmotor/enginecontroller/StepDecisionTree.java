@@ -118,13 +118,30 @@ public class StepDecisionTree implements Runnable{
     
     public void StepDecisionTree(StepDecisionTree orig){
     
-        this.allyBeginsRef = orig.allyBeginsRef;
+    public StepDecisionTree(StepDecisionTree orig) throws Exception{
+    
+        if(orig == null){
+        
+            throw new Exception("Original object is null.");
+        }
+        
+        this.stepDecisionTree = orig.stepDecisionTree;
+        this.allyBegins = orig.allyBegins;
         this.piecesRef = orig.piecesRef;
         this.stepHistoryRef = orig.stepHistoryRef;
         this.gameBoardRef = orig.gameBoardRef;
         this.depth = orig.depth;
         this.cumulativeNegativeChangeThreshold = orig.cumulativeNegativeChangeThreshold;
         this.minConvThreshold = orig.minConvThreshold;
+        
+        this.stepHistoryStack = orig.stepHistoryStack;
+        this.keyHistoryStack = orig.keyHistoryStack;
+        this.leafSteps = orig.leafSteps;
+        this.leafKeys = orig.leafKeys;
+        this.gameBoardHistoryContinuation = orig.gameBoardHistoryContinuation;
+        
+        this.fracs = orig.fracs;
+        this.no = orig.no;
     }
     
     
