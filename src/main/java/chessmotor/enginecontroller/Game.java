@@ -8,9 +8,11 @@ import chessmotor.enginecontroller.piecetypes.Pawn;
 import chessmotor.enginecontroller.piecetypes.Queen;
 import chessmotor.enginecontroller.piecetypes.Rook;
 import genmath.GenStepKey;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import chessmotor.view.IGameUI;
+import java.util.Stack;
 
 // evolution of engine
 
@@ -25,6 +27,8 @@ import java.util.ArrayList;
 //    for maximizing the most n valuable pieces.
 
 public class Game{
+    
+    IGameUI gameUI;
     
     // initialization of game is required
     private boolean initialized;
@@ -148,36 +152,82 @@ public class Game{
         if(!initialized) throw new Exception("Uninitialized game.");
         // TODO
     
-        int gameStatus = 0;
-        playGame = true;
+        //gameStatus = 0;
+        //playGame = true;
+        Step step;
         
         if(allyBegins){
-        
-            // build step decision tree for the first time
-            stepSequences.buildStepSequences(true, 0);
+            
+            
+            buildStrategy();
             selectNextStep();
+        
+            
+            validatePlayerStatus();
+
+            step = stepHistory.lastElement();
+            gameUI.updateTablePiece(
+            step.getPieceId(), step.getFile(), step.getRank());    
+            
             
             // waiting for player action
             requestPlayerAction();
             
             stepSequences.buildStepSequences(false, 0);
+            step = stepHistory.lastElement();
+            gameUI.updateTablePiece(
+            step.getPieceId(), step.getFile(), step.getRank());
+            
+            
+            stepSequences.continueStepSequences();
             selectNextStep();
+            
+            validatePlayerStatus();
+
+            step = stepHistory.lastElement();
+            gameUI.updateTablePiece(
+            step.getPieceId(),step.getFile(), step.getRank());
+            
         }
         else{
         
             // waiting for player action
             requestPlayerAction();
             
-            // build step decision tree for the first time
-            stepSequences.buildStepSequences(true, 0);
+            
+            step = stepHistory.lastElement();
+            gameUI.updateTablePiece(
+            step.getPieceId(), step.getFile(), step.getRank());
+            
+            buildStrategy();
             selectNextStep();
+            
+            validatePlayerStatus();
+            
+            step = stepHistory.lastElement();
+            gameUI.updateTablePiece(
+            step.getPieceId(), step.getFile(), step.getRank());
         }
         
         while(playGame){
         
             requestPlayerAction();
-            stepSequences.buildStepSequences(false, 0);
+            
+            step = stepHistory.lastElement();
+            gameUI.updateTablePiece(
+            step.getPieceId(), step.getFile(), step.getRank());
+            
+            intervalStartAlly = LocalDateTime.now();
+            
+            stepSequences.continueStepSequences();
             selectNextStep();
+            
+            validatePlayerStatus();
+        
+            step = stepHistory.lastElement();
+            gameUI.updateTablePiece(
+            step.getPieceId(), step.getFile(), step.getRank());
+            
         }
 
         if(gameStatus < 0){
@@ -194,7 +244,9 @@ public class Game{
         }
         else{
         
-            System.out.println("Game has ended with draw.");
+            System.out.println("Game has ended with draw ("
+                    + opponentScore + " - " + allyScore + ", player - machine) with "
+                    + stepId + " steps.");
             
             // TODO print more information (especially score related informations)
             //  the draw does not mean that the scores are equal, identic
