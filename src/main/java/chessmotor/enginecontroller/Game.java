@@ -569,6 +569,7 @@ public class Game{
             stepSequences.addOne(new GenStepKey("a"), new GenStepKey("a"), selectedStep);
             
             stepHistory.add(selectedStep);
+        ++stepId;
     private void validatePlayerStatus() throws Exception{
     
         // looking for check mate on opponent king piece
@@ -680,6 +681,7 @@ public class Game{
         //       in order to limit the key length (comparison optimization)
         stepSequences.trimKeys();
         
+        ++stepId;
         
         // TASK) TODO yield control to opponent player (asynchronous tasks)
     }
