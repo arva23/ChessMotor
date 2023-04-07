@@ -39,6 +39,8 @@ public class Game{
     // which player begins with the white pieces
     private boolean allyBegins;
     
+    private double allyScore;
+    private double opponentScore;
     
     private Duration timeLimit;
     private Duration allyTime;
@@ -559,6 +561,7 @@ public class Game{
             //       in order to limit the key length (comparison optimization)
             stepSequences.trimKeys();
             
+            opponentScore += stepHistory.get(stepHistory.size() - 1).getValue();
         }
         else{
             
@@ -569,7 +572,14 @@ public class Game{
             stepSequences.addOne(new GenStepKey("a"), new GenStepKey("a"), selectedStep);
             
             stepHistory.add(selectedStep);
+        
+            //opponentScore = 0.0;// initial step has taken
+        }
+        
         ++stepId;
+    }
+    
+    
     private void validatePlayerStatus() throws Exception{
     
         // looking for check mate on opponent king piece
@@ -598,6 +608,7 @@ public class Game{
             gameUI.updateGameStatus(gameStatus);
         }        
     }
+    
     
     // TODO it could be integrated in step decision tree builder
     private void selectNextStep() throws Exception{
@@ -680,6 +691,8 @@ public class Game{
         // TASK) TODO rename step node keys/identifiers (cyclic renaming)
         //       in order to limit the key length (comparison optimization)
         stepSequences.trimKeys();
+        
+        allyScore += stepHistory.get(stepHistory.size() - 1).getValue();
         
         ++stepId;
         
