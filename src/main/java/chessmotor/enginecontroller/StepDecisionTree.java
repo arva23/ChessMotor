@@ -29,8 +29,9 @@ public class StepDecisionTree implements Runnable{
     StepDecisionTree(boolean allyBegins, GenPiece[] pieces, ArrayList<Step> stepHistory, 
     private int fracs;
     private int no;
+    public StepDecisionTree(boolean allyBegins, GenPiece[] pieces, Stack<Step> stepHistory, 
             int[][] gameBoard, int depth, int cumulativeNegativeChangeThreshold, 
-            double minConvThreshold) throws Exception{
+            double minConvThreshold, int fracs, int no, long memLimit) throws Exception{
     
         super();
         stepDecisionTree = new IncArbTree<GenStepKey, Step>();
@@ -148,6 +149,17 @@ public class StepDecisionTree implements Runnable{
         }
     }
     
+    
+    public void unite(StepDecisionTree chunk) throws Exception{
+    
+        // expand container using upper estimation of number of nodes respect 
+        //  to potentially reserved (in future) memory
+        stepDecisionTree.reserve(stepDecisionTree.size() + chunk.stepDecisionTree.size());
+        
+        stepDecisionTree.mergeToNode(chunk.stepDecisionTree);
+    }
+    
+    
     public void addOne(GenStepKey whereKey, GenStepKey key, Step step) throws Exception{
     
         stepDecisionTree.addOne(whereKey, key, step);
@@ -167,6 +179,10 @@ public class StepDecisionTree implements Runnable{
         // generating steps for levels
         
         LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps =
+    public void reserveMem(int resMemSize) throws Exception{
+    
+        stepDecisionTree.reserve(resMemSize);
+    }
                 new LinTreeMultiMap<GenTmpStepKey, Step>();
         
         Step step;
