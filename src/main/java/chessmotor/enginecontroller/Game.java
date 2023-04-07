@@ -32,46 +32,155 @@ public class Game{
     
     // initialization of game is required
     private boolean initialized;
-    
     // which player begins with the white pieces
     private boolean allyBegins;
     
-    private boolean playGame;
     
+    private boolean playGame;
+    private int gameStatus;
     // active in game piece container
     private GenPiece pieces[];
-    
     // piece name resolution array
     private ArrayList<String> pieceNames;
-    
     // the actual game board to operate with
     private int[][] gameBoard;
-    
     // recent status of generated (arbirary incomplete n-ary tree) step sequences 
     // for further step decisions
     StepDecisionTree stepSequences;
-    
-    private ArrayList<Step> stepHistory;
+    private int stepId;// starting from 1 (the first step)
+    private Stack<Step> stepHistory;
 
     public Game(){
     
         initialized = false;
     }
     
-    public Game(boolean allyBegins, int stepsToLookAhead, double minConvThreshold, 
-            int cumulativeNegativeChangeThreshold) throws Exception{
     
-        initialized = true;
+    public Game(IGameUI gameUI, boolean allyBegins, int stepsToLookAhead, double minConvThreshold, 
+            int cumulativeNegativeChangeThreshold, Duration timeLimit, long memLimit) {
+    
+        try{
+
+            if(gameUI == null){
+            
+                throw new Exception("User interface object is null.");
+            }
+            
+            this.gameUI = gameUI;
+
+            this.gameUI.run();
+
+            initialized = true;
+
+            this.allyBegins = allyBegins;
+
+            allyScore = 0.0;
+            opponentScore = 0.0;
+            allyIsInCheck = false;
+            opponentIsInCheck = false;
+            playGame = true;
+            gameStatus = 0;
+
+            pieces = new GenPiece[32];
+            pieceNames = new ArrayList<String>();
+            gameBoard = new int[8][8];
+            stepHistory = new Stack<Step>();
+            
+            if(memLimit <= 0){
+            
+                throw new Exception("Memory limit is not positive.");
+            }
+            
+            stepSequences = new StepDecisionTree(allyBegins, pieces, stepHistory,
+                gameBoard, stepsToLookAhead, cumulativeNegativeChangeThreshold, 
+                minConvThreshold, 0, 0, memLimit);
+
+            stepId = 0;
+
+            // initializing ally pieces
+
+            for(int i = 0; i < 8; ++i){
+
+                pieces[i] = new Pawn(-3.0, 1, i);
+                gameBoard[1][i] = i;
+                pieceNames.add("" + (i + 1) + "pawn");
+
+                pieces[16 + i] = new Pawn(3.0, 6, i);
+                gameBoard[6][i] = 16 + i;
+            }
+
+            pieces[8] = new Rook(-14.0, 0, 0);
+            pieceNames.add("lrook");
+            pieces[9] = new Knight( -8.0, 0, 1);
+            pieceNames.add("lknight");
+            pieces[10] = new Bishop(-14.0, 0, 2);
+            pieceNames.add("lbishop");
+            pieces[11] = new King(-8.0, 0, 3);
+            pieceNames.add("king");
+            pieces[12] = new Queen(-28.0, 0, 4);
+            pieceNames.add("queen");
+            pieces[13] = new Bishop(-14.0, 0, 5);
+            pieceNames.add("rbishop");
+            pieces[14] = new Knight(-8.0, 0, 6);
+            pieceNames.add("rknight");
+            pieces[15] = new Rook(-14.0, 0, 7);
+            pieceNames.add("rrook");
+
+            gameBoard[0][0] = 8;
+            gameBoard[0][1] = 9;
+            gameBoard[0][2] = 10;
+            gameBoard[0][3] = 11;
+            gameBoard[0][4] = 12;
+            gameBoard[0][5] = 13;
+            gameBoard[0][6] = 14;
+            gameBoard[0][7] = 15;
+
+            // initializing opponent pieces
+
+            pieces[16 + 8] = new Rook(14.0, 7, 0);
+            pieces[16 + 9] = new Knight(8.0, 7, 1);
+            pieces[16 + 10] = new Bishop(14.0, 7, 2);
+            pieces[16 + 11] = new King(8.0, 7, 3);
+            pieces[16 + 12] = new Queen(28.0, 7, 4);
+            pieces[16 + 13] = new Bishop(14.0, 7, 5);
+            pieces[16 + 14] = new Knight(8.0, 7, 6);
+            pieces[16 + 15] = new Rook(14.0, 7, 7);
+
+            gameBoard[7][0] = 16 + 8;
+            gameBoard[7][1] = 16 + 9;
+            gameBoard[7][2] = 16 + 10;
+            gameBoard[7][3] = 16 + 11;
+            gameBoard[7][4] = 16 + 12;
+            gameBoard[7][5] = 16 + 13;
+            gameBoard[7][6] = 16 + 14;
+            gameBoard[7][7] = 16 + 15;
+
+            // filling empty squares
+            for(int rankInd = 0; rankInd < 8; ++rankInd){
+
+                for(int fileInd = 2; fileInd < 6; ++fileInd){
+
+                    gameBoard[fileInd][rankInd] = -1;
+                }
+            }
+            
+            if(timeLimit.isZero()){
+            
+                throw new Exception("Time limit is zero for player durations.");
+            }
+            
+            this.timeLimit = timeLimit;
+        }
+        catch(Exception e){
         
-        this.allyBegins = allyBegins;
-        
-        
-        pieces = new GenPiece[32];
-        pieceNames = new ArrayList<String>();
-        gameBoard = new int[8][8];
-        stepSequences = new StepDecisionTree(allyBegins, pieces, stepHistory, gameBoard, 
-            stepsToLookAhead, cumulativeNegativeChangeThreshold, minConvThreshold);
-        stepHistory = new ArrayList<Step>();
+            System.out.println("Could not initialize game: " + e.getMessage());
+        }
+    }
+    
+    
+    private void buildStrategy() throws Exception{
+    
+        int numberOfThreads = Runtime.getRuntime().availableProcessors();
         
         // initializing ally pieces
         
