@@ -2,6 +2,45 @@ package genmath;
 
 import java.util.ArrayList;
 
+// linearized tree Vs nested object oriented tree
+//  nested version (reference):
+//    + Low cost of insertion of new node [no previous element shift, arbitrary 
+//      (system defined memory alloction] simple allocation and reference creation)
+//    + Logarithmic key lookup requires less command (no index offsets)
+//      (time complexity is the same with the other version)
+//    + Root displacement is cheap (simple reference dislocation)
+//    + Node removal is cheap (just detach the certain object from reference 
+//      likage chain)
+//    - Node obtain by direct, specialized order based sort index is logarithmic 
+//      instead of constant
+//    - Whole level obtain requires entire traversal of tree (including leaf level)
+//    ? Leaf level direct access could be available in case of a <recent leaf 
+//      node> container if at least one traversal has performed at arbitrary 
+//      method that contains traversal, This would cause slower add method (
+//    - Insertion cost is high due to ad-hoc memory allocation
+//
+//  linearized version (ArrayList):
+//    - High cost of insertion of new node [previous element shift occurs and 
+//      allocation of new array in case of run out of enough memory] advanced 
+//      allocation and reference creation)
+//    - Logarithmmic key lookup requires more command (index offsets)
+//      (time complexity is the same with the other version)
+//    - Root displacement is expensive (array modification occurs as at the insertion)
+//    - Node removal is expensive (detachment of node requires offset indexing shifts)
+//    + Node obtain by direct, specialized order based sort index is constant instead 
+//      of logarithmic or else
+//    + Whole level obtain requires forward index offset jump traversal on array
+//    + Leaf level obtain requires backward traversal on container array 
+//      (the more the node number and equated [homogeneous] leaf level[s], the 
+//      less the level obtainment)
+//    + Option for preallocation in order to save allocation cost at insertion
+
+
+// The required implementation depends on purpose
+//  insertion time (overwhelmingly modification of tree)
+//  ability to faster conversion to other formats (e.g. graph matrix)
+//  subgraph operation speeds, etc..
+
 public class IncArbTree<K extends ComparableKey<K>, V> {
     
     // pair auxiliary type
