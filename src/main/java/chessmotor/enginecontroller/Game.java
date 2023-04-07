@@ -501,21 +501,67 @@ public class Game{
         
         ArrayList<GenStepKey> levelKeys = stepSequences.getLeafLevelKeys();
         
+        if(levelKeys.size() == 1){
+        
+            playGame = false;
+            gameStatus = 1;
+            
+            gameUI.updateGameStatus(gameStatus);
+            return;
+        }
+        
         int sizeOfLeafSteps = levelKeys.size();
         int maxI = 0;
         double currCumulativeValue = 0.0;
         double maxCumulativeValue = stepSequences.getByKey(
                 levelKeys.get(maxI)).getCumulativeValue();
         
-        for(int i = 1; i < sizeOfLeafSteps; ++i){
+        if(allyIsInCheck){
+        
+            boolean foundNextStep = false;
             
-            currCumulativeValue = stepSequences.getByKey(
-                levelKeys.get(i)).getCumulativeValue();
+            for(int i = 1; i < sizeOfLeafSteps; ++i){
+                
+                if(stepSequences.getByKey(levelKeys.get(i)).getPieceId() == 11){
+                
+                    foundNextStep = true;
+                    
+                    currCumulativeValue = stepSequences.getByKey(
+                    levelKeys.get(i)).getCumulativeValue();
             
-            if(maxCumulativeValue < currCumulativeValue){
+                    if(maxCumulativeValue < currCumulativeValue){
+
+                        maxCumulativeValue = currCumulativeValue;
+                        maxI = i;
+                    }
+                }
+            }
             
-                maxCumulativeValue = currCumulativeValue;
-                maxI = i;
+            if(!foundNextStep){
+            
+                playGame = false;
+                gameStatus = 1;
+                
+                gameUI.updateGameStatus(gameStatus);
+                return;
+            }
+            else{
+            
+                allyIsInCheck = false;
+            }
+        }
+        else{
+        
+            for(int i = 1; i < sizeOfLeafSteps; ++i){
+
+                currCumulativeValue = stepSequences.getByKey(
+                    levelKeys.get(i)).getCumulativeValue();
+            
+                if(maxCumulativeValue < currCumulativeValue){
+
+                    maxCumulativeValue = currCumulativeValue;
+                    maxI = i;
+                }
             }
         }
         
