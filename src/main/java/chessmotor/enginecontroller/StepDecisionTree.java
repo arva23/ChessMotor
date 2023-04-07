@@ -11,9 +11,9 @@ public class StepDecisionTree implements Runnable{
     
     private IncArbTree<GenStepKey, Step> stepDecisionTree;
     
-    private boolean allyBeginsRef;
+    private boolean allyBegins;
     private GenPiece[] piecesRef;
-    private ArrayList<Step> stepHistoryRef;
+    private Stack<Step> stepHistoryRef;
     private int[][] gameBoardRef;
     
     // number of steps to be generated (look ahead with N steps), as an upper 
@@ -26,7 +26,15 @@ public class StepDecisionTree implements Runnable{
     // score values are greater than a threshold, drop step sequence.
     private double minConvThreshold;
     
-    StepDecisionTree(boolean allyBegins, GenPiece[] pieces, ArrayList<Step> stepHistory, 
+    
+    // in order to restore consistency for peer (by level) steps
+    private ArrayList<Step> stepHistoryStack;
+    private ArrayList<String> keyHistoryStack;
+
+    private ArrayList<Step> leafSteps;
+    private ArrayList<String> leafKeys;
+    private ArrayList<ArrayList<Integer>> gameBoardHistoryContinuation;
+    
     private int fracs;
     private int no;
     public StepDecisionTree(boolean allyBegins, GenPiece[] pieces, Stack<Step> stepHistory, 
@@ -34,13 +42,32 @@ public class StepDecisionTree implements Runnable{
             double minConvThreshold, int fracs, int no, long memLimit) throws Exception{
     
         super();
+        
         stepDecisionTree = new IncArbTree<GenStepKey, Step>();
-        this.allyBeginsRef = allyBegins;
+        this.allyBegins = allyBegins;
+        
+        if(pieces == null){
+        
+            throw new Exception("Piece storage is null.");
+        }
+        
         this.piecesRef = pieces;
+        
+        if(stepHistory == null){
+        
+            throw new Exception("Step history is null.");
+        }
+        
         this.stepHistoryRef = stepHistory;
+        
+        if(gameBoard == null){
+        
+            throw new Exception("Game board is null.");
+        }
+        
         this.gameBoardRef = gameBoard;
         
-        if(minConvThreshold < 0)
+        if(minConvThreshold < 0.0)
             throw new Exception("Opponent score increase slope must be positive.");
         
         this.minConvThreshold = minConvThreshold;
@@ -78,6 +105,14 @@ public class StepDecisionTree implements Runnable{
     
         this.no = no;
         
+        stepHistoryStack = new ArrayList<Step>();
+        keyHistoryStack = new ArrayList<String>();
+        
+        leafSteps = new ArrayList<Step>();
+        leafKeys = new ArrayList<String>();
+        
+        gameBoardHistoryContinuation = new ArrayList<ArrayList<Integer>>();
+        
     }
     
     public void StepDecisionTree(StepDecisionTree orig){
@@ -91,20 +126,24 @@ public class StepDecisionTree implements Runnable{
         this.minConvThreshold = orig.minConvThreshold;
     }
     
+    
     public int size(){
     
         return stepDecisionTree.size();
     }
+    
     
     public ArrayList<GenStepKey> getLeafLevelKeys(){
     
         return stepDecisionTree.getLeafLevelKeys();
     }
     
+    
     public Step getByKey(GenStepKey key) throws Exception{
     
         return stepDecisionTree.getByKey(key);
     }
+    
     
     public void setNewRootByKey(GenStepKey key) throws Exception{
     
