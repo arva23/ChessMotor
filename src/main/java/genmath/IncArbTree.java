@@ -1,9 +1,41 @@
 package genmath;
 
-import genmath.LinTreeMap.Pair;
 import java.util.ArrayList;
 
 public class IncArbTree<K extends ComparableKey<K>, V> {
+    
+    // pair auxiliary type
+    public static class Pair<K extends ComparableKey<K>, V> implements Comparable<Pair<K, V>> {
+
+        public Pair() {
+
+            this.key = null;
+            this.value = null;
+        }
+
+        public Pair(K key, V value) throws Exception {
+
+            if (key == null) {
+                throw new Exception("Key is null.");
+            }
+
+            this.key = key;
+
+            if (value == null) {
+                throw new Exception("Value is null.");
+            }
+            this.value = value;
+        }
+
+        public int compareTo(Pair<K, V> item) {
+
+            return key.compareTo(item.key);
+        }
+
+        public K key;
+        public V value;
+
+    }
     
     // traversal
     private ArrayList<Integer> nodeIndHist;// node identifier for relative child indexing limit
