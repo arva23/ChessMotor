@@ -395,6 +395,67 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         }
     }
     
+    // order preserving subtree insertion
+    public int mergeToNode(IncArbTree chunk) throws Exception{
+    
+        if(chunk.size == 0){
+        
+            throw new Exception("Provided chunk is empty.");
+        }
+        
+        if(size == 0){
+        
+            cumulativeChildNodeOffsetRegistry = chunk.cumulativeChildNodeOffsetRegistry;
+            nodeSizeChildRegistry = chunk.nodeSizeChildRegistry;
+            container = chunk.container;
+            
+            size = chunk.size;
+        }
+        else{
+        
+            if(!(chunk.nodeSizeChildRegistry.get(0).equals(1))){
+            
+                throw new Exception("Multiple roots have found.");
+            }
+            
+            boolean found = false;
+            K rootKey = (K)chunk.getKeyByOrdInd(0);
+            int i = 0;
+            
+            for(; i < size && !found; ++i){
+            
+                found = rootKey.equals(container.get(i));
+            }
+            
+            if(!found){
+            
+                throw new Exception("The provided root node can not be found in the current tree.");
+            }
+            
+            ArrayList<K> nodeKeyHistory = new ArrayList<K>();
+            nodeKeyHistory.add((K)chunk.getKeyByOrdInd(0));
+            
+            Pair<K, V> node = new Pair<K, V>();
+            
+            chunk.initDFS();
+            
+            while(chunk.hasNextDFS()){
+            
+                if(chunk.wasRecentLeaf()){
+                
+                    nodeKeyHistory.remove(nodeKeyHistory.size() - 1);
+                }
+                
+                node = chunk.getNextItemDFS();
+                addOne(nodeKeyHistory.get(nodeKeyHistory.size() - 1), node);
+                
+                nodeKeyHistory.add(node.key);
+            }
+        }
+        
+        return size;
+    }
+    
     public V getByInd(){
     
         // todo, recursive procedure, computation heavy
