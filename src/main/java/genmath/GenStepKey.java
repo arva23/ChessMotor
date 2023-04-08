@@ -95,10 +95,4 @@ public class GenStepKey extends ComparableKey<GenStepKey> {
 
         return new GenStepKey(rawData);
     }
-    
-    @Override
-    public boolean isPlaceholder(){
-    
-        return isPlaceholder;
-    }
 }
