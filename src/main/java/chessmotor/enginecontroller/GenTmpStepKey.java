@@ -1,4 +1,6 @@
-package genmath;
+package chessmotor.enginecontroller;
+
+import genmath.ComparableKey;
 
 public class GenTmpStepKey extends ComparableKey<GenTmpStepKey> {
 
