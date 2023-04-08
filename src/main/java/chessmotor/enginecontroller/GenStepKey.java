@@ -5,11 +5,9 @@ import genmath.ComparableKey;
 public class GenStepKey extends ComparableKey<GenStepKey> {
 
     public String val;
-    public boolean isPlaceholder;
     
     public GenStepKey(){
     
-        isPlaceholder = true;
     }
     
     public GenStepKey(String val){
@@ -17,7 +15,6 @@ public class GenStepKey extends ComparableKey<GenStepKey> {
         super();
 
         this.val = val;
-        isPlaceholder = false;
     }
 
     @Override
