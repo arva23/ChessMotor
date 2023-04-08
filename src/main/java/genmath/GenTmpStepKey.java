@@ -3,11 +3,9 @@ package genmath;
 public class GenTmpStepKey extends ComparableKey<GenTmpStepKey> {
 
     public Double val = 0.0;
-    public boolean isPlaceholder;
     
     public GenTmpStepKey(){
     
-        isPlaceholder = true;
     }
     
     public GenTmpStepKey(Double val){
@@ -82,11 +80,5 @@ public class GenTmpStepKey extends ComparableKey<GenTmpStepKey> {
     public static GenTmpStepKey fromString(String rawData) {
 
         return new GenTmpStepKey(Double.parseDouble(rawData));
-    }
-    
-    @Override
-    public boolean isPlaceholder(){
-    
-        return isPlaceholder;
     }
 }
