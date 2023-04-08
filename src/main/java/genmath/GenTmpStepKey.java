@@ -13,7 +13,6 @@ public class GenTmpStepKey extends ComparableKey<GenTmpStepKey> {
         super();
 
         this.val = val;
-        isPlaceholder = false;
     }
 
     @Override
