@@ -456,6 +456,16 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return size;
     }
     
+    public V getByLevelOrdInd(int i) throws Exception{
+        
+        if (i >= size || i < 0) {
+
+            throw new Exception("Index out of bounds.");
+        }
+
+        return container.get(i).value;
+    }
+    
     public V getByInd(){
     
         // todo, recursive procedure, computation heavy
