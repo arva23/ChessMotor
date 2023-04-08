@@ -474,7 +474,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     
     public void setKeyByInd(int i, K key){
     
-        IncBinTree.Pair<K, V> modPair = container.get(i);
+        Pair<K, V> modPair = container.get(i);
         modPair.key = key;
         container.set(i, modPair);
     }
