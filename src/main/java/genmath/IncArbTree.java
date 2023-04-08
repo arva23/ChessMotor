@@ -472,6 +472,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return null;
     }
     
+    // warning: it causes inconsistency, reordering is needed, todo
     public void setKeyByInd(int i, K key){
     
         Pair<K, V> modPair = container.get(i);
