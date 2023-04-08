@@ -56,7 +56,7 @@ public class GenStepKey extends ComparableKey<GenStepKey> {
     @Override
     public int at(int pos){
     
-        if(val.length() > pos) return Integer.MIN_VALUE;
+        if(val.length() < pos + 1) return Integer.MIN_VALUE;
         
         return val.charAt(pos);
     }
