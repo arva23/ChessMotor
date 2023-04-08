@@ -486,11 +486,6 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             throw new Exception("Index out of bounds.");
         }
 
-        if (container.get(i).key.isPlaceholder()) {
-
-            throw new Exception("Item is placeholder.");
-        }
-
         Pair<K, V> modPair = container.get(i);
         modPair.value = value;
         container.set(i, modPair);
