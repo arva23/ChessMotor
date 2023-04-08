@@ -338,9 +338,9 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
                 
                 prevShift = insertionInd;
                 
-                if(key.len() == container.get(prevShift + j).key.at(level)){
+                if(key.len() == container.get(i).key.at(level)){
                 
-                    // insert new node onto selected level
+                    // insert new node under selected level
                     break;
                 }
                 else{
