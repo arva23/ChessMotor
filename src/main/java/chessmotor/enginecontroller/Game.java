@@ -32,7 +32,7 @@ import java.util.Stack;
 
 public class Game{
     
-    IGameUI gameUI;
+    private IGameUI gameUI;
     
     // initialization of game is required
     private boolean initialized;
@@ -63,8 +63,9 @@ public class Game{
     // for further step decisions
     StepDecisionTree stepSequences;
     private int stepId;// starting from 1 (the first step)
-    private Stack<Step> stepHistory;
-
+    private Stack<Step> sourceStepHistory;
+    private Stack<Step> targetStepHistory;
+    
     public Game(){
     
         initialized = false;
@@ -97,18 +98,18 @@ public class Game{
             gameStatus = 0;
 
             pieces = new GenPiece[32];
-            pieceNames = new ArrayList<String>();
             gameBoard = new int[8][8];
-            stepHistory = new Stack<Step>();
+            sourceStepHistory = new Stack<Step>();
+            targetStepHistory = new Stack<Step>();
             
             if(memLimit <= 0){
             
                 throw new Exception("Memory limit is not positive.");
             }
             
-            stepSequences = new StepDecisionTree(allyBegins, pieces, stepHistory,
-                gameBoard, stepsToLookAhead, cumulativeNegativeChangeThreshold, 
-                minConvThreshold, 0, 0, memLimit);
+            stepSequences = new StepDecisionTree(allyBegins, pieces,
+                targetStepHistory, gameBoard, stepsToLookAhead, 
+                cumulativeNegativeChangeThreshold, minConvThreshold, 0, 0, memLimit);
 
             stepId = 0;
 
@@ -249,7 +250,8 @@ public class Game{
     
         //gameStatus = 0;
         //playGame = true;
-        Step step;
+        Step sourceStep;
+        Step targetStep;
         
         if(allyBegins){
             
@@ -263,9 +265,11 @@ public class Game{
             
             validatePlayerStatus();
 
-            step = stepHistory.lastElement();
-            gameUI.updateTablePiece(
-            step.getPieceId(), step.getFile(), step.getRank());    
+            sourceStep = sourceStepHistory.lastElement();
+            targetStep = targetStepHistory.lastElement();
+            gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(), 
+                sourceStep.getFile(), sourceStep.getRank(),
+                targetStep.getFile(), targetStep.getRank());    
             
             if(timeLimit.compareTo(allyTime) <= 0){
             
@@ -285,9 +289,11 @@ public class Game{
             opponentTime.plus(LocalDateTime.now().until(
             intervalStartOpponent, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
-            step = stepHistory.lastElement();
-            gameUI.updateTablePiece(
-            step.getPieceId(), step.getFile(), step.getRank());
+            sourceStep = sourceStepHistory.lastElement();
+            targetStep = targetStepHistory.lastElement();
+            gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(), 
+                sourceStep.getFile(), sourceStep.getRank(),
+                targetStep.getFile(), targetStep.getRank());
             
             if(timeLimit.compareTo(opponentTime) <= 0){
             
@@ -309,9 +315,11 @@ public class Game{
             
             validatePlayerStatus();
 
-            step = stepHistory.lastElement();
-            gameUI.updateTablePiece(
-            step.getPieceId(),step.getFile(), step.getRank());
+            sourceStep = sourceStepHistory.lastElement();
+            targetStep = targetStepHistory.lastElement();
+            gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(),
+                sourceStep.getFile(), sourceStep.getRank(),
+                targetStep.getFile(), targetStep.getRank());
             
             if(timeLimit.compareTo(allyTime) <= 0){
             
@@ -332,9 +340,11 @@ public class Game{
             opponentTime.plus(LocalDateTime.now().until(
             intervalStartOpponent, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
-            step = stepHistory.lastElement();
-            gameUI.updateTablePiece(
-            step.getPieceId(), step.getFile(), step.getRank());
+            sourceStep = sourceStepHistory.lastElement();
+            targetStep = targetStepHistory.lastElement();
+            gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(),
+                sourceStep.getFile(), sourceStep.getRank(),
+                targetStep.getFile(), targetStep.getRank());
             
             if(timeLimit.compareTo(opponentTime) <= 0){
             
@@ -356,9 +366,11 @@ public class Game{
             
             validatePlayerStatus();
             
-            step = stepHistory.lastElement();
-            gameUI.updateTablePiece(
-            step.getPieceId(), step.getFile(), step.getRank());
+            sourceStep = sourceStepHistory.lastElement();
+            targetStep = targetStepHistory.lastElement();
+            gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(),
+                sourceStep.getFile(), sourceStep.getRank(),
+                targetStep.getFile(), targetStep.getRank());
             
             if(timeLimit.compareTo(allyTime) <= 0){
             
@@ -380,9 +392,11 @@ public class Game{
             opponentTime.plus(LocalDateTime.now().until(
             intervalStartOpponent, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
-            step = stepHistory.lastElement();
-            gameUI.updateTablePiece(
-            step.getPieceId(), step.getFile(), step.getRank());
+            sourceStep = sourceStepHistory.lastElement();
+            targetStep = targetStepHistory.lastElement();
+            gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(), 
+                sourceStep.getFile(), sourceStep.getRank(),
+                targetStep.getFile(), targetStep.getRank());
             
             if(timeLimit.compareTo(opponentTime) <= 0){
             
@@ -404,9 +418,11 @@ public class Game{
             
             validatePlayerStatus();
         
-            step = stepHistory.lastElement();
-            gameUI.updateTablePiece(
-            step.getPieceId(), step.getFile(), step.getRank());
+            sourceStep = sourceStepHistory.lastElement();
+            targetStep = targetStepHistory.lastElement();
+            gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(),
+                sourceStep.getFile(), sourceStep.getRank(),
+                targetStep.getFile(), targetStep.getRank());
             
             if(timeLimit.compareTo(allyTime) <= 0){
             
@@ -545,33 +561,32 @@ public class Game{
 
                 selectedStep = stepSequences.getByKey(levelKeys.get(i));
 
-                if(selectedStep.getFile() == selectedFile 
-                        && selectedStep.getRank() == selectedRank){
+                if(selectedStep.getFile() == targetSelectedFile 
+                        && selectedStep.getRank() == targetSelectedRank){
 
                     break;
                 }
             }
             
             // TASK) shift tree with one level, throw root away (root displacement)
-            stepSequences.setNewRootByKey(levelKeys.get(i));
-            
-            stepHistory.add(stepSequences.getByKey(levelKeys.get(i)));
+            stepSequences.setNewRootByKey(levelKeys.get(i));            
+            targetStepHistory.add(stepSequences.getByKey(levelKeys.get(i)));
             
             // TASK) TODO rename step node keys/identifiers (cyclic renaming)
             //       in order to limit the key length (comparison optimization)
             stepSequences.trimKeys();
             
-            opponentScore += stepHistory.get(stepHistory.size() - 1).getValue();
+            opponentScore += targetStepHistory.get(targetStepHistory.size() - 1).getValue();
         }
         else{
             
-            selectedStep = new Step(gameBoard[selectedFile][selectedRank], 
-                    selectedFile, selectedRank, selectedPiece.getValue(), 
+            selectedStep = new Step(gameBoard[targetSelectedFile][targetSelectedRank], 
+                    targetSelectedFile, targetSelectedRank, selectedPiece.getValue(), 
                     0, selectedPiece.getValue());
             
             stepSequences.addOne(new GenStepKey("a"), new GenStepKey("a"), selectedStep);
             
-            stepHistory.add(selectedStep);
+            targetStepHistory.add(selectedStep);
         
             //opponentScore = 0.0;// initial step has taken
         }
@@ -684,18 +699,35 @@ public class Game{
         }
         
         // TASK) shift tree with one level, throw root away (root displacement)
+        
+        // set the actual root as source position
+        sourceStepHistory.add(stepSequences.getByKey(new GenStepKey("a")));
+        
         stepSequences.setNewRootByKey(levelKeys.get(maxI));
         
-        stepHistory.add(stepSequences.getByKey(levelKeys.get(maxI)));
+        targetStepHistory.add(stepSequences.getByKey(levelKeys.get(maxI)));
         
         // TASK) TODO rename step node keys/identifiers (cyclic renaming)
         //       in order to limit the key length (comparison optimization)
         stepSequences.trimKeys();
         
-        allyScore += stepHistory.get(stepHistory.size() - 1).getValue();
+        allyScore += targetStepHistory.get(targetStepHistory.size() - 1).getValue();
         
         ++stepId;
         
         // TASK) TODO yield control to opponent player (asynchronous tasks)
     }
+
+    
+    public Stack<Step> getSourceStepHistory(){
+    
+        return sourceStepHistory;
+    }
+    
+    
+    public Stack<Step> getTargetStepHistory(){
+    
+        return targetStepHistory;
+    }
+    
 }
