@@ -481,60 +481,84 @@ public class Game{
             return;
         }
         
-        String[] params = action.split("|");
+        String[] param = action.split("|");
         
-        if(params[0].isEmpty()){
+        if(param.length != 2){
         
-            throw new Exception("Piece has not been provided.");
+            throw new Exception("No source and target position has been given properly.");
         }
         
-        if(!pieceNames.contains(params[0])){
+        if(param[0].length() != 2){
         
-            throw new Exception("Piece name resolution is unsuccessful.");
+            throw new Exception("Ill given source position.");
         }
         
-        int selectedFile = 0;
+        int sourceSelectedFile = 0;
         
-        if(params[1].charAt(0) < 'a' || params[1].charAt(0) > 'h'){
+        if(param[0].charAt(0) < 'a' || param[0].charAt(0) > 'h'){
         
-            throw new Exception("File is out of range.");
+            throw new Exception("Source file is out of range.");
         }
         
-        selectedFile = (int)params[1].charAt(0);
-        int selectedRank = 0;
+        sourceSelectedFile = (int)param[0].charAt(0);
+        int sourceSelectedRank = 0;
         
-        if(params[1].charAt(1) < 1 || params[1].charAt(1) > 8){
+        if(param[0].charAt(1) < 1 || param[0].charAt(1) > 8){
         
-            throw new Exception("Rank is out of range.");
+            throw new Exception("Source rank is out of range.");
         }
         
-        selectedRank = (int)params[1].charAt(1);
+        sourceSelectedRank = (int)param[0].charAt(1);
         
-        if(opponentIsInCheck && pieceNames.indexOf(params[0]) != 11){
+        if(opponentIsInCheck && gameBoard[sourceSelectedRank][sourceSelectedFile] != 11){
         
             throw new Exception("Player is in check. Resolve check.");
         }
         
-        GenPiece selectedPiece = pieces[pieceNames.indexOf(params[0])];
+        GenPiece selectedPiece = 
+            pieces[gameBoard[sourceSelectedRank][sourceSelectedFile]];
+        
+        if(param[1].length() != 2){
+        
+            throw new Exception("Ill given target position.");
+        }
+        
+        int targetSelectedFile = 0;
+        
+        if(param[1].charAt(0) < 'a' || param[1].charAt(0) > 'h'){
+        
+            throw new Exception("Targer file is out of range.");
+        }
+        
+        targetSelectedFile = (int)param[1].charAt(0);
+        int targetSelectedRank = 0;
+        
+        if(param[1].charAt(1) < 1 || param[1].charAt(1) > 8){
+        
+            throw new Exception("Target rank is out of range.");
+        }
+        
+        targetSelectedRank = (int)param[0].charAt(1);
         
         if(!(selectedPiece.generateSteps(gameBoard).contains(
-                new Pair(selectedFile, selectedRank)))){
+                new Pair(targetSelectedFile, targetSelectedRank)))){
         
             throw new Exception("Illegal selected step by chosen piece.");
         }
         
-        if(gameBoard[selectedFile][selectedRank] != -1){
-            
-            // hit occurs
-            pieceNames.set(gameBoard[selectedFile][selectedRank], "");
-        }
-        else{
-        
-            selectedPiece.setFile(selectedFile);
-            selectedPiece.setRank(selectedRank);
-            gameBoard[selectedFile][selectedRank] = pieceNames.indexOf(params[0]);
-        }
-        
+        // in case of hit as well
+
+        selectedPiece.setFile(targetSelectedFile);
+        selectedPiece.setRank(targetSelectedRank);
+
+        gameBoard[targetSelectedFile][targetSelectedRank] = 
+            gameBoard[sourceSelectedFile][sourceSelectedRank];
+
+        sourceStepHistory.add(new Step(gameBoard[sourceSelectedFile][sourceSelectedRank],
+        sourceSelectedFile, sourceSelectedRank, 0.0,
+            0, 0.0));
+        gameBoard[sourceSelectedFile][sourceSelectedRank] = -1;
+
         Step selectedStep;
         
         if(stepSequences.size() > 0){
