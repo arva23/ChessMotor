@@ -10,9 +10,9 @@ public class Knight extends GenPiece{
         super();
     }
     
-    public Knight(double value, int file, int rank){
+    public Knight(boolean isWhite, double value, int file, int rank){
     
-        super(value, file, rank);
+        super(isWhite ? "whiteknight" : "blackknight", value, file, rank);
     }
     
     @Override

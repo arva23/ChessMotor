@@ -55,8 +55,6 @@ public class Game{
     private int gameStatus;
     // active in game piece container
     private GenPiece pieces[];
-    // piece name resolution array
-    private ArrayList<String> pieceNames;
     // the actual game board to operate with
     private int[][] gameBoard;
     // recent status of generated (arbirary incomplete n-ary tree) step sequences 
@@ -117,31 +115,22 @@ public class Game{
 
             for(int i = 0; i < 8; ++i){
 
-                pieces[i] = new Pawn(-3.0, 1, i);
+                pieces[i] = new Pawn(allyBegins, -3.0, 1, i);
                 gameBoard[1][i] = i;
-                pieceNames.add("" + (i + 1) + "pawn");
-
-                pieces[16 + i] = new Pawn(3.0, 6, i);
+                
+                pieces[16 + i] = new Pawn(!allyBegins, 3.0, 6, i);
                 gameBoard[6][i] = 16 + i;
             }
 
-            pieces[8] = new Rook(-14.0, 0, 0);
-            pieceNames.add("lrook");
-            pieces[9] = new Knight( -8.0, 0, 1);
-            pieceNames.add("lknight");
-            pieces[10] = new Bishop(-14.0, 0, 2);
-            pieceNames.add("lbishop");
-            pieces[11] = new King(-8.0, 0, 3);
-            pieceNames.add("king");
-            pieces[12] = new Queen(-28.0, 0, 4);
-            pieceNames.add("queen");
-            pieces[13] = new Bishop(-14.0, 0, 5);
-            pieceNames.add("rbishop");
-            pieces[14] = new Knight(-8.0, 0, 6);
-            pieceNames.add("rknight");
-            pieces[15] = new Rook(-14.0, 0, 7);
-            pieceNames.add("rrook");
-
+            pieces[8] = new Rook(allyBegins, -14.0, 0, 0);
+            pieces[9] = new Knight(allyBegins, -8.0, 0, 1);
+            pieces[10] = new Bishop(allyBegins, -14.0, 0, 2);
+            pieces[11] = new King(allyBegins, -8.0, 0, 3);
+            pieces[12] = new Queen(allyBegins, -28.0, 0, 4);
+            pieces[13] = new Bishop(allyBegins, -14.0, 0, 5);
+            pieces[14] = new Knight(allyBegins, -8.0, 0, 6);
+            pieces[15] = new Rook(allyBegins, -14.0, 0, 7);
+            
             gameBoard[0][0] = 8;
             gameBoard[0][1] = 9;
             gameBoard[0][2] = 10;
@@ -153,14 +142,14 @@ public class Game{
 
             // initializing opponent pieces
 
-            pieces[16 + 8] = new Rook(14.0, 7, 0);
-            pieces[16 + 9] = new Knight(8.0, 7, 1);
-            pieces[16 + 10] = new Bishop(14.0, 7, 2);
-            pieces[16 + 11] = new King(8.0, 7, 3);
-            pieces[16 + 12] = new Queen(28.0, 7, 4);
-            pieces[16 + 13] = new Bishop(14.0, 7, 5);
-            pieces[16 + 14] = new Knight(8.0, 7, 6);
-            pieces[16 + 15] = new Rook(14.0, 7, 7);
+            pieces[16 + 8] = new Rook(!allyBegins, 14.0, 7, 0);
+            pieces[16 + 9] = new Knight(!allyBegins, 8.0, 7, 1);
+            pieces[16 + 10] = new Bishop(!allyBegins, 14.0, 7, 2);
+            pieces[16 + 11] = new King(!allyBegins, 8.0, 7, 3);
+            pieces[16 + 12] = new Queen(!allyBegins, 28.0, 7, 4);
+            pieces[16 + 13] = new Bishop(!allyBegins, 14.0, 7, 5);
+            pieces[16 + 14] = new Knight(!allyBegins, 8.0, 7, 6);
+            pieces[16 + 15] = new Rook(!allyBegins, 14.0, 7, 7);
 
             gameBoard[7][0] = 16 + 8;
             gameBoard[7][1] = 16 + 9;

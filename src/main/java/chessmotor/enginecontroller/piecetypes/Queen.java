@@ -10,9 +10,9 @@ public class Queen extends GenPiece{
         super();
     }
     
-    public Queen(double value, int file, int rank){
+    public Queen(boolean isWhite, double value, int file, int rank){
     
-        super(value, file, rank);
+        super(isWhite ? "whitequeen" : "blackquen", value, file, rank);
     }
 
     @Override

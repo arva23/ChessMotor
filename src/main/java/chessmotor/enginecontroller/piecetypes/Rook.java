@@ -10,9 +10,9 @@ public class Rook extends GenPiece{
         super();
     }
     
-    public Rook(double value, int file, int rank){
+    public Rook(boolean isWhite, double value, int file, int rank){
     
-        super(value, file, rank);
+        super(isWhite ? "whiterook" : "blackrook",  value, file, rank);
     }
     
     @Override
