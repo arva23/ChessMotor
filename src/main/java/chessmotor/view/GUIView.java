@@ -169,18 +169,76 @@ public class GUIView implements IGameUI{
 
     @Override
     public void switchPlayerClock() {
+        
+        playerClocks.switchPlayer();
     }
 
     @Override
     public String readPlayerAction() throws InterruptedException {
         
         String action = "";
+        board.alternateActivePlayer();
+        
+        while(true){
+        
+            playerWaitCond.signal();
+            playerActionCond.await();
+            
+            if((allyBegins && board.getPlayerActionSquare().getPlayer() < 0)
+                || (!allyBegins && board.getPlayerActionSquare().getPlayer() > 0)){
+
+                System.out.println("Illegal selection, choose another.");
+                break;
+            }
+        }
+        
+        action += board.getPlayerActionResult();
+
+        while(true){
+        
+            playerWaitCond.signal();
+            playerActionCond.await();
+    
+            if((allyBegins && board.getPlayerActionSquare().getPlayer() > 0) 
+                || (!allyBegins && board.getPlayerActionSquare().getPlayer() < 0)){
+            
+                System.out.println("Illegal selection, choose another.");
+                break;
+            }
+        }
+        
+        action += "|";
+        action += board.getPlayerActionResult();
+        
         return action;
     }
     
     @Override
     public void applyGenPlayerAction(String pieceType, int sourceRank, int sourceFile,
             int targetRank, int targetFile) throws Exception{
+    
+        if(sourceRank < 0 || sourceRank > 7){
+        
+            throw new Exception("Source rank is out of range.");
+        }
+        
+        if(sourceFile < 0 || sourceFile > 7){
+        
+            throw new Exception("Source file is out of range.");
+        }
+        
+        if(targetRank < 0 || targetRank > 7){
+        
+            throw new Exception("Target rank is ou of range.");
+        }
+    
+        if(targetFile < 0 || targetFile > 7){
+        
+            throw new Exception("Target file is out of range.");
+        }
+        
+        board.setSquare(allyBegins, "empty", sourceRank, sourceFile);
+        board.setSquare(allyBegins, pieceType, targetRank, targetFile);
     }
     
 }
