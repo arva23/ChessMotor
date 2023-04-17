@@ -477,7 +477,12 @@ public class StepDecisionTree implements Runnable{
                 // no further seps to take with currently selected piece, stepback
                 stepHistoryStack.remove(lvl);
                 keyHistoryStack.remove(lvl);
+                
+                // suboptimal, simplification is needed
+                gameBoardRef[stepHistoryStack.get(lvl - 1).getFile()][stepHistoryStack.get(lvl - 1).getRank()] =
+                        gameBoardRef[step.getFile()][step.getRank()];
                 gameBoardRef[step.getFile()][step.getRank()] = gameBoardHistory.get(lvl);
+                
                 gameBoardHistory.remove(lvl);
                 generatedLevelNodeSteps.remove(lvl);
                 --lvl;
@@ -509,6 +514,7 @@ public class StepDecisionTree implements Runnable{
                 // in case of piece hit by an opponent piece, access of to that 
                 //  piece is going to be forbidden by the removal its id from the board
                 gameBoardRef[selectedStep.getFile()][selectedStep.getRank()] = step.getPieceId();
+                gameBoardRef[step.getFile()][step.getRank()] = -1;// leave previous position free
                 
                 generatedLevelNodeSteps.get(lvl).remove(0);
                 
