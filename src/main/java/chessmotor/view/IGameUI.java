@@ -14,7 +14,7 @@ public interface IGameUI {
     
     public void updateGameStatus(int gameStatus);
     
-    public void updateTime(boolean toAlly, Duration time);
+    public void switchPlayerClock();
     
     public String readPlayerAction() throws Exception;    
     

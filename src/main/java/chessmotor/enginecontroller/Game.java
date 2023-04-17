@@ -268,7 +268,7 @@ public class Game{
                 gameUI.updateGameStatus(gameStatus);
             }
             
-            gameUI.updateTime(true, allyTime);
+            gameUI.switchPlayerClock();
             
             // waiting for player action
             intervalStartOpponent = LocalDateTime.now();
@@ -292,7 +292,7 @@ public class Game{
                 gameUI.updateGameStatus(gameStatus);
             }
             
-            gameUI.updateTime(false, opponentTime);
+            gameUI.switchPlayerClock();
             
             intervalStartAlly = LocalDateTime.now();
             
@@ -317,7 +317,7 @@ public class Game{
                 gameUI.updateGameStatus(gameStatus);
             }
             
-            gameUI.updateTime(true, allyTime);
+            gameUI.switchPlayerClock();
         }
         else{
             
@@ -343,7 +343,7 @@ public class Game{
                 gameUI.updateGameStatus(gameStatus);
             }
             
-            gameUI.updateTime(false, opponentTime);
+            gameUI.switchPlayerClock();
             
             intervalStartAlly = LocalDateTime.now();
             
@@ -369,7 +369,7 @@ public class Game{
                 gameUI.updateGameStatus(gameStatus);
             }
             
-            gameUI.updateTime(true, allyTime);
+            gameUI.switchPlayerClock();
         }
         
         while(playGame){
@@ -395,7 +395,7 @@ public class Game{
                 break;
             }
             
-            gameUI.updateTime(false, opponentTime);
+            gameUI.switchPlayerClock();
             
             intervalStartAlly = LocalDateTime.now();
             
@@ -421,7 +421,7 @@ public class Game{
                 break;
             }
             
-            gameUI.updateTime(true, allyTime);
+            gameUI.switchPlayerClock();
         }
 
         if(gameStatus < 0){
