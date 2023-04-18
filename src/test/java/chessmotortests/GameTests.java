@@ -85,9 +85,9 @@ public class GameTests {
         // User has wanted to select unavailable piece (no piece 
         // exists with such identifier), name resolution error
     
-        // Selected file coordinate component is out of range
-        
         // Selected rank coordinate component is out of range
+        
+        // Selected file coordinate component is out of range
         
         // Selected piece by user is removed (not available on game board)
     

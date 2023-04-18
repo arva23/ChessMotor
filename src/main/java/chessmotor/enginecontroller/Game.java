@@ -161,11 +161,11 @@ public class Game{
             gameBoard[7][7] = 16 + 15;
 
             // filling empty squares
-            for(int rankInd = 0; rankInd < 8; ++rankInd){
+            for(int rankInd = 2; rankInd < 6; ++rankInd){
 
-                for(int fileInd = 2; fileInd < 6; ++fileInd){
+                for(int fileInd = 0; fileInd < 8; ++fileInd){
 
-                    gameBoard[fileInd][rankInd] = -1;
+                    gameBoard[rankInd][fileInd] = -1;
                 }
             }
             
@@ -257,8 +257,8 @@ public class Game{
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
             gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(), 
-                sourceStep.getFile(), sourceStep.getRank(),
-                targetStep.getFile(), targetStep.getRank());    
+                sourceStep.getRank(), sourceStep.getFile(),
+                targetStep.getRank(), targetStep.getFile());    
             
             if(timeLimit.compareTo(machineTime) <= 0){
             
@@ -281,8 +281,8 @@ public class Game{
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
             gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(), 
-                sourceStep.getFile(), sourceStep.getRank(),
-                targetStep.getFile(), targetStep.getRank());
+                sourceStep.getRank(), sourceStep.getFile(),
+                targetStep.getRank(), targetStep.getFile());
             
             if(timeLimit.compareTo(humanTime) <= 0){
             
@@ -307,8 +307,8 @@ public class Game{
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
             gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(),
-                sourceStep.getFile(), sourceStep.getRank(),
-                targetStep.getFile(), targetStep.getRank());
+                sourceStep.getRank(), sourceStep.getFile(),
+                targetStep.getRank(), targetStep.getFile());
             
             if(timeLimit.compareTo(machineTime) <= 0){
             
@@ -332,8 +332,8 @@ public class Game{
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
             gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(),
-                sourceStep.getFile(), sourceStep.getRank(),
-                targetStep.getFile(), targetStep.getRank());
+                sourceStep.getRank(), sourceStep.getFile(),
+                targetStep.getRank(), targetStep.getFile());
             
             if(timeLimit.compareTo(humanTime) <= 0){
             
@@ -358,8 +358,8 @@ public class Game{
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
             gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(),
-                sourceStep.getFile(), sourceStep.getRank(),
-                targetStep.getFile(), targetStep.getRank());
+                sourceStep.getRank(), sourceStep.getFile(),
+                targetStep.getRank(), targetStep.getFile());
             
             if(timeLimit.compareTo(machineTime) <= 0){
             
@@ -384,8 +384,8 @@ public class Game{
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
             gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(), 
-                sourceStep.getFile(), sourceStep.getRank(),
-                targetStep.getFile(), targetStep.getRank());
+                sourceStep.getRank(), sourceStep.getFile(),
+                targetStep.getRank(), targetStep.getFile());
             
             if(timeLimit.compareTo(humanTime) <= 0){
             
@@ -410,8 +410,8 @@ public class Game{
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
             gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(),
-                sourceStep.getFile(), sourceStep.getRank(),
-                targetStep.getFile(), targetStep.getRank());
+                sourceStep.getRank(), sourceStep.getFile(),
+                targetStep.getRank(), targetStep.getFile());
             
             if(timeLimit.compareTo(machineTime) <= 0){
             
@@ -493,22 +493,22 @@ public class Game{
             throw new Exception("Ill given source position.");
         }
         
-        int sourceSelectedFile = 0;
-        
-        if(param[0].charAt(0) < 'a' || param[0].charAt(0) > 'h'){
-        
-            throw new Exception("Source file is out of range.");
-        }
-        
-        sourceSelectedFile = (int)param[0].charAt(0);
         int sourceSelectedRank = 0;
         
-        if(param[0].charAt(1) < 1 || param[0].charAt(1) > 8){
+        if(param[0].charAt(0) < 0 || param[0].charAt(0) > 7){
         
             throw new Exception("Source rank is out of range.");
         }
         
-        sourceSelectedRank = (int)param[0].charAt(1);
+        sourceSelectedRank = (int)param[0].charAt(0);
+        int sourceSelectedFile = 0;
+        
+        if(param[0].charAt(1) < 1 || param[0].charAt(1) > 7){
+        
+            throw new Exception("Source file is out of range.");
+        }
+        
+        sourceSelectedFile = (int)param[0].charAt(1);
         
         if(humanIsInCheck && gameBoard[sourceSelectedRank][sourceSelectedFile] != 11){
         
@@ -523,41 +523,41 @@ public class Game{
             throw new Exception("Ill given target position.");
         }
         
-        int targetSelectedFile = 0;
+        int targetSelectedRank = 0;
         
-        if(param[1].charAt(0) < 'a' || param[1].charAt(0) > 'h'){
+        if(param[1].charAt(0) < '0' || param[1].charAt(0) > '7'){
         
-            throw new Exception("Targer file is out of range.");
+            throw new Exception("Targer rank is out of range.");
         }
         
-        targetSelectedFile = (int)param[1].charAt(0);
-        int targetSelectedRank = 0;
+        targetSelectedRank = (int)param[1].charAt(0);
+        int targetSelectedFile = 0;
         
         if(param[1].charAt(1) < 1 || param[1].charAt(1) > 8){
         
-            throw new Exception("Target rank is out of range.");
+            throw new Exception("Target file is out of range.");
         }
         
-        targetSelectedRank = (int)param[0].charAt(1);
+        targetSelectedFile = (int)param[0].charAt(1);
         
         if(!(selectedPiece.generateSteps(gameBoard).contains(
-                new Pair(targetSelectedFile, targetSelectedRank)))){
+                new Pair(targetSelectedRank, targetSelectedFile)))){
         
             throw new Exception("Illegal selected step by chosen piece.");
         }
         
         // in case of hit as well
 
-        selectedPiece.setFile(targetSelectedFile);
         selectedPiece.setRank(targetSelectedRank);
+        selectedPiece.setFile(targetSelectedFile);
 
-        gameBoard[targetSelectedFile][targetSelectedRank] = 
-            gameBoard[sourceSelectedFile][sourceSelectedRank];
+        gameBoard[targetSelectedRank][targetSelectedFile] = 
+            gameBoard[sourceSelectedRank][sourceSelectedFile];
 
-        sourceStepHistory.add(new Step(gameBoard[sourceSelectedFile][sourceSelectedRank],
-        sourceSelectedFile, sourceSelectedRank, 0.0,
+        sourceStepHistory.add(new Step(gameBoard[sourceSelectedRank][sourceSelectedFile],
+        sourceSelectedRank, sourceSelectedFile, 0.0,
             0, 0.0));
-        gameBoard[sourceSelectedFile][sourceSelectedRank] = -1;
+        gameBoard[sourceSelectedRank][sourceSelectedFile] = -1;
 
         Step selectedStep;
         
@@ -574,8 +574,8 @@ public class Game{
 
                 selectedStep = stepSequences.getByKey(levelKeys.get(i));
 
-                if(selectedStep.getFile() == targetSelectedFile 
-                        && selectedStep.getRank() == targetSelectedRank){
+                if(selectedStep.getRank() == targetSelectedRank 
+                        && selectedStep.getFile() == targetSelectedFile){
 
                     break;
                 }
@@ -593,8 +593,8 @@ public class Game{
         }
         else{
             
-            selectedStep = new Step(gameBoard[targetSelectedFile][targetSelectedRank], 
-                    targetSelectedFile, targetSelectedRank, selectedPiece.getValue(), 
+            selectedStep = new Step(gameBoard[targetSelectedRank][targetSelectedFile], 
+                    targetSelectedRank, targetSelectedFile, selectedPiece.getValue(), 
                     0, selectedPiece.getValue());
             
             stepSequences.addOne(new GenStepKey("a"), new GenStepKey("a"), selectedStep);
@@ -621,7 +621,7 @@ public class Game{
 
             step = stepSequences.getByKey(levelKeys.get(i));
 
-            if(gameBoard[step.getFile()][step.getRank()] == 11){
+            if(gameBoard[step.getRank()][step.getFile()] == 11){
 
                 // machine king is in check
                 humanIsInCheck = true;

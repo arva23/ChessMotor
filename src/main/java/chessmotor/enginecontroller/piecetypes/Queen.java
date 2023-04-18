@@ -10,9 +10,9 @@ public class Queen extends GenPiece{
         super();
     }
     
-    public Queen(boolean isWhite, double value, int file, int rank){
+    public Queen(boolean isWhite, double value, int rank, int file){
     
-        super(isWhite ? "whitequeen" : "blackquen", value, file, rank);
+        super(isWhite ? "whitequeen" : "blackquen", value, rank, file);
     }
 
     @Override
@@ -23,150 +23,150 @@ public class Queen extends GenPiece{
         int lowerBound = 16;
         int upperBound = 32;
         
-        if(gameBoard[file][rank] >= 16){
+        if(gameBoard[rank][file] >= 16){
         
             lowerBound = 0;
             upperBound = 16;
         }
         
         // right
-        int sFile = file;
         int sRank = rank + 1;
+        int sFile = file;
+
+        while(sRank < 8 && gameBoard[sRank][sFile] == -1){
         
-        while(sRank < 8 && gameBoard[sFile][sRank] == -1){
-        
-            steps.add(new Pair(sFile, sRank));
+            steps.add(new Pair(sRank, sFile));
             ++sRank;
         }
         
         if(sFile < 8 
-                && (gameBoard[sFile][sRank] >= lowerBound 
-                && gameBoard[sFile][sRank] < upperBound)){
+                && (gameBoard[sRank][sFile] >= lowerBound 
+                && gameBoard[sRank][sFile] < upperBound)){
         
-            steps.add(new Pair(sFile, sRank));
+            steps.add(new Pair(sRank, sFile));
         }
         
         // up right
-        sFile = file + 1;
         sRank = rank + 1;
+        sFile = file + 1;
         
-        while(sFile < 8 && sRank < 8 && gameBoard[sFile][sRank] == -1){
+        while(sRank < 8 && sFile < 8 && gameBoard[sRank][sFile] == -1){
         
-            steps.add(new Pair(sFile, sRank));
-            ++sFile;
+            steps.add(new Pair(sRank, sFile));
             ++sRank;
+            ++sFile;
         }
         
-        if(sFile < 8 && sRank < 8 
-                && (gameBoard[sFile][sRank] >= lowerBound 
-                && gameBoard[sFile][sRank] < upperBound)){
+        if(sRank < 8 && sFile < 8 
+                && (gameBoard[sRank][sFile] >= lowerBound 
+                && gameBoard[sRank][sFile] < upperBound)){
         
-            steps.add(new Pair(sFile, sRank));
+            steps.add(new Pair(sRank, sFile));
         }
         
         // up
-        sFile = file + 1;
         sRank = rank;
+        sFile = file + 1;
         
-        while(sFile < 8 && gameBoard[sFile][sRank] == -1){
+        while(sFile < 8 && gameBoard[sRank][sFile] == -1){
         
-            steps.add(new Pair(sFile, sRank));
+            steps.add(new Pair(sRank, sFile));
             ++sFile;
         }
         
         if(sFile < 8 
-                && (gameBoard[sFile][sRank] >= lowerBound 
-                && gameBoard[sFile][sRank] < upperBound)){
+                && (gameBoard[sRank][sFile] >= lowerBound 
+                && gameBoard[sRank][sFile] < upperBound)){
         
-            steps.add(new Pair(sFile, sRank));
+            steps.add(new Pair(sRank, sFile));
         }
         
         // up left
-        sFile = file + 1;
         sRank = rank - 1;
+        sFile = file + 1;
         
-        while(sFile < 8 && sRank >= 0 && gameBoard[sFile][sRank] == -1){
+        while(sRank >= 0 && sFile < 8 && gameBoard[sRank][sFile] == -1){
         
-            steps.add(new Pair(sFile, sRank));
+            steps.add(new Pair(sRank, sFile));
+            --sRank;            
             ++sFile;
-            --sRank;
         }
         
-        if(sFile < 8 && sRank >= 0 
-                && (gameBoard[sFile][sRank] >= lowerBound 
-                && gameBoard[sFile][sRank] < upperBound)){
+        if(sRank >= 0 && sFile < 8 
+                && (gameBoard[sRank][sFile] >= lowerBound 
+                && gameBoard[sRank][sFile] < upperBound)){
         
-            steps.add(new Pair(sFile, sRank));
+            steps.add(new Pair(sRank, sFile));
         }
         
         // left
-        sFile = file;
         sRank = rank - 1;
+        sFile = file;
         
-        while(sRank >= 0 && gameBoard[sFile][sRank] == -1){
+        while(sRank >= 0 && gameBoard[sRank][sFile] == -1){
         
-            steps.add(new Pair(sFile, sRank));
+            steps.add(new Pair(sRank, sFile));
             --sRank;
         }
         
         if(sRank >= 0 
-                && (gameBoard[sFile][sRank] >= lowerBound 
-                && gameBoard[sFile][sRank] < upperBound)){
+                && (gameBoard[sRank][sFile] >= lowerBound 
+                && gameBoard[sRank][sFile] < upperBound)){
         
-            steps.add(new Pair(sFile, sRank));
+            steps.add(new Pair(sRank, sFile));
         }
         
         // down left
-        sFile = file - 1;
         sRank = rank - 1;
+        sFile = file - 1;
         
-        while(sFile >= 0 && sRank >= 0 && gameBoard[sFile][sRank] == -1){
+        while(sRank >= 0 && sFile >= 0 && gameBoard[sRank][sFile] == -1){
         
-            steps.add(new Pair(sFile, sRank));
-            --sFile;
+            steps.add(new Pair(sRank, sFile));
             --sRank;
+            --sFile;
         }
         
-        if(sFile >= 0 && sRank >= 0 
-                && (gameBoard[sFile][sRank] >= lowerBound 
-                && gameBoard[sFile][sRank] < upperBound)){
+        if(sRank >= 0 && sFile >= 0 
+                && (gameBoard[sRank][sFile] >= lowerBound 
+                && gameBoard[sRank][sFile] < upperBound)){
         
-            steps.add(new Pair(sFile, sRank));
+            steps.add(new Pair(sRank, sFile));
         }
         
         // down
-        sFile = file - 1;
         sRank = rank;
+        sFile = file - 1;
         
-        while(sFile >= 0 && gameBoard[sFile][sRank] == -1){
+        while(sFile >= 0 && gameBoard[sRank][sFile] == -1){
         
-            steps.add(new Pair(sFile, sRank));
+            steps.add(new Pair(sRank, sFile));
             --sFile;
         }
         
         if(sFile >= 0 
-                && (gameBoard[sFile][sRank] >= lowerBound 
-                && gameBoard[sFile][sRank] < upperBound)){
+                && (gameBoard[sRank][sFile] >= lowerBound 
+                && gameBoard[sRank][sFile] < upperBound)){
         
-            steps.add(new Pair(sFile, sRank));
+            steps.add(new Pair(sRank, sFile));
         }
         
         // down right
-        sFile = file - 1;
         sRank = rank + 1;
+        sFile = file - 1;
         
-        while(sFile >= 0 && sRank < 8 && gameBoard[sFile][sRank] == -1){
+        while(sRank < 8 && sFile >= 0 && gameBoard[sRank][sFile] == -1){
         
-            steps.add(new Pair(sFile, sRank));
-            --sFile;
+            steps.add(new Pair(sRank, sFile));
             ++sRank;
+            --sFile;
         }
         
-        if(sFile >= 0 && sRank < 8 
-                && (gameBoard[sFile][sRank] >= lowerBound 
-                && gameBoard[sFile][sRank] < upperBound)){
+        if(sRank < 8 && sFile >= 0
+                && (gameBoard[sRank][sFile] >= lowerBound 
+                && gameBoard[sRank][sFile] < upperBound)){
         
-            steps.add(new Pair(sFile, sRank));
+            steps.add(new Pair(sRank, sFile));
         }
         
         return steps;

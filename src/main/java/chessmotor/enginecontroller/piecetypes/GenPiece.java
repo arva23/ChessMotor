@@ -11,19 +11,19 @@ public class GenPiece {
     
     private String typeName;
     private double value;// penalty value for machine
-    protected int file;
     protected int rank;
+    protected int file;
     
     public GenPiece(){
     
     }
     
-    public GenPiece(String typeName, double value, int file, int rank) {
+    public GenPiece(String typeName, double value, int rank, int file) {
     
         this.typeName = typeName;
         this.value = value;
-        this.file = file;
         this.rank = rank;
+        this.file = file;
     }
     
     public ArrayList<Pair> generateSteps(int gameBoard[][]){
@@ -54,24 +54,24 @@ public class GenPiece {
         return value;
     }
     
-    public int getFile(){
-    
-        return file;
-    }
-    
     public int getRank(){
     
         return rank;
     }
     
-    public void setFile(int file){
+    public int getFile(){
     
-        this.file = file;
+        return file;
     }
     
     public void setRank(int rank){
     
         this.rank = rank;
+    }
+    
+    public void setFile(int file){
+    
+        this.file = file;
     }
     
     public String getTypeName(){

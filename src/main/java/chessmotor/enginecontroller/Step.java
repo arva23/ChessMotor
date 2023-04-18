@@ -3,8 +3,8 @@ package chessmotor.enginecontroller;
 public class Step{
 
     private int pieceId;
-    private int file;
     private int rank;
+    private int file;
     private double value;
     // counting changes in tendency for certain number of steps
     private int cumulativeChangeCount;
@@ -13,24 +13,24 @@ public class Step{
     public Step(){
 
         pieceId = -1;
-        file = -1;
         rank = -1;
+        file = -1;
     }
 
-    public Step(int pieceId, int file, int rank, double value, 
+    public Step(int pieceId, int rank, int file, double value, 
             int cumulativeChangeCount, double cumulativeValue) throws Exception{
 
         this.pieceId = pieceId;
 
-        if(file < 0 || 7 < file)
-            throw new Exception("File is out of range.");
-
-        if(rank < 0 && 7 < rank)
+        if(rank < 0 || 7 < rank)
             throw new Exception("Rank is out of range.");
 
-        this.file = file;
-        
+        if(file < 0 && 7 < file)
+            throw new Exception("File is out of range.");
+
         this.rank = rank;
+        
+        this.file = file;
         
         this.cumulativeChangeCount = cumulativeChangeCount;
 

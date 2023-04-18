@@ -144,15 +144,16 @@ public class GameBoard implements IGameBoard {
         board = new UnitSquare[8][8];
         int squareTypeId = 0;
         
-        for(int rank = 0; rank < 8; ++rank){
+        for(int rankInd = 0; rankInd < 8; ++rankInd){
         
-            for(int file = 0; file < 8; ++file){
+            for(int fileInd = 0; fileInd < 8; ++fileInd){
             
-                squareTypeId = file % 2 + rank % 2;
-                board[rank][file] = new UnitSquare(
-                        file * squareHeight, rank * squareWidth, 
+                squareTypeId = fileInd % 2 + rankInd % 2;
+                
+                board[rankInd][fileInd] = new UnitSquare(
+                        rankInd * squareHeight, fileInd * squareWidth, 
                         squareWidth, squareHeight, squareBgs[squareTypeId],
-                        pieceTypes.get(boardSquareStatus[rank][file]));
+                        pieceTypes.get(boardSquareStatus[rankInd][fileInd]));
             }
         }
         

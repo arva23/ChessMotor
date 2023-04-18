@@ -279,7 +279,7 @@ public class StepDecisionTree implements Runnable{
             keyHistoryStack.add("a");
             
             // modify game table status
-            gameBoardRef[step.getFile()][step.getRank()] = step.getPieceId();
+            gameBoardRef[step.getRank()][step.getFile()] = step.getPieceId();
         }
     }
     
@@ -367,7 +367,7 @@ public class StepDecisionTree implements Runnable{
                 for(int stepI = 0; stepI < sizeOfGeneratedSteps; ++stepI){
                 
                     generatedStep = generatedSteps.get(stepI);
-                    pieceInd = gameBoardRef[generatedStep.file][generatedStep.rank];
+                    pieceInd = gameBoardRef[generatedStep.rank][generatedStep.file];
 
                     // ordered insertion is quasi nlogn
 
@@ -391,8 +391,8 @@ public class StepDecisionTree implements Runnable{
                             try{
                             
                                 allocatedGeneratedStep = new Step(
-                                step.getPieceId(), generatedStep.file, 
-                                generatedStep.rank, piecesRef[pieceInd].getValue(),
+                                step.getPieceId(), generatedStep.rank, 
+                                generatedStep.file, piecesRef[pieceInd].getValue(),
                                 cumulativeNegativeChange,  
                                 cumulativeValue + piecesRef[pieceInd].getValue());
                             
@@ -424,8 +424,8 @@ public class StepDecisionTree implements Runnable{
                         try{
                         
                             allocatedGeneratedStep = new Step(
-                            step.getPieceId(), generatedStep.file,
-                            generatedStep.rank, 0, 
+                            step.getPieceId(), generatedStep.rank,
+                            generatedStep.file, 0, 
                             cumulativeNegativeChange, 
                             cumulativeValue + 0.0);
 
@@ -479,9 +479,9 @@ public class StepDecisionTree implements Runnable{
                 keyHistoryStack.remove(lvl);
                 
                 // suboptimal, simplification is needed
-                gameBoardRef[stepHistoryStack.get(lvl - 1).getFile()][stepHistoryStack.get(lvl - 1).getRank()] =
-                        gameBoardRef[step.getFile()][step.getRank()];
-                gameBoardRef[step.getFile()][step.getRank()] = gameBoardHistory.get(lvl);
+                gameBoardRef[stepHistoryStack.get(lvl - 1).getRank()][stepHistoryStack.get(lvl - 1).getFile()] =
+                        gameBoardRef[step.getRank()][step.getFile()];
+                gameBoardRef[step.getRank()][step.getFile()] = gameBoardHistory.get(lvl);
                 
                 gameBoardHistory.remove(lvl);
                 generatedLevelNodeSteps.remove(lvl);
@@ -495,7 +495,7 @@ public class StepDecisionTree implements Runnable{
                 // savign previous level status
                 stepHistoryStack.add(selectedStep);
                 keyHistoryStack.add(key);
-                gameBoardHistory.add(gameBoardRef[selectedStep.getFile()][selectedStep.getRank()]);
+                gameBoardHistory.add(gameBoardRef[selectedStep.getRank()][selectedStep.getFile()]);
                 
                 // TASK) update computation tree
                 // insert step into decision tree
@@ -513,8 +513,8 @@ public class StepDecisionTree implements Runnable{
                 // modify game table status
                 // in case of piece hit by an human  piece, access of to that 
                 //  piece is going to be forbidden by the removal its id from the board
-                gameBoardRef[selectedStep.getFile()][selectedStep.getRank()] = step.getPieceId();
-                gameBoardRef[step.getFile()][step.getRank()] = -1;// leave previous position free
+                gameBoardRef[selectedStep.getRank()][selectedStep.getFile()] = step.getPieceId();
+                gameBoardRef[step.getRank()][step.getFile()] = -1;// leave previous position free
                 
                 generatedLevelNodeSteps.get(lvl).remove(0);
                 
@@ -579,7 +579,7 @@ public class StepDecisionTree implements Runnable{
                 // conditioning game table according to selected step sequence
                 for(int j = 0; j < sizeOfTakenSteps; ++j){
 
-                    gameBoardCopy[step.getFile()][step.getRank()] = 
+                    gameBoardCopy[step.getRank()][step.getFile()] = 
                         gameBoardHistoryContinuation.get(i).get(j);
                 }
 
@@ -600,7 +600,7 @@ public class StepDecisionTree implements Runnable{
                 for(int stepI = 0; stepI < sizeOfGeneratedSteps; ++stepI){
 
                     generatedStep = generatedSteps.get(stepI);
-                    pieceInd = gameBoardCopy[generatedStep.file][generatedStep.rank];
+                    pieceInd = gameBoardCopy[generatedStep.rank][generatedStep.file];
 
                     if(pieceInd != -1){
 
@@ -615,8 +615,8 @@ public class StepDecisionTree implements Runnable{
                             try{
 
                                 allocatedGeneratedStep = new Step(
-                                step.getPieceId(), generatedStep.file, 
-                                generatedStep.rank, piecesRef[pieceInd].getValue(),
+                                step.getPieceId(), generatedStep.rank, 
+                                generatedStep.file, piecesRef[pieceInd].getValue(),
                                 cumulativeNegativeChange,  
                                 cumulativeValue + piecesRef[pieceInd].getValue());
 
@@ -635,8 +635,8 @@ public class StepDecisionTree implements Runnable{
                         try{
 
                             allocatedGeneratedStep = new Step(
-                            step.getPieceId(), generatedStep.file,
-                            generatedStep.rank, piecesRef[pieceInd].getValue(), 
+                            step.getPieceId(), generatedStep.rank,
+                            generatedStep.file, piecesRef[pieceInd].getValue(), 
                             cumulativeNegativeChange, 
                             cumulativeValue + 0.0);
 
@@ -682,7 +682,7 @@ public class StepDecisionTree implements Runnable{
                         recentGameBoardHistoryContinuation.add(
                         gameBoardHistoryContinuation.get(i));
                         recentGameBoardHistoryContinuation.get(i).add(
-                            gameBoardCopy[selectedStep.getFile()][selectedStep.getRank()]);
+                            gameBoardCopy[selectedStep.getRank()][selectedStep.getFile()]);
                     }
                 }
                 catch(Exception e){

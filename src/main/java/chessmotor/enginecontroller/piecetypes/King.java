@@ -10,9 +10,9 @@ public class King extends GenPiece{
         super();
     }
     
-    public King(boolean isWhite, double value, int file, int rank){
+    public King(boolean isWhite, double value, int rank, int file){
     
-        super(isWhite ? "whiteking" : "blackking", value, file, rank);
+        super(isWhite ? "whiteking" : "blackking", value, rank, file);
     }
     
     @Override
@@ -23,7 +23,7 @@ public class King extends GenPiece{
         int lowerBound = 16;
         int upperBound = 32;
         
-        if(gameBoard[file][rank] >= 16){
+        if(gameBoard[rank][file] >= 16){
         
             lowerBound = 0;
             upperBound = 16;
@@ -31,74 +31,74 @@ public class King extends GenPiece{
         
         // right
         if(rank + 1 < 8 
-                && (gameBoard[file][rank + 1] == -1 
-                || gameBoard[file][rank + 1] >= lowerBound 
-                && gameBoard[file][rank + 1] < upperBound)){
+                && (gameBoard[rank + 1][file] == -1 
+                || gameBoard[rank + 1][file] >= lowerBound 
+                && gameBoard[rank + 1][file] < upperBound)){
         
-            steps.add(new Pair(file, rank + 1));
+            steps.add(new Pair(rank + 1, file));
         }
         
         // up right
-        if(file + 1 < 8 && rank + 1 < 8 
-                && (gameBoard[file + 1][rank + 1] == -1 
-                || gameBoard[file + 1][rank + 1] >= lowerBound 
-                && gameBoard[file + 1][rank + 1] < upperBound)){
+        if(rank + 1 < 8 && file + 1 < 8
+                && (gameBoard[rank + 1][file + 1] == -1 
+                || gameBoard[rank + 1][file + 1] >= lowerBound 
+                && gameBoard[rank + 1][file + 1] < upperBound)){
         
-            steps.add(new Pair(file + 1, rank + 1));
+            steps.add(new Pair(rank + 1, file + 1));
         }
         
         // up
         if(file + 1 < 8 
-                && (gameBoard[file + 1][rank] == -1 
-                || gameBoard[file + 1][rank] >= lowerBound 
-                && gameBoard[file + 1][rank] < upperBound)){
+                && (gameBoard[rank][file + 1] == -1 
+                || gameBoard[rank][file + 1] >= lowerBound 
+                && gameBoard[rank][file + 1] < upperBound)){
         
-            steps.add(new Pair(file + 1, rank));
+            steps.add(new Pair(rank, file + 1));
         }
         
         // up left
-        if(file + 1 < 8 && rank - 1 >= 0 
-                && (gameBoard[file + 1][rank - 1] == -1 
-                || gameBoard[file + 1][rank - 1] >= lowerBound 
-                && gameBoard[file + 1][rank - 1] < lowerBound)){
+        if(rank - 1 >= 0 && file + 1 < 8
+                && (gameBoard[rank - 1][file + 1] == -1 
+                || gameBoard[rank - 1][file + 1] >= lowerBound 
+                && gameBoard[rank - 1][file + 1] < lowerBound)){
         
-            steps.add(new Pair(file + 1, rank - 1));
+            steps.add(new Pair(rank - 1, file + 1));
         }
         
         // left
         if(rank - 1 >= 0 
-                && (gameBoard[file][rank - 1] == -1 
-                || gameBoard[file][rank - 1] >= lowerBound 
-                && gameBoard[file][rank - 1] < upperBound)){
+                && (gameBoard[rank - 1][file] == -1 
+                || gameBoard[rank - 1][file] >= lowerBound 
+                && gameBoard[rank - 1][file] < upperBound)){
         
-            steps.add(new Pair(file, rank - 1));
+            steps.add(new Pair(rank - 1, file));
         }
         
         // down left
-        if(file - 1 >= 0 && rank - 1 >= 0 
-                && (gameBoard[file - 1][rank - 1] == -1 
-                || gameBoard[file - 1][rank - 1] >= lowerBound 
-                && gameBoard[file - 1][rank - 1] < upperBound)){
+        if(rank - 1 >= 0 && file - 1 >= 0
+                && (gameBoard[rank - 1][file - 1] == -1 
+                || gameBoard[rank - 1][file - 1] >= lowerBound 
+                && gameBoard[rank - 1][file - 1] < upperBound)){
         
-            steps.add(new Pair(file - 1, rank - 1));
+            steps.add(new Pair(rank - 1, file - 1));
         }
         
         // down
         if(file - 1 >= 0 
-                && (gameBoard[file - 1][rank] == -1 
-                || gameBoard[file - 1][rank] >= lowerBound 
-                && gameBoard[file - 1][rank] < upperBound)){
+                && (gameBoard[rank][file - 1] == -1 
+                || gameBoard[rank][file - 1] >= lowerBound 
+                && gameBoard[rank][file - 1] < upperBound)){
         
-            steps.add(new Pair(file - 1, rank));
+            steps.add(new Pair(rank, file - 1));
         }
         
         // down right
-        if(file - 1 >= 0 && rank + 1 < 8 
-                && (gameBoard[file - 1][rank + 1] == -1 
-                || gameBoard[file - 1][rank + 1] >= lowerBound 
-                && gameBoard[file - 1][rank + 1] < upperBound)){
+        if(rank + 1 < 8 && file - 1 >= 0
+                && (gameBoard[rank + 1][file - 1] == -1 
+                || gameBoard[rank + 1][file - 1] >= lowerBound 
+                && gameBoard[rank + 1][file - 1] < upperBound)){
         
-            steps.add(new Pair(file - 1, rank + 1));
+            steps.add(new Pair(rank + 1, file - 1));
         }
         
         return steps;

@@ -53,13 +53,13 @@ public class PieceTests {
     
         // getValue getter method
         
-        // getFile getter method
-        
         // getRank getter method
         
-        // setFile setter method
+        // getFile getter method
         
         // setRank setter method
+        
+        // setFile setter method
         
     }
     
@@ -70,7 +70,7 @@ public class PieceTests {
    
         // Empty constructor
         
-        // Constructor with provided parameters of value, file and rank
+        // Constructor with provided parameters of value, rank and file
         
         // generateSteps method
         
@@ -84,7 +84,7 @@ public class PieceTests {
         
         // Empty constructor
         
-        // Constructor with provided parameters of value, file and rank
+        // Constructor with provided parameters of value, rank and file
         
         // generateSteps method
         
@@ -98,7 +98,7 @@ public class PieceTests {
     
         // Empty constructor
         
-        // Constructor with provided parameters of value, file and rank
+        // Constructor with provided parameters of value, rank and file
         
         // generateSteps method
         
@@ -112,7 +112,7 @@ public class PieceTests {
         
         // Empty constructor
         
-        // Constructor with provided parameters of value, file and rank
+        // Constructor with provided parameters of value, rank and file
         
         // generateSteps method
         
@@ -126,7 +126,7 @@ public class PieceTests {
         
         // Empty constructor
         
-        // Constructor with provided parameters of value, file and rank
+        // Constructor with provided parameters of value, rank and file
         
         // generateSteps method
         
@@ -140,7 +140,7 @@ public class PieceTests {
         
         // Empty constructor
         
-        // Constructor with provided parameters of value, file and rank
+        // Constructor with provided parameters of value, rank and file
         
         // generateSteps method
         

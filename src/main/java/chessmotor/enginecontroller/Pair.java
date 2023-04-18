@@ -3,18 +3,18 @@ package chessmotor.enginecontroller;
 // position pair type for squares
 public class Pair {
 
-    public int file;
     public int rank;
+    public int file;
     
     public Pair(){
     
-        file = 0;
         rank = 0;
+        file = 0;
     }
     
-    public Pair(int file, int rank){
+    public Pair(int rank, int file){
     
-        this.file = file;
         this.rank = rank;
+        this.file = file;
     }
 }
