@@ -85,37 +85,47 @@ public class GUIView implements IGameUI{
         int boardHeight = (int)((double)windowHeight * boardRatio);
         
         // default initialization of game board status
-        int[][] boardSquareStatus = new int[8][8];
+        String[][] boardSquareStatus = new String[8][8];
+        
+        String allyColor = "white";
+        String oppColor = "black";
+        
+        // board is rotated at game board
+        if(allyBegins){
+        
+            allyColor = "black";
+            oppColor = "white";
+        }
         
         for(int i = 0; i < 8; ++i){
 
-            boardSquareStatus[1][i] = i;
-            boardSquareStatus[6][i] = 16 + i;
+            boardSquareStatus[1][i] = allyColor + "pawn";
+            boardSquareStatus[6][i] = oppColor + "pawn";
         }
 
-        boardSquareStatus[0][0] = 8;
-        boardSquareStatus[0][1] = 9;
-        boardSquareStatus[0][2] = 10;
-        boardSquareStatus[0][3] = 11;
-        boardSquareStatus[0][4] = 12;
-        boardSquareStatus[0][5] = 13;
-        boardSquareStatus[0][6] = 14;
-        boardSquareStatus[0][7] = 15;
+        boardSquareStatus[0][0] = allyColor + "rook";
+        boardSquareStatus[0][1] = allyColor + "knight";
+        boardSquareStatus[0][2] = allyColor + "bishop";
+        boardSquareStatus[0][3] = allyColor + "king";
+        boardSquareStatus[0][4] = allyColor + "queen";
+        boardSquareStatus[0][5] = allyColor + "bishop";
+        boardSquareStatus[0][6] = allyColor + "knight";
+        boardSquareStatus[0][7] = allyColor + "rook";
 
-        boardSquareStatus[7][0] = 16 + 8;
-        boardSquareStatus[7][1] = 16 + 9;
-        boardSquareStatus[7][2] = 16 + 10;
-        boardSquareStatus[7][3] = 16 + 11;
-        boardSquareStatus[7][4] = 16 + 12;
-        boardSquareStatus[7][5] = 16 + 13;
-        boardSquareStatus[7][6] = 16 + 14;
-        boardSquareStatus[7][7] = 16 + 15;
+        boardSquareStatus[7][0] = oppColor + "rook";
+        boardSquareStatus[7][1] = oppColor + "knight";
+        boardSquareStatus[7][2] = oppColor + "bishop";
+        boardSquareStatus[7][3] = oppColor + "king";
+        boardSquareStatus[7][4] = oppColor + "queen";
+        boardSquareStatus[7][5] = oppColor + "bishop";
+        boardSquareStatus[7][6] = oppColor + "knight";
+        boardSquareStatus[7][7] = oppColor + "rook";
         
         for(int rankInd = 2; rankInd < 5; ++rankInd){
         
             for(int fileInd = 0; fileInd < 8; ++fileInd){
             
-                boardSquareStatus[rankInd][fileInd] = -1;
+                boardSquareStatus[rankInd][fileInd] = "empty";
             }
         }
         
