@@ -173,7 +173,7 @@ public class GUIView implements IGameUI{
     
     
     @Override
-    public void updateGameStatus(int gameStatus) {
+    public void updateGameStatus(String gameStatus) {
         
         // todo
     }

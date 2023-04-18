@@ -52,7 +52,7 @@ public class Game{
     private boolean allyIsInCheck;
     private boolean opponentIsInCheck;
     private boolean playGame;
-    private int gameStatus;
+    private String gameStatus;
     // active in game piece container
     private GenPiece pieces[];
     // the actual game board to operate with
@@ -93,7 +93,7 @@ public class Game{
             allyIsInCheck = false;
             opponentIsInCheck = false;
             playGame = true;
-            gameStatus = 0;
+            gameStatus = "OK";
 
             pieces = new GenPiece[32];
             gameBoard = new int[8][8];
@@ -263,7 +263,7 @@ public class Game{
             if(timeLimit.compareTo(allyTime) <= 0){
             
                 playGame = false;
-                gameStatus = 1;
+                gameStatus = "WIN";
                 
                 gameUI.updateGameStatus(gameStatus);
             }
@@ -287,7 +287,7 @@ public class Game{
             if(timeLimit.compareTo(opponentTime) <= 0){
             
                 playGame = false;
-                gameStatus = -1;
+                gameStatus = "LOSE";
                 
                 gameUI.updateGameStatus(gameStatus);
             }
@@ -313,7 +313,7 @@ public class Game{
             if(timeLimit.compareTo(allyTime) <= 0){
             
                 playGame = false;
-                gameStatus = 1;
+                gameStatus = "WIN";
                 gameUI.updateGameStatus(gameStatus);
             }
             
@@ -338,7 +338,7 @@ public class Game{
             if(timeLimit.compareTo(opponentTime) <= 0){
             
                 playGame = false;
-                gameStatus = -1;
+                gameStatus = "LOSE";
                 
                 gameUI.updateGameStatus(gameStatus);
             }
@@ -364,7 +364,7 @@ public class Game{
             if(timeLimit.compareTo(allyTime) <= 0){
             
                 playGame = false;
-                gameStatus = 1;
+                gameStatus = "WIN";
                 
                 gameUI.updateGameStatus(gameStatus);
             }
@@ -390,7 +390,7 @@ public class Game{
             if(timeLimit.compareTo(opponentTime) <= 0){
             
                 playGame = false;
-                gameStatus = -1;
+                gameStatus = "LOSE";
                 gameUI.updateGameStatus(gameStatus);
                 break;
             }
@@ -416,7 +416,7 @@ public class Game{
             if(timeLimit.compareTo(allyTime) <= 0){
             
                 playGame = false;
-                gameStatus = 1;
+                gameStatus = "WIN";
                 gameUI.updateGameStatus(gameStatus);
                 break;
             }
@@ -424,15 +424,13 @@ public class Game{
             gameUI.switchPlayerClock();
         }
 
-        if(gameStatus < 0){
+        if(gameStatus.compareTo("WIN") == 0){
         
-            System.out.println("Ally won the game.");
             
             // print more information (especially score progressions)
         }
-        else if(gameStatus > 0){
+        else if(gameStatus.compareTo("LOSE") == 0){
         
-            System.out.println("Opponent won the game.");
             
             // print more information (especially score progressions)
         }
@@ -475,7 +473,7 @@ public class Game{
         if(opponentIsInCheck && action.compareTo("giveup") == 0){
         
             playGame = false;
-            gameStatus = -1;
+            gameStatus = "LOSE";
             
             gameUI.updateGameStatus(gameStatus);
             return;
@@ -631,7 +629,7 @@ public class Game{
         if(opponentIsInCheck && pieces[11].generateSteps(gameBoard).isEmpty()){
         
             playGame = false;
-            gameStatus = -1;
+            gameStatus = "LOSE";
             
             gameUI.updateGameStatus(gameStatus);
         }        
@@ -650,7 +648,7 @@ public class Game{
         if(levelKeys.size() == 1){
         
             playGame = false;
-            gameStatus = 1;
+            gameStatus = "WIN";
             
             gameUI.updateGameStatus(gameStatus);
             return;
@@ -686,7 +684,7 @@ public class Game{
             if(!foundNextStep){
             
                 playGame = false;
-                gameStatus = 1;
+                gameStatus = "WIN";
                 
                 gameUI.updateGameStatus(gameStatus);
                 return;

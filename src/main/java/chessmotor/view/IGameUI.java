@@ -12,7 +12,7 @@ public interface IGameUI {
     
     public void printErr(String errMsg);
     
-    public void updateGameStatus(int gameStatus);
+    public void updateGameStatus(String gameStatus);
     
     public void switchPlayerClock();
     
