@@ -162,6 +162,8 @@ public class GameBoard implements IGameBoard {
     
     @Override
     public JPanel getMainPanel(){
+    
+        return eventHandlerPanel;
     }
     
     @Override

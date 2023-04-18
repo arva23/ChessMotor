@@ -150,6 +150,7 @@ public class GUIView implements IGameUI{
         int statusMgrHeight = boardHeight - playerClocksHeight;
         gameStatusMgr = new GameStatusMgr(statusMgrX, statusMgrY,
                 statusMgrWidth, statusMgrHeight);
+        elementContainer.add(gameStatusMgr.getMainPanel());
     }
     
     @Override
