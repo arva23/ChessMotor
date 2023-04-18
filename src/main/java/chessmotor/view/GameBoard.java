@@ -26,10 +26,12 @@ public class GameBoard implements IGameBoard {
     // piece types
     private HashMap<String, ImageIcon> pieceTypes;
     
-    private static int squareWidth;
-    private static int squareHeight;
-    private static int boardWidth;
-    private static int boardHeight;
+    private int squareWidth;
+    private int squareHeight;
+    private int boardX;
+    private int boardY;
+    private int boardWidth;
+    private int boardHeight;
     
     private UnitSquare[][] board;// strictly 8 x 8 board
     // boardStatus is assigned at game controller object temporarily
@@ -42,9 +44,9 @@ public class GameBoard implements IGameBoard {
     private JPanel eventHandlerPanel;
     
     
-    public GameBoard(int x, int y, int widht, int height, 
+    public GameBoard(int x, int y, int width, int height, 
             Condition playerWaitCond, Condition playerActionCond,
-            boolean allyComes, String[][] boardSquareStatus){
+            boolean allyComes, String[][] boardSquareStatus) throws Exception{
     
         try {
             
@@ -90,8 +92,37 @@ public class GameBoard implements IGameBoard {
             System.out.println("Error at loading gameboard textures.");
         }    
         
-        eventHandlerPanel.setBounds(x, y, widht, height);
+        if(width < 0 || width > 1366){
         
+            throw new Exception("Width parameter is out range.");
+        }
+        
+        this.boardWidth = width;
+        
+        if(height < 0 || height > 768){
+        
+            throw new Exception("Height parameter is out of range.");
+        }
+        
+        this.boardHeight = height;
+        
+        if(x < 0 || x > 1366 - width){
+        
+            throw new Exception("X coordinate is out of range.");
+        }
+        
+        this.boardX = x;
+        
+        if(y < 0 || y > 768 - height){
+        
+            throw new Exception("Y coordinate is out of range.");
+        }
+        
+        this.boardY = y;
+        
+        eventHandlerPanel = new JPanel();
+        eventHandlerPanel.setBounds(x, y, width, height);
+
         this.playerWaitCond = playerWaitCond;
         this.playerActionCond = playerActionCond;
         
