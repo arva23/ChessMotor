@@ -1,8 +1,13 @@
 package chessmotor.view;
 
+import javax.swing.JPanel;
+
 public interface IGameBoard {
     
-    public JPanel getGAmeTablePanel();
+    public JPanel getMainPanel();
+
+    public void setGameBoard(String[][] boardSquareStatus, boolean allyBegins, 
+            boolean allyComes);
     
     public void alternateActivePlayer();
     
