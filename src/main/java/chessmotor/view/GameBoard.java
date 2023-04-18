@@ -21,6 +21,21 @@ public class GameBoard implements IGameBoard {
     // piece types
     private HashMap<String, ImageIcon> pieceTypes;
     
+    private static int squareWidth;
+    private static int squareHeight;
+    private static int boardWidth;
+    private static int boardHeight;
+    
+    private UnitSquare[][] board;// strictly 8 x 8 board
+    // boardStatus is assigned at game controller object temporarily
+     
+    private Condition playerWaitCond;
+    private Condition playerActionCond;
+    
+    private boolean allyComes;
+    private boolean allyBegins;
+    private JPanel eventHandlerPanel;
+    
     
     public GameBoard(int x, int y, int widht, int height, 
             Condition playerWaitCond, Condition playerActionCond,
@@ -70,6 +85,37 @@ public class GameBoard implements IGameBoard {
             System.out.println("Error at loading gameboard textures.");
         }    
         
+        eventHandlerPanel.setBounds(x, y, widht, height);
+        
+        this.playerWaitCond = playerWaitCond;
+        this.playerActionCond = playerActionCond;
+        
+        this.allyComes = allyComes;
+        this.allyBegins = allyComes;
+        
+        if(!allyComes){
+        
+            squareBgs[0] = squareBgs[1];
+            squareBgs[1] = squareBgs[2];
+            squareBgs[2] = squareBgs[0];
+        }
+        
+        board = new UnitSquare[8][8];
+        int squareTypeId = 0;
+        
+        for(int rank = 0; rank < 8; ++rank){
+        
+            for(int file = 0; file < 8; ++file){
+            
+                squareTypeId = file % 2 + rank % 2;
+                board[rank][file] = new UnitSquare(
+                        file * squareHeight, rank * squareWidth, 
+                        squareWidth, squareHeight, squareBgs[squareTypeId],
+                        pieceTypes.get(boardSquareStatus[rank][file]));
+            }
+        }
+        
+        eventHandlerPanel = new JPanel(/*todo position and dimensions*/);
     }
     
     @Override
