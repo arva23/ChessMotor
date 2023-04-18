@@ -7,9 +7,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.EventListener;
 import java.util.HashMap;
+import java.util.concurrent.locks.Condition;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 
 // the squares are managed by pooling the events, only one event is by event 
 //  types to avoid overwhelmingly loaded listener cases
