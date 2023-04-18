@@ -45,6 +45,9 @@ public class GameBoard implements IGameBoard {
     private boolean allyBegins;
     private JPanel eventHandlerPanel;
     
+    private int recentRank;
+    private int recentFile;
+    private UnitSquare recentSquare;
     
     public GameBoard(int x, int y, int width, int height, 
             Condition playerWaitCond, Condition playerActionCond,
@@ -201,16 +204,19 @@ public class GameBoard implements IGameBoard {
     @Override
     public void alternateActivePlayer(){
     
+        allyComes = !allyComes;
     }
     
     @Override
     public String getPlayerActionResult(){
     
+        return "" + recentRank + recentFile;
     }
     
     @Override
     public UnitSquare getPlayerActionSquare(){
     
+        return recentSquare;
     }
     
     @Override
