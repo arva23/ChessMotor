@@ -37,20 +37,20 @@ public class Game{
     // initialization of game is required
     private boolean initialized;
     // which player begins with the white pieces
-    private boolean allyBegins;
+    private boolean machineBegins;
     
-    private double allyScore;
-    private double opponentScore;
+    private double machineScore;
+    private double humanScore;
     
     private Duration timeLimit;
-    private Duration allyTime;
-    private Duration opponentTime;
+    private Duration machineTime;
+    private Duration humanTime;
 
-    private LocalDateTime intervalStartAlly;
-    private LocalDateTime intervalStartOpponent;
+    private LocalDateTime intervalStartMachine;
+    private LocalDateTime intervalStartHuman;
     
-    private boolean allyIsInCheck;
-    private boolean opponentIsInCheck;
+    private boolean machineIsInCheck;
+    private boolean humanIsInCheck;
     private boolean playGame;
     private String gameStatus;
     // active in game piece container
@@ -70,7 +70,7 @@ public class Game{
     }
     
     
-    public Game(IGameUI gameUI, boolean allyBegins, int stepsToLookAhead, double minConvThreshold, 
+    public Game(IGameUI gameUI, boolean machineBegins, int stepsToLookAhead, double minConvThreshold, 
             int cumulativeNegativeChangeThreshold, Duration timeLimit, long memLimit) {
     
         try{
@@ -86,12 +86,12 @@ public class Game{
 
             initialized = true;
 
-            this.allyBegins = allyBegins;
+            this.machineBegins = machineBegins;
 
-            allyScore = 0.0;
-            opponentScore = 0.0;
-            allyIsInCheck = false;
-            opponentIsInCheck = false;
+            machineScore = 0.0;
+            humanScore = 0.0;
+            machineIsInCheck = false;
+            humanIsInCheck = false;
             playGame = true;
             gameStatus = "OK";
 
@@ -105,31 +105,31 @@ public class Game{
                 throw new Exception("Memory limit is not positive.");
             }
             
-            stepSequences = new StepDecisionTree(allyBegins, pieces,
+            stepSequences = new StepDecisionTree(machineBegins, pieces,
                 targetStepHistory, gameBoard, stepsToLookAhead, 
                 cumulativeNegativeChangeThreshold, minConvThreshold, 0, 0, memLimit);
 
             stepId = 0;
 
-            // initializing ally pieces
+            // initializing machine pieces
 
             for(int i = 0; i < 8; ++i){
 
-                pieces[i] = new Pawn(allyBegins, -3.0, 1, i);
+                pieces[i] = new Pawn(machineBegins, -3.0, 1, i);
                 gameBoard[1][i] = i;
                 
-                pieces[16 + i] = new Pawn(!allyBegins, 3.0, 6, i);
+                pieces[16 + i] = new Pawn(!machineBegins, 3.0, 6, i);
                 gameBoard[6][i] = 16 + i;
             }
 
-            pieces[8] = new Rook(allyBegins, -14.0, 0, 0);
-            pieces[9] = new Knight(allyBegins, -8.0, 0, 1);
-            pieces[10] = new Bishop(allyBegins, -14.0, 0, 2);
-            pieces[11] = new King(allyBegins, -8.0, 0, 3);
-            pieces[12] = new Queen(allyBegins, -28.0, 0, 4);
-            pieces[13] = new Bishop(allyBegins, -14.0, 0, 5);
-            pieces[14] = new Knight(allyBegins, -8.0, 0, 6);
-            pieces[15] = new Rook(allyBegins, -14.0, 0, 7);
+            pieces[8] = new Rook(machineBegins, -14.0, 0, 0);
+            pieces[9] = new Knight(machineBegins, -8.0, 0, 1);
+            pieces[10] = new Bishop(machineBegins, -14.0, 0, 2);
+            pieces[11] = new King(machineBegins, -8.0, 0, 3);
+            pieces[12] = new Queen(machineBegins, -28.0, 0, 4);
+            pieces[13] = new Bishop(machineBegins, -14.0, 0, 5);
+            pieces[14] = new Knight(machineBegins, -8.0, 0, 6);
+            pieces[15] = new Rook(machineBegins, -14.0, 0, 7);
             
             gameBoard[0][0] = 8;
             gameBoard[0][1] = 9;
@@ -140,16 +140,16 @@ public class Game{
             gameBoard[0][6] = 14;
             gameBoard[0][7] = 15;
 
-            // initializing opponent pieces
+            // initializing human pieces
 
-            pieces[16 + 8] = new Rook(!allyBegins, 14.0, 7, 0);
-            pieces[16 + 9] = new Knight(!allyBegins, 8.0, 7, 1);
-            pieces[16 + 10] = new Bishop(!allyBegins, 14.0, 7, 2);
-            pieces[16 + 11] = new King(!allyBegins, 8.0, 7, 3);
-            pieces[16 + 12] = new Queen(!allyBegins, 28.0, 7, 4);
-            pieces[16 + 13] = new Bishop(!allyBegins, 14.0, 7, 5);
-            pieces[16 + 14] = new Knight(!allyBegins, 8.0, 7, 6);
-            pieces[16 + 15] = new Rook(!allyBegins, 14.0, 7, 7);
+            pieces[16 + 8] = new Rook(!machineBegins, 14.0, 7, 0);
+            pieces[16 + 9] = new Knight(!machineBegins, 8.0, 7, 1);
+            pieces[16 + 10] = new Bishop(!machineBegins, 14.0, 7, 2);
+            pieces[16 + 11] = new King(!machineBegins, 8.0, 7, 3);
+            pieces[16 + 12] = new Queen(!machineBegins, 28.0, 7, 4);
+            pieces[16 + 13] = new Bishop(!machineBegins, 14.0, 7, 5);
+            pieces[16 + 14] = new Knight(!machineBegins, 8.0, 7, 6);
+            pieces[16 + 15] = new Rook(!machineBegins, 14.0, 7, 7);
 
             gameBoard[7][0] = 16 + 8;
             gameBoard[7][1] = 16 + 9;
@@ -202,7 +202,7 @@ public class Game{
             
         // the number of possible steps is much higher than the number of 
         //  concurrent threads
-        if(allyBegins){
+        if(machineBegins){
 
             initStepSequences.generateFirstStep();
         }
@@ -242,15 +242,15 @@ public class Game{
         Step sourceStep;
         Step targetStep;
         
-        if(allyBegins){
+        if(machineBegins){
             
-            intervalStartAlly = LocalDateTime.now();
+            intervalStartMachine = LocalDateTime.now();
             
             buildStrategy();
             selectNextStep();
         
-            allyTime.plus(LocalDateTime.now().until(
-            intervalStartAlly, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            machineTime.plus(LocalDateTime.now().until(
+            intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
             validatePlayerStatus();
 
@@ -260,7 +260,7 @@ public class Game{
                 sourceStep.getFile(), sourceStep.getRank(),
                 targetStep.getFile(), targetStep.getRank());    
             
-            if(timeLimit.compareTo(allyTime) <= 0){
+            if(timeLimit.compareTo(machineTime) <= 0){
             
                 playGame = false;
                 gameStatus = "WIN";
@@ -271,12 +271,12 @@ public class Game{
             gameUI.switchPlayerClock();
             
             // waiting for player action
-            intervalStartOpponent = LocalDateTime.now();
+            intervalStartHuman = LocalDateTime.now();
             
             requestPlayerAction();
             
-            opponentTime.plus(LocalDateTime.now().until(
-            intervalStartOpponent, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            humanTime.plus(LocalDateTime.now().until(
+            intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
@@ -284,7 +284,7 @@ public class Game{
                 sourceStep.getFile(), sourceStep.getRank(),
                 targetStep.getFile(), targetStep.getRank());
             
-            if(timeLimit.compareTo(opponentTime) <= 0){
+            if(timeLimit.compareTo(humanTime) <= 0){
             
                 playGame = false;
                 gameStatus = "LOSE";
@@ -294,13 +294,13 @@ public class Game{
             
             gameUI.switchPlayerClock();
             
-            intervalStartAlly = LocalDateTime.now();
+            intervalStartMachine = LocalDateTime.now();
             
             stepSequences.continueStepSequences();
             selectNextStep();
             
-            allyTime.plus(LocalDateTime.now().until(
-            intervalStartAlly, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            machineTime.plus(LocalDateTime.now().until(
+            intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
             validatePlayerStatus();
 
@@ -310,7 +310,7 @@ public class Game{
                 sourceStep.getFile(), sourceStep.getRank(),
                 targetStep.getFile(), targetStep.getRank());
             
-            if(timeLimit.compareTo(allyTime) <= 0){
+            if(timeLimit.compareTo(machineTime) <= 0){
             
                 playGame = false;
                 gameStatus = "WIN";
@@ -322,12 +322,12 @@ public class Game{
         else{
             
             // waiting for player action
-            intervalStartOpponent = LocalDateTime.now();
+            intervalStartHuman = LocalDateTime.now();
             
             requestPlayerAction();
             
-            opponentTime.plus(LocalDateTime.now().until(
-            intervalStartOpponent, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            humanTime.plus(LocalDateTime.now().until(
+            intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
@@ -335,7 +335,7 @@ public class Game{
                 sourceStep.getFile(), sourceStep.getRank(),
                 targetStep.getFile(), targetStep.getRank());
             
-            if(timeLimit.compareTo(opponentTime) <= 0){
+            if(timeLimit.compareTo(humanTime) <= 0){
             
                 playGame = false;
                 gameStatus = "LOSE";
@@ -345,13 +345,13 @@ public class Game{
             
             gameUI.switchPlayerClock();
             
-            intervalStartAlly = LocalDateTime.now();
+            intervalStartMachine = LocalDateTime.now();
             
             buildStrategy();
             selectNextStep();
             
-            allyTime.plus(LocalDateTime.now().until(
-            intervalStartAlly, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            machineTime.plus(LocalDateTime.now().until(
+            intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
             validatePlayerStatus();
             
@@ -361,7 +361,7 @@ public class Game{
                 sourceStep.getFile(), sourceStep.getRank(),
                 targetStep.getFile(), targetStep.getRank());
             
-            if(timeLimit.compareTo(allyTime) <= 0){
+            if(timeLimit.compareTo(machineTime) <= 0){
             
                 playGame = false;
                 gameStatus = "WIN";
@@ -374,12 +374,12 @@ public class Game{
         
         while(playGame){
         
-            intervalStartOpponent = LocalDateTime.now();
+            intervalStartHuman = LocalDateTime.now();
             
             requestPlayerAction();
 
-            opponentTime.plus(LocalDateTime.now().until(
-            intervalStartOpponent, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            humanTime.plus(LocalDateTime.now().until(
+            intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
@@ -387,7 +387,7 @@ public class Game{
                 sourceStep.getFile(), sourceStep.getRank(),
                 targetStep.getFile(), targetStep.getRank());
             
-            if(timeLimit.compareTo(opponentTime) <= 0){
+            if(timeLimit.compareTo(humanTime) <= 0){
             
                 playGame = false;
                 gameStatus = "LOSE";
@@ -397,13 +397,13 @@ public class Game{
             
             gameUI.switchPlayerClock();
             
-            intervalStartAlly = LocalDateTime.now();
+            intervalStartMachine = LocalDateTime.now();
             
             stepSequences.continueStepSequences();
             selectNextStep();
             
-            allyTime.plus(LocalDateTime.now().until(
-            intervalStartAlly, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            machineTime.plus(LocalDateTime.now().until(
+            intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
             validatePlayerStatus();
         
@@ -413,7 +413,7 @@ public class Game{
                 sourceStep.getFile(), sourceStep.getRank(),
                 targetStep.getFile(), targetStep.getRank());
             
-            if(timeLimit.compareTo(allyTime) <= 0){
+            if(timeLimit.compareTo(machineTime) <= 0){
             
                 playGame = false;
                 gameStatus = "WIN";
@@ -426,18 +426,20 @@ public class Game{
 
         if(gameStatus.compareTo("WIN") == 0){
         
+            System.out.println("Human won the game.");
             
             // print more information (especially score progressions)
         }
         else if(gameStatus.compareTo("LOSE") == 0){
         
+            System.out.println("Machine won the game.");
             
             // print more information (especially score progressions)
         }
         else{
         
             System.out.println("Game has ended with draw ("
-                    + opponentScore + " - " + allyScore + ", player - machine) with "
+                    + humanScore + " - " + machineScore + ", player - machine) with "
                     + stepId + " steps.");
             
             // TODO print more information (especially score related informations)
@@ -470,7 +472,7 @@ public class Game{
             throw new Exception("Provided input is not acceptable.");
         }
         
-        if(opponentIsInCheck && action.compareTo("giveup") == 0){
+        if(humanIsInCheck && action.compareTo("giveup") == 0){
         
             playGame = false;
             gameStatus = "LOSE";
@@ -508,7 +510,7 @@ public class Game{
         
         sourceSelectedRank = (int)param[0].charAt(1);
         
-        if(opponentIsInCheck && gameBoard[sourceSelectedRank][sourceSelectedFile] != 11){
+        if(humanIsInCheck && gameBoard[sourceSelectedRank][sourceSelectedFile] != 11){
         
             throw new Exception("Player is in check. Resolve check.");
         }
@@ -587,7 +589,7 @@ public class Game{
             //       in order to limit the key length (comparison optimization)
             stepSequences.trimKeys();
             
-            opponentScore += targetStepHistory.get(targetStepHistory.size() - 1).getValue();
+            humanScore += targetStepHistory.get(targetStepHistory.size() - 1).getValue();
         }
         else{
             
@@ -599,7 +601,7 @@ public class Game{
             
             targetStepHistory.add(selectedStep);
         
-            //opponentScore = 0.0;// initial step has taken
+            //humanScore = 0.0;// initial step has taken
         }
         
         ++stepId;
@@ -608,7 +610,7 @@ public class Game{
     
     private void validatePlayerStatus() throws Exception{
     
-        // looking for check mate on opponent king piece
+        // looking for check mate on human king piece
         
         ArrayList<GenStepKey> levelKeys = stepSequences.getLeafLevelKeys();
 
@@ -621,12 +623,12 @@ public class Game{
 
             if(gameBoard[step.getFile()][step.getRank()] == 11){
 
-                // ally king is in check
-                opponentIsInCheck = true;
+                // machine king is in check
+                humanIsInCheck = true;
             }
         }
         
-        if(opponentIsInCheck && pieces[11].generateSteps(gameBoard).isEmpty()){
+        if(humanIsInCheck && pieces[11].generateSteps(gameBoard).isEmpty()){
         
             playGame = false;
             gameStatus = "LOSE";
@@ -660,7 +662,7 @@ public class Game{
         double maxCumulativeValue = stepSequences.getByKey(
                 levelKeys.get(maxI)).getCumulativeValue();
         
-        if(allyIsInCheck){
+        if(machineIsInCheck){
         
             boolean foundNextStep = false;
             
@@ -691,7 +693,7 @@ public class Game{
             }
             else{
             
-                allyIsInCheck = false;
+                machineIsInCheck = false;
             }
         }
         else{
@@ -722,11 +724,11 @@ public class Game{
         //       in order to limit the key length (comparison optimization)
         stepSequences.trimKeys();
         
-        allyScore += targetStepHistory.get(targetStepHistory.size() - 1).getValue();
+        machineScore += targetStepHistory.get(targetStepHistory.size() - 1).getValue();
         
         ++stepId;
         
-        // TASK) TODO yield control to opponent player (asynchronous tasks)
+        // TASK) TODO yield control to human player (asynchronous tasks)
     }
 
     

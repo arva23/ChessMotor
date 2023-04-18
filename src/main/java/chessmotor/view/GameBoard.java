@@ -41,8 +41,8 @@ public class GameBoard implements IGameBoard {
     private Condition playerWaitCond;
     private Condition playerActionCond;
     
-    private boolean allyComes;
-    private boolean allyBegins;
+    private boolean machineComes;
+    private boolean machineBegins;
     private JPanel eventHandlerPanel;
     
     private int recentRank;
@@ -51,7 +51,7 @@ public class GameBoard implements IGameBoard {
     
     public GameBoard(int x, int y, int width, int height, 
             Condition playerWaitCond, Condition playerActionCond,
-            boolean allyComes, String[][] boardSquareStatus) throws Exception{
+            boolean machineComes, String[][] boardSquareStatus) throws Exception{
     
         try {
             
@@ -131,10 +131,10 @@ public class GameBoard implements IGameBoard {
         this.playerWaitCond = playerWaitCond;
         this.playerActionCond = playerActionCond;
         
-        this.allyComes = allyComes;
-        this.allyBegins = allyComes;
+        this.machineComes = machineComes;
+        this.machineBegins = machineComes;
         
-        if(!allyComes){
+        if(!machineComes){
         
             squareBgs[0] = squareBgs[1];
             squareBgs[1] = squareBgs[2];
@@ -161,7 +161,7 @@ public class GameBoard implements IGameBoard {
             @Override
             public void mouseClicked(MouseEvent e){
             
-                if(!allyComes && e.getButton() == MouseEvent.BUTTON1){
+                if(!machineComes && e.getButton() == MouseEvent.BUTTON1){
                 
                     try {
                         playerWaitCond.await();
@@ -190,8 +190,8 @@ public class GameBoard implements IGameBoard {
     }
     
     @Override
-    public void setGameBoard(String[][] boardSquareStatus, boolean allyBegins,
-            boolean allyComes){
+    public void setGameBoard(String[][] boardSquareStatus, boolean machineBegins,
+            boolean machineComes){
     
     }
     
@@ -204,7 +204,7 @@ public class GameBoard implements IGameBoard {
     @Override
     public void alternateActivePlayer(){
     
-        allyComes = !allyComes;
+        machineComes = !machineComes;
     }
     
     @Override

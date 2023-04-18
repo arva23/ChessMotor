@@ -22,7 +22,7 @@ public class GUIView implements IGameUI{
     private Container elementContainer;
     
     // GAME BOARD MANAGEMENT
-    private boolean allyBegins;
+    private boolean machineBegins;
     private GameBoard board;
     private Condition playerWaitCond;
     private Condition playerActionCond;
@@ -87,30 +87,30 @@ public class GUIView implements IGameUI{
         // default initialization of game board status
         String[][] boardSquareStatus = new String[8][8];
         
-        String allyColor = "white";
+        String machineColor = "white";
         String oppColor = "black";
         
         // board is rotated at game board
-        if(allyBegins){
+        if(machineBegins){
         
-            allyColor = "black";
+            machineColor = "black";
             oppColor = "white";
         }
         
         for(int i = 0; i < 8; ++i){
 
-            boardSquareStatus[1][i] = allyColor + "pawn";
+            boardSquareStatus[1][i] = machineColor + "pawn";
             boardSquareStatus[6][i] = oppColor + "pawn";
         }
 
-        boardSquareStatus[0][0] = allyColor + "rook";
-        boardSquareStatus[0][1] = allyColor + "knight";
-        boardSquareStatus[0][2] = allyColor + "bishop";
-        boardSquareStatus[0][3] = allyColor + "king";
-        boardSquareStatus[0][4] = allyColor + "queen";
-        boardSquareStatus[0][5] = allyColor + "bishop";
-        boardSquareStatus[0][6] = allyColor + "knight";
-        boardSquareStatus[0][7] = allyColor + "rook";
+        boardSquareStatus[0][0] = machineColor + "rook";
+        boardSquareStatus[0][1] = machineColor + "knight";
+        boardSquareStatus[0][2] = machineColor + "bishop";
+        boardSquareStatus[0][3] = machineColor + "king";
+        boardSquareStatus[0][4] = machineColor + "queen";
+        boardSquareStatus[0][5] = machineColor + "bishop";
+        boardSquareStatus[0][6] = machineColor + "knight";
+        boardSquareStatus[0][7] = machineColor + "rook";
 
         boardSquareStatus[7][0] = oppColor + "rook";
         boardSquareStatus[7][1] = oppColor + "knight";
@@ -130,7 +130,7 @@ public class GUIView implements IGameUI{
         }
         
         board = new GameBoard(boardX, boardY, boardWidth, boardHeight, 
-                playerWaitCond, playerActionCond, allyBegins, boardSquareStatus);
+                playerWaitCond, playerActionCond, machineBegins, boardSquareStatus);
         elementContainer.add(board.getMainPanel());
         
         int playerClocksX = boardWidth + 1;
@@ -195,8 +195,8 @@ public class GUIView implements IGameUI{
             playerWaitCond.signal();
             playerActionCond.await();
             
-            if((allyBegins && board.getPlayerActionSquare().getPlayer() < 0)
-                || (!allyBegins && board.getPlayerActionSquare().getPlayer() > 0)){
+            if((machineBegins && board.getPlayerActionSquare().getPlayer() < 0)
+                || (!machineBegins && board.getPlayerActionSquare().getPlayer() > 0)){
 
                 System.out.println("Illegal selection, choose another.");
                 break;
@@ -210,8 +210,8 @@ public class GUIView implements IGameUI{
             playerWaitCond.signal();
             playerActionCond.await();
     
-            if((allyBegins && board.getPlayerActionSquare().getPlayer() > 0) 
-                || (!allyBegins && board.getPlayerActionSquare().getPlayer() < 0)){
+            if((machineBegins && board.getPlayerActionSquare().getPlayer() > 0) 
+                || (!machineBegins && board.getPlayerActionSquare().getPlayer() < 0)){
             
                 System.out.println("Illegal selection, choose another.");
                 break;
@@ -248,8 +248,8 @@ public class GUIView implements IGameUI{
             throw new Exception("Target file is out of range.");
         }
         
-        board.setSquare(allyBegins, "empty", sourceRank, sourceFile);
-        board.setSquare(allyBegins, pieceType, targetRank, targetFile);
+        board.setSquare(machineBegins, "empty", sourceRank, sourceFile);
+        board.setSquare(machineBegins, pieceType, targetRank, targetFile);
     }
     
 }

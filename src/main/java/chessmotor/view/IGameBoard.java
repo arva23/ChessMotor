@@ -6,8 +6,8 @@ public interface IGameBoard {
     
     public JPanel getMainPanel();
 
-    public void setGameBoard(String[][] boardSquareStatus, boolean allyBegins, 
-            boolean allyComes);
+    public void setGameBoard(String[][] boardSquareStatus, boolean machineBegins, 
+            boolean machineComes);
     
     public void alternateActivePlayer();
     
@@ -15,6 +15,6 @@ public interface IGameBoard {
 
     public String getPlayerActionResult();
 
-    public void setSquare(boolean allyBegins, String pieceType, int targetRank,
+    public void setSquare(boolean machineBegins, String pieceType, int targetRank,
             int targetFile) throws Exception;
 }

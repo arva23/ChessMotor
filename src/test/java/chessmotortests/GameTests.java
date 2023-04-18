@@ -58,7 +58,7 @@ public class GameTests {
         // Failed to get the concurrent thread number information
         
         // Generate with few available pieces (small piece stock)
-        // where ally wons the game
+        // where machine wons the game
         // The result is compared with a manually computed game, 
         // including score comparison
         

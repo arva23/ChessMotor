@@ -5,8 +5,8 @@ import java.time.Duration;
 public interface IGameUI {
 
     public void loadGame(String[][] boardSquareStatus, int whitePlayerTime, 
-            int blackPlayerTime, boolean whitePlayerComes, boolean allyBegins,
-            boolean allyComes);
+            int blackPlayerTime, boolean whitePlayerComes, boolean machineBegins,
+            boolean machineComes);
     
     public void run();
     

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class GenPiece {
     
     private String typeName;
-    private double value;// penalty value for ally (machine)
+    private double value;// penalty value for machine
     protected int file;
     protected int rank;
     
@@ -34,7 +34,7 @@ public class GenPiece {
         // It can only detect empty squares or occupied squares.
         ArrayList<Pair> steps = new ArrayList<Pair>();
 
-        // todo, generate routes in aware of different sign of value of opponent pieces
+        // todo, generate routes in aware of different sign of value of human pieces
         
         return steps;
     }

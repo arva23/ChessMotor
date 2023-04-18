@@ -12,7 +12,7 @@ public class StepDecisionTree implements Runnable{
     
     private IncArbTree<GenStepKey, Step> stepDecisionTree;
     
-    private boolean allyBegins;
+    private boolean machineBegins;
     private GenPiece[] piecesRef;
     private Stack<Step> stepHistoryRef;
     private int[][] gameBoardRef;
@@ -23,7 +23,7 @@ public class StepDecisionTree implements Runnable{
     
     private int cumulativeNegativeChangeThreshold;
     
-    // Negative tendency threshold in step sequences. If difference of two opponent 
+    // Negative tendency threshold in step sequences. If difference of two human 
     // score values are greater than a threshold, drop step sequence.
     private double minConvThreshold;
     
@@ -38,14 +38,14 @@ public class StepDecisionTree implements Runnable{
     
     private int fracs;
     private int no;
-    public StepDecisionTree(boolean allyBegins, GenPiece[] pieces, Stack<Step> stepHistory, 
+    public StepDecisionTree(boolean machineBegins, GenPiece[] pieces, Stack<Step> stepHistory, 
             int[][] gameBoard, int depth, int cumulativeNegativeChangeThreshold, 
             double minConvThreshold, int fracs, int no, long memLimit) throws Exception{
     
         super();
         
         stepDecisionTree = new IncArbTree<GenStepKey, Step>();
-        this.allyBegins = allyBegins;
+        this.machineBegins = machineBegins;
         
         if(pieces == null){
         
@@ -69,7 +69,7 @@ public class StepDecisionTree implements Runnable{
         this.gameBoardRef = gameBoard;
         
         if(minConvThreshold < 0.0)
-            throw new Exception("Opponent score increase slope must be positive.");
+            throw new Exception("Human score increase slope must be positive.");
         
         this.minConvThreshold = minConvThreshold;
         
@@ -126,7 +126,7 @@ public class StepDecisionTree implements Runnable{
         }
         
         this.stepDecisionTree = orig.stepDecisionTree;
-        this.allyBegins = orig.allyBegins;
+        this.machineBegins = orig.machineBegins;
         this.piecesRef = orig.piecesRef;
         this.stepHistoryRef = orig.stepHistoryRef;
         this.gameBoardRef = orig.gameBoardRef;
@@ -249,7 +249,7 @@ public class StepDecisionTree implements Runnable{
         
         Step step;
         
-        if(allyBegins){
+        if(machineBegins){
         
             for(int i = 0; i < 16; ++i){
             
@@ -309,8 +309,8 @@ public class StepDecisionTree implements Runnable{
         // TASK) iterate through available further lookAhead(depth) steps according to
         //       collision states collect available steps
         
-        // alternate piece strength scores by ally-opponent oscillating scheme
-        boolean opponentSide = true;
+        // alternate piece strength scores by machine-human oscillating scheme
+        boolean humanSide = true;
         
         ArrayList<ArrayList<Step> > generatedLevelNodeSteps =
             new ArrayList<ArrayList<Step> >();
@@ -330,7 +330,7 @@ public class StepDecisionTree implements Runnable{
         
         while(stepHistoryStack.size() > 0){
             
-            opponentSide = !opponentSide;
+            humanSide = !humanSide;
             
             if(generatedLevelNodeSteps.isEmpty() && wasStepBack){
             
@@ -371,11 +371,11 @@ public class StepDecisionTree implements Runnable{
 
                     // ordered insertion is quasi nlogn
 
-                    // ally piecesRef are filtered out at step generation
+                    // machine piecesRef are filtered out at step generation
                     if(pieceInd != -1){
 
-                        // opponent score addition comes
-                        if(opponentSide &&
+                        // human score addition comes
+                        if(humanSide &&
                             (-1.0) * step.getValue() + minConvThreshold < piecesRef[pieceInd].getValue()){
 
                             ++cumulativeNegativeChange;
@@ -511,7 +511,7 @@ public class StepDecisionTree implements Runnable{
                 }
                 
                 // modify game table status
-                // in case of piece hit by an opponent piece, access of to that 
+                // in case of piece hit by an human  piece, access of to that 
                 //  piece is going to be forbidden by the removal its id from the board
                 gameBoardRef[selectedStep.getFile()][selectedStep.getRank()] = step.getPieceId();
                 gameBoardRef[step.getFile()][step.getRank()] = -1;// leave previous position free
@@ -535,7 +535,7 @@ public class StepDecisionTree implements Runnable{
         
         // continuing generation by generator
         
-        boolean opponentSide = true;
+        boolean humanSide = true;
         
         LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps =
             new LinTreeMultiMap<GenTmpStepKey, Step>();
@@ -547,7 +547,7 @@ public class StepDecisionTree implements Runnable{
         
         boolean wasStepBack = false;
         
-        int lvl = depth - 2;// -1 for ally and opponent
+        int lvl = depth - 2;// -1 for machine and human
         int lvlLimit = depth;
         
         double cumulativeValue = 0.0;
@@ -604,7 +604,7 @@ public class StepDecisionTree implements Runnable{
 
                     if(pieceInd != -1){
 
-                        if(opponentSide &&
+                        if(humanSide &&
                             (-1.0) * step.getValue() + minConvThreshold < piecesRef[pieceInd].getValue()){
 
                             ++cumulativeNegativeChange;

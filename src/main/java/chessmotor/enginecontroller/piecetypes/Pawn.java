@@ -20,11 +20,11 @@ public class Pawn extends GenPiece{
     
         ArrayList<Pair> steps = new ArrayList<Pair>();
 
-        // pawn steps are symmetric comparing to opponent pawn steps
+        // pawn steps are symmetric comparing to human pawn steps
         
         if(gameBoard[file][rank] < 16){
         
-            // ally pawn
+            // machine pawn
             
             // from initial position in order to include double jump
             if(file == 1
@@ -62,7 +62,7 @@ public class Pawn extends GenPiece{
         }
         else{
         
-            // opponent pawn
+            // human pawn
             
             // from initial position in order to include double jump
             if(file == 6 
