@@ -2,6 +2,8 @@ package chessmotor.view;
 
 // this class represents the game board that is consisted of squared
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -151,7 +153,37 @@ public class GameBoard implements IGameBoard {
             }
         }
         
-        eventHandlerPanel = new JPanel(/*todo position and dimensions*/);
+        eventHandlerPanel.addMouseListener(new MouseAdapter(){
+        
+            @Override
+            public void mouseClicked(MouseEvent e){
+            
+                if(!allyComes && e.getButton() == MouseEvent.BUTTON1){
+                
+                    try {
+                        playerWaitCond.await();
+                        
+                        recentSquare = board[recentRank][recentFile];
+                        
+                        playerActionCond.signal();
+                        
+                    }
+                    catch (InterruptedException ex) {
+                        
+                        System.out.println("Player action requirest has been failed.");
+                    }
+                }
+            }
+            
+            @Override
+            public void mouseMoved(MouseEvent e){
+            
+                recentRank =
+                        (int)Math.ceil((double)(e.getY()) / (8.0 * squareHeight));                    
+                recentFile =
+                        (int)Math.ceil((double)(e.getX()) / (8.0 * squareWidth));
+            }
+        });
     }
     
     @Override
@@ -184,5 +216,22 @@ public class GameBoard implements IGameBoard {
     @Override
     public void setSquare(boolean isAlly, String pieceType, int rank, int file) throws Exception{
     
+        if(rank < 0 || rank > 7){
+        
+            throw new Exception("Rank is out of range.");
+        }
+        
+        if(file < 0 || file > 7){
+        
+            throw new Exception("File is out of range.");
+        }
+                    
+        if(!pieceTypes.containsKey(pieceType)){
+        
+            throw new Exception("No such piece type exists.");
+        }
+        
+        board[rank][file].setNewPiece((isAlly ? -1 : 1), 
+                pieceTypes.get(pieceType));
     }
 }
