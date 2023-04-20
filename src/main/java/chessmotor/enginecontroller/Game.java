@@ -671,6 +671,37 @@ public class Game{
             removedMachinePieces.add(gameBoard[targetSelectedRank][targetSelectedFile]);
         }
         
+        // pawn replacement with earlier hit piece
+        int pieceId = selectedStep.getPieceId();
+        
+        if(0 <= pieceId && pieceId <= 7 && selectedStep.getRank() == 0){
+        
+            // selection strategy is via user action
+            // the typename selection is aave because typenames are selected 
+            //  from removed pieces list
+            String selectedTypeName = gameUI.selectPawnReplacement();
+            
+            int sizeOfRemovedHumanPieces = removedHumanPieces.size();
+            int selectedI = 0;
+            boolean pieceTypeFound = false;
+            
+            for(int i = 1; i < sizeOfRemovedHumanPieces && pieceTypeFound; ++i){
+            
+                if(pieces[removedHumanPieces.get(i)].getTypeName().equals(
+                        selectedTypeName)){
+                
+                    selectedI = i;
+                    pieceTypeFound = true;
+                }
+            }
+            
+            selectedI = removedHumanPieces.get(selectedI);
+            pieces[selectedI].setRank(targetSelectedRank);
+            pieces[selectedI].setFile(targetSelectedFile);
+            gameBoard[targetSelectedRank][targetSelectedFile] = selectedI;
+            selectedStep.setPieceId(selectedI);
+            removedHumanPieces.remove(selectedI);
+        }
         
         ++stepId;
     }
@@ -824,6 +855,32 @@ public class Game{
             removedHumanPieces.add(gameBoard[step.getRank()][step.getFile()]);
         }
         
+        // pawn replacement with earlier hit piece
+        pieceId = step.getPieceId();
+        
+        if(0 <= pieceId && pieceId <= 7 && step.getRank() == 7){
+        
+            // selection strategy: select piece with the highest value
+            int sizeOfRemovedMachinePieces  = removedMachinePieces.size();
+            int selectedI = 0;
+            
+            for(int i = 1; i < sizeOfRemovedMachinePieces; ++i){
+            
+                if(pieces[removedMachinePieces.get(i)].getValue() > 
+                        pieces[removedMachinePieces.get(selectedI)].getValue()){
+                
+                    selectedI = i;
+                }
+            }
+            
+            selectedI = removedMachinePieces.get(selectedI);
+            pieces[selectedI].setRank(step.getRank());
+            pieces[selectedI].setFile(step.getFile());
+            gameBoard[step.getRank()][step.getFile()] = selectedI;
+            // a priori piece type replacement
+            step.setPieceId(selectedI);
+            removedMachinePieces.remove(selectedI);
+        }
         
         // TASK) shift tree with one level, throw root away (root displacement)
         
