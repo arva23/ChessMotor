@@ -255,45 +255,54 @@ public class StepDecisionTree implements Runnable{
     }
     
     
-    public void generateFirstStep() throws Exception{
-    
+    public void generateFirstMachineStep() throws Exception{
+
         LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps = 
-                new LinTreeMultiMap<GenTmpStepKey, Step>();
-        
+            new LinTreeMultiMap<GenTmpStepKey, Step>();
+
         Step step;
-        
+
+        for(int i = 0; i < 16; ++i){
+
+            if(piecesRef[i].generateSteps(gameBoardRef).size() > 0){
+
+                step = new Step(i, 1 - (int)Math.floor(i / 8), i % 8,
+                piecesRef[i].getValue(), 0,
+                piecesRef[i].getValue());
+
+                sortedGeneratedSteps.add(
+                        new GenTmpStepKey(piecesRef[i].getValue()), step);
+            }
+        }
+
+        // suboptimal strategy of initial step
+        //  (strategies can be added by weighthening graph later)
+        int selectedPieceInd = 
+            (int)((double)Math.random() * (double)(sortedGeneratedSteps.size() - 1));
+
+        step = sortedGeneratedSteps.getByInd(selectedPieceInd);
+
         if(machineBegins){
         
-            for(int i = 0; i < 16; ++i){
-            
-                if(piecesRef[i].generateSteps(gameBoardRef).size() > 0){
-                
-                    step = new Step(i, 1 - (int)Math.floor(i / 8), i % 8,
-                    piecesRef[i].getValue(), 0,
-                    piecesRef[i].getValue());
-                
-                    sortedGeneratedSteps.add(
-                            new GenTmpStepKey(piecesRef[i].getValue()), step);
-                }
-            }
-            
-            // suboptimal strategy of initial step
-            //  (strategies can be added by weighthening graph later)
-            int selectedPieceInd = 
-                (int)((double)Math.random() * (double)(sortedGeneratedSteps.size() - 1));
-            
-            step = sortedGeneratedSteps.getByInd(selectedPieceInd);
-            
             stepDecisionTree.addOne(new GenStepKey("a"), 
-                    new GenStepKey("a"), step);
+                new GenStepKey("a"), step);
             
             // saving previous level status
             stepHistoryStack.add(step);
             keyHistoryStack.add("a");
-            
-            // modify game table status
-            gameBoardRef[step.getRank()][step.getFile()] = step.getPieceId();
         }
+        else{
+        
+            stepDecisionTree.addOne(new GenStepKey("a"), 
+                new GenStepKey("aa"), step);
+        
+            // saving previous level status
+            stepHistoryStack.add(step);
+            keyHistoryStack.add("aa");
+        }
+        
+        // modify game table status
+        gameBoardRef[step.getRank()][step.getFile()] = step.getPieceId();
     }
     
     
