@@ -249,6 +249,13 @@ public class StepDecisionTree implements Runnable{
     }
     
     
+    public void addToHistoryStack(String key, Step step){
+    
+        stepHistoryStack.add(step);
+        keyHistoryStack.add(key);
+    }
+    
+    
     public void reserveMem(int resMemSize) throws Exception{
     
         stepDecisionTree.reserve(resMemSize);
