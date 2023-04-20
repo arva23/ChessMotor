@@ -67,6 +67,9 @@ public class Game{
     private Stack<Step> sourceStepHistory;
     private Stack<Step> targetStepHistory;
     
+    private Stack<Integer> removedHumanPieces;
+    private Stack<Integer> removedMachinePieces;
+    
     public Game(){
     
         initialized = false;
@@ -102,6 +105,8 @@ public class Game{
             gameBoard = new int[8][8];
             sourceStepHistory = new Stack<Step>();
             targetStepHistory = new Stack<Step>();
+            removedHumanPieces = new Stack<Integer>();
+            removedMachinePieces = new Stack<Integer>();
             
             if(memLimit <= 0){
             
@@ -660,6 +665,12 @@ public class Game{
             //humanScore = 0.0;// initial step has taken
         }
         
+        // piece removal in case of hit
+        if(gameBoard[targetSelectedRank][targetSelectedFile] != -1){
+        
+            removedMachinePieces.add(gameBoard[targetSelectedRank][targetSelectedFile]);
+        }
+        
         
         ++stepId;
     }
@@ -804,6 +815,15 @@ public class Game{
         sourceStepHistory.add(new Step(pieceId, piece.getRank(), piece.getFile(), 
                 piece.getValue(), 0, piece.getValue()));
         sourceStepHistory.add(stepSequences.getByKey(levelKeys.get(maxI)));
+
+        Step step = stepSequences.getByKey(levelKeys.get(maxI));
+        
+        // piece removal in case of hit
+        if(gameBoard[step.getRank()][step.getFile()] != -1){
+        
+            removedHumanPieces.add(gameBoard[step.getRank()][step.getFile()]);
+        }
+        
         
         // TASK) shift tree with one level, throw root away (root displacement)
         
