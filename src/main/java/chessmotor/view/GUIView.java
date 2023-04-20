@@ -225,6 +225,11 @@ public class GUIView implements IGameUI{
     }
     
     @Override
+    public String selectPawnReplacement() throws InterruptedException{
+    
+    }
+    
+    @Override
     public void applyGenPlayerAction(String pieceType, int sourceRank, int sourceFile,
             int targetRank, int targetFile) throws Exception{
     

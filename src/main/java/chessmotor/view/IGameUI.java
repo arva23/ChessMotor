@@ -18,6 +18,8 @@ public interface IGameUI {
     
     public String readPlayerAction() throws Exception;    
     
+    public String selectPawnReplacement() throws Exception;
+    
     public void applyGenPlayerAction(String pieceType, int sourceRank, int sourceFile,
             int targetRank, int targetFile) throws Exception;
 }
