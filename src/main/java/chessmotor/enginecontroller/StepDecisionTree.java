@@ -151,6 +151,12 @@ public class StepDecisionTree implements Runnable{
     }
     
     
+    public ArrayList<GenStepKey> getLevelKeys(int levelId){
+
+        return stepDecisionTree.getLevelKeys(levelId);
+    }
+
+    
     public ArrayList<GenStepKey> getLeafLevelKeys(){
     
         return stepDecisionTree.getLeafLevelKeys();

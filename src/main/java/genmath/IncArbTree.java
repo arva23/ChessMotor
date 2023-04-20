@@ -815,7 +815,40 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
 
         ArrayList<K> levelKeys = new ArrayList<K>();
         
-        // todo
+        if(size <= levelId){
+        
+            return levelKeys;
+        }
+        
+        ++levelId;
+        K itemKey;
+
+        // suboptimal, linear iteration is performed
+        
+        if(levelId < size / 2){
+        
+            for(int i = 0; i < size; ++i){
+
+                itemKey = container.get(i).key;
+
+                if(itemKey.len() == levelId){
+
+                    levelKeys.add(itemKey);
+                }
+            }
+        }
+        else{
+        
+            for(int i = size - 1; i >= 0; --i){
+        
+                itemKey = container.get(i).key;
+
+                if(itemKey.len() == levelId){
+
+                    levelKeys.add(itemKey);
+                }
+            }
+        }
 
         return levelKeys;
     }

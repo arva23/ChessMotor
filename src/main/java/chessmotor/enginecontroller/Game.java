@@ -58,7 +58,10 @@ public class Game{
     // the actual game board to operate with
     private int[][] gameBoard;
     // recent status of generated (arbirary incomplete n-ary tree) step sequences 
-    // for further step decisions
+    //  for further step decisions
+    // explicit step n-ary decision tree is requied in order to trace further steps
+    //  to be able to locate the origin step of leaves that are required for next 
+    //  step generations
     StepDecisionTree stepSequences;
     private int stepId;// starting from 1 (the first step)
     private Stack<Step> sourceStepHistory;
@@ -103,6 +106,22 @@ public class Game{
             if(memLimit <= 0){
             
                 throw new Exception("Memory limit is not positive.");
+            }
+            
+            if(stepsToLookAhead < 4){
+        
+                throw new Exception("Provided stepsToLookAhead is under minimum stepsToLookAhead.");
+            }
+
+            // restrict step deicision tree generation with human leaf level
+            if(machineBegins && stepsToLookAhead % 2 == 1){
+
+                --stepsToLookAhead;
+            }
+
+            if(!machineBegins && stepsToLookAhead % 2 == 0){
+
+                --stepsToLookAhead;
             }
             
             stepSequences = new StepDecisionTree(machineBegins, pieces,
@@ -252,7 +271,7 @@ public class Game{
             machineTime.plus(LocalDateTime.now().until(
             intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
-            validatePlayerStatus();
+            validateHumanPlayerStatus();
 
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
@@ -278,6 +297,8 @@ public class Game{
             humanTime.plus(LocalDateTime.now().until(
             intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
+            validateMachinePlayerStatus();
+            
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
             gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(), 
@@ -302,7 +323,7 @@ public class Game{
             machineTime.plus(LocalDateTime.now().until(
             intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
-            validatePlayerStatus();
+            validateHumanPlayerStatus();
 
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
@@ -329,6 +350,8 @@ public class Game{
             humanTime.plus(LocalDateTime.now().until(
             intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
+            validateMachinePlayerStatus();
+            
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
             gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(),
@@ -353,7 +376,7 @@ public class Game{
             machineTime.plus(LocalDateTime.now().until(
             intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
-            validatePlayerStatus();
+            validateHumanPlayerStatus();
             
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
@@ -381,6 +404,8 @@ public class Game{
             humanTime.plus(LocalDateTime.now().until(
             intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
+            validateMachinePlayerStatus();
+            
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
             gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(), 
@@ -405,7 +430,7 @@ public class Game{
             machineTime.plus(LocalDateTime.now().until(
             intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
             
-            validatePlayerStatus();
+            validateHumanPlayerStatus();
         
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
@@ -451,6 +476,22 @@ public class Game{
     
     public void setDepth(int depth) throws Exception{
     
+        if(depth < 4){
+        
+            throw new Exception("Provided depth is under minimum depth.");
+        }
+        
+        // restrict step deicision tree generation with human leaf level
+        if(machineBegins && depth % 2 == 1){
+            
+            --depth;
+        }
+        
+        if(!machineBegins && depth % 2 == 0){
+        
+            --depth;
+        }
+        
         stepSequences.setDepth(depth);
     }
     
@@ -608,11 +649,11 @@ public class Game{
     }
     
     
-    private void validatePlayerStatus() throws Exception{
+    private void validateHumanPlayerStatus() throws Exception{
     
         // looking for check mate on human king piece
         
-        ArrayList<GenStepKey> levelKeys = stepSequences.getLeafLevelKeys();
+        ArrayList<GenStepKey> levelKeys = stepSequences.getLevelKeys(1);
 
         int sizeOfLevelKeys = levelKeys.size();
 
@@ -621,20 +662,50 @@ public class Game{
 
             step = stepSequences.getByKey(levelKeys.get(i));
 
-            if(gameBoard[step.getRank()][step.getFile()] == 11){
+            if(gameBoard[step.getRank()][step.getFile()] == 11 + 16){
 
-                // machine king is in check
+                // human king is in check
                 humanIsInCheck = true;
             }
         }
         
-        if(humanIsInCheck && pieces[11].generateSteps(gameBoard).isEmpty()){
+        if(humanIsInCheck && pieces[11 + 16].generateSteps(gameBoard).isEmpty()){
         
             playGame = false;
             gameStatus = "LOSE";
             
             gameUI.updateGameStatus(gameStatus);
         }        
+    }
+    
+    
+    private void validateMachinePlayerStatus() throws Exception{
+    
+        // looking of check mate on machine king piece
+        
+        ArrayList<GenStepKey> levelKeys = stepSequences.getLevelKeys(1);
+        
+        int sizeOfLastNonLeafLevelKeys = levelKeys.size();
+        
+        Step step;
+        for(int i = 0; i < sizeOfLastNonLeafLevelKeys; ++i){
+        
+            step = stepSequences.getByKey(levelKeys.get(i));
+            
+            if(gameBoard[step.getRank()][step.getFile()] == 11){
+            
+                // machine king is in check
+                machineIsInCheck = true;
+            }
+        }
+        
+        if(machineIsInCheck && pieces[11].generateSteps(gameBoard).isEmpty()){
+        
+            playGame = false;
+            gameStatus = "WIN";
+            
+            gameUI.updateGameStatus(gameStatus);
+        }
     }
     
     
