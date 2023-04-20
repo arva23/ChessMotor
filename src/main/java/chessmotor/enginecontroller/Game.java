@@ -724,13 +724,13 @@ public class Game{
     
     
     // TODO it could be integrated in step decision tree builder
-    private void selectNextStep() throws Exception{
+    private void selectNextMachineStep() throws Exception{
     
         // TASK) select the best option - max search, and apply to the game using 
         //       posteriori update(perform update after execution of further subroutines 
         //       of this method)
         
-        ArrayList<GenStepKey> levelKeys = stepSequences.getLeafLevelKeys();
+        ArrayList<GenStepKey> levelKeys = stepSequences.getLevelKeys(1);
         
         if(levelKeys.size() == 1){
         
@@ -747,6 +747,7 @@ public class Game{
         double maxCumulativeValue = stepSequences.getByKey(
                 levelKeys.get(maxI)).getCumulativeValue();
         
+        // machine check defense
         if(machineIsInCheck){
         
             boolean foundNextStep = false;
@@ -796,11 +797,15 @@ public class Game{
             }
         }
         
+        int pieceId = stepSequences.getByKey(levelKeys.get(maxI)).getPieceId();
+        GenPiece piece = pieces[pieceId];
+        sourceStepHistory.add(new Step(pieceId, piece.getRank(), piece.getFile(), 
+                piece.getValue(), 0, piece.getValue()));
+        sourceStepHistory.add(stepSequences.getByKey(levelKeys.get(maxI)));
+        
         // TASK) shift tree with one level, throw root away (root displacement)
         
-        // set the actual root as source position
-        sourceStepHistory.add(stepSequences.getByKey(new GenStepKey("a")));
-        
+        // set the actual root as source position        
         stepSequences.setNewRootByKey(levelKeys.get(maxI));
         
         targetStepHistory.add(stepSequences.getByKey(levelKeys.get(maxI)));
