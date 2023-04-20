@@ -61,6 +61,11 @@ public class Step{
 
         return value;
     }
+    
+    public void setPieceId(int pieceId){
+    
+        this.pieceId = pieceId;
+    }
 
     public int getCumulativeChangeCount(){
 
