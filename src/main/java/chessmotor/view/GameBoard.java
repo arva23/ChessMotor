@@ -38,8 +38,8 @@ public class GameBoard implements IGameBoard {
     private UnitSquare[][] board;// strictly 8 x 8 board
     // boardStatus is assigned at game controller object temporarily
      
-    private Condition playerWaitCond;
-    private Condition playerActionCond;
+    private Condition playerBoardWaitCond;
+    private Condition playerBoardActionCond;
     
     private boolean machineComes;
     private boolean machineBegins;
@@ -50,7 +50,7 @@ public class GameBoard implements IGameBoard {
     private UnitSquare recentSquare;
     
     public GameBoard(int x, int y, int width, int height, 
-            Condition playerWaitCond, Condition playerActionCond,
+            Condition playerBoardWaitCond, Condition playerBoardActionCond,
             boolean machineComes, String[][] boardSquareStatus) throws Exception{
     
         try {
@@ -128,8 +128,8 @@ public class GameBoard implements IGameBoard {
         eventHandlerPanel = new JPanel();
         eventHandlerPanel.setBounds(x, y, width, height);
 
-        this.playerWaitCond = playerWaitCond;
-        this.playerActionCond = playerActionCond;
+        this.playerBoardWaitCond = playerBoardWaitCond;
+        this.playerBoardActionCond = playerBoardActionCond;
         
         this.machineComes = machineComes;
         this.machineBegins = machineComes;
@@ -165,11 +165,11 @@ public class GameBoard implements IGameBoard {
                 if(!machineComes && e.getButton() == MouseEvent.BUTTON1){
                 
                     try {
-                        playerWaitCond.await();
+                        playerBoardWaitCond.await();
                         
                         recentSquare = board[recentRank][recentFile];
                         
-                        playerActionCond.signal();
+                        playerBoardActionCond.signal();
                         
                     }
                     catch (InterruptedException ex) {

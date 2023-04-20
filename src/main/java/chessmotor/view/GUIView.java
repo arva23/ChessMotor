@@ -24,8 +24,8 @@ public class GUIView implements IGameUI{
     // GAME BOARD MANAGEMENT
     private boolean machineBegins;
     private GameBoard board;
-    private Condition playerWaitCond;
-    private Condition playerActionCond;
+    private Condition playerBoardWaitCond;
+    private Condition playerBoardActionCond;
     
     // PLAYER CLOCK MANAGEMENT
     private PlayerClock playerClocks;
@@ -130,7 +130,7 @@ public class GUIView implements IGameUI{
         }
         
         board = new GameBoard(boardX, boardY, boardWidth, boardHeight, 
-                playerWaitCond, playerActionCond, machineBegins, boardSquareStatus);
+                playerBoardWaitCond, playerBoardActionCond, machineBegins, boardSquareStatus);
         elementContainer.add(board.getMainPanel());
         
         int playerClocksX = boardWidth + 1;
@@ -192,8 +192,8 @@ public class GUIView implements IGameUI{
         
         while(true){
         
-            playerWaitCond.signal();
-            playerActionCond.await();
+            playerBoardWaitCond.signal();
+            playerBoardActionCond.await();
             
             if((machineBegins && board.getPlayerActionSquare().getPlayer() < 0)
                 || (!machineBegins && board.getPlayerActionSquare().getPlayer() > 0)){
@@ -207,8 +207,8 @@ public class GUIView implements IGameUI{
 
         while(true){
         
-            playerWaitCond.signal();
-            playerActionCond.await();
+            playerBoardWaitCond.signal();
+            playerBoardActionCond.await();
     
             if((machineBegins && board.getPlayerActionSquare().getPlayer() > 0) 
                 || (!machineBegins && board.getPlayerActionSquare().getPlayer() < 0)){
