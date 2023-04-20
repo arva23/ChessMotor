@@ -202,7 +202,7 @@ public class Game{
     }
     
     
-    private void buildStrategy() throws Exception{
+    private void buildMachineStrategy() throws Exception{
     
         int numberOfThreads = Runtime.getRuntime().availableProcessors();
         
@@ -218,14 +218,10 @@ public class Game{
         ArrayList<StepDecisionTree> stepSequencesChunks = new ArrayList<StepDecisionTree>();
        
         // build step decision tree in parallel mode for the first time
-            
+        
         // the number of possible steps is much higher than the number of 
         //  concurrent threads
-        if(machineBegins){
-
-            initStepSequences.generateFirstStep();
-        }
-
+        
         int memReq = 10000;// for the first time to avoid frequent allocations
 
         for(int threadId = 0; threadId < numberOfThreads; ++threadId){
@@ -240,7 +236,7 @@ public class Game{
 
         for(int threadId = 0; threadId < numberOfThreads; ++threadId){
 
-            stepSequences.unite(stepSequencesChunks.get(0));
+            stepSequences.unite(stepSequencesChunks.get(threadId));
         }
     }
     
@@ -261,12 +257,16 @@ public class Game{
         Step sourceStep;
         Step targetStep;
         
+        // generation scenarios
+        //  first step from human, second steps from machine
+        //  first step from machine, second from human
+        
         if(machineBegins){
             
             intervalStartMachine = LocalDateTime.now();
-            
-            buildStrategy();
-            selectNextStep();
+        
+            stepSequences.generateFirstMachineStep();
+            selectNextMachineStep();
         
             machineTime.plus(LocalDateTime.now().until(
             intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
@@ -317,8 +317,8 @@ public class Game{
             
             intervalStartMachine = LocalDateTime.now();
             
-            stepSequences.continueStepSequences();
-            selectNextStep();
+            buildMachineStrategy();
+            selectNextMachineStep();
             
             machineTime.plus(LocalDateTime.now().until(
             intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
@@ -370,8 +370,9 @@ public class Game{
             
             intervalStartMachine = LocalDateTime.now();
             
-            buildStrategy();
-            selectNextStep();
+            stepSequences.generateFirstMachineStep();
+            selectNextMachineStep();
+            buildMachineStrategy();
             
             machineTime.plus(LocalDateTime.now().until(
             intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
@@ -424,8 +425,8 @@ public class Game{
             
             intervalStartMachine = LocalDateTime.now();
             
-            stepSequences.continueStepSequences();
-            selectNextStep();
+            stepSequences.continueMachineStepSequences();
+            selectNextMachineStep();
             
             machineTime.plus(LocalDateTime.now().until(
             intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
@@ -462,6 +463,7 @@ public class Game{
             // print more information (especially score progressions)
         }
         else{
+            // no further condition is needed, only draw scenario is at present
         
             System.out.println("Game has ended with draw ("
                     + humanScore + " - " + machineScore + ", player - machine) with "
