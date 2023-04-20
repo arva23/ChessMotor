@@ -292,7 +292,7 @@ public class Game{
             // waiting for player action
             intervalStartHuman = LocalDateTime.now();
             
-            requestPlayerAction();
+            requestHumanPlayerAction();
             
             humanTime.plus(LocalDateTime.now().until(
             intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
@@ -345,7 +345,7 @@ public class Game{
             // waiting for player action
             intervalStartHuman = LocalDateTime.now();
             
-            requestPlayerAction();
+            requestHumanPlayerAction();
             
             humanTime.plus(LocalDateTime.now().until(
             intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
@@ -399,7 +399,7 @@ public class Game{
         
             intervalStartHuman = LocalDateTime.now();
             
-            requestPlayerAction();
+            requestHumanPlayerAction();
 
             humanTime.plus(LocalDateTime.now().until(
             intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
@@ -496,7 +496,7 @@ public class Game{
     }
     
     
-    private void requestPlayerAction() throws Exception{
+    private void requestHumanPlayerAction() throws Exception{
     
         // TODO refactor method by a from-to square position pair
         
@@ -600,12 +600,12 @@ public class Game{
             0, 0.0));
         gameBoard[sourceSelectedRank][sourceSelectedFile] = -1;
 
-        Step selectedStep;
+        Step selectedStep = new Step();
         
-        if(stepSequences.size() > 0){
+        if(stepSequences.size() > 2){
         
             // finding step node with given position
-            ArrayList<GenStepKey> levelKeys = stepSequences.getLeafLevelKeys();
+            ArrayList<GenStepKey> levelKeys = stepSequences.getLevelKeys(1);
 
             int sizeOfLevelKeys = levelKeys.size();
 
@@ -623,7 +623,8 @@ public class Game{
             }
             
             // TASK) shift tree with one level, throw root away (root displacement)
-            stepSequences.setNewRootByKey(levelKeys.get(i));            
+            stepSequences.setNewRootByKey(levelKeys.get(i));
+            
             targetStepHistory.add(stepSequences.getByKey(levelKeys.get(i)));
             
             // TASK) TODO rename step node keys/identifiers (cyclic renaming)
@@ -637,13 +638,26 @@ public class Game{
             selectedStep = new Step(gameBoard[targetSelectedRank][targetSelectedFile], 
                     targetSelectedRank, targetSelectedFile, selectedPiece.getValue(), 
                     0, selectedPiece.getValue());
+            if(machineBegins){
+                
+                stepSequences.addOne(new GenStepKey("a"), 
+                        new GenStepKey("aa"), selectedStep);
+                // saving previous level status
+                stepSequences.addToHistoryStack("aa", selectedStep);
+            }
+            else{
             
-            stepSequences.addOne(new GenStepKey("a"), new GenStepKey("a"), selectedStep);
+                stepSequences.addOne(new GenStepKey("a"), 
+                        new GenStepKey("a"), selectedStep);
+                // saving previous level status
+                stepSequences.addToHistoryStack("a", selectedStep);
+            }
             
             targetStepHistory.add(selectedStep);
         
             //humanScore = 0.0;// initial step has taken
         }
+        
         
         ++stepId;
     }
