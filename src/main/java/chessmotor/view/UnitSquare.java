@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 //  events, only setters and getters that are available for board handler
 public class UnitSquare extends JPanel{
     
+    private String pieceTypeName;
     private int player;
     
     private JPanel squareBase;
@@ -23,9 +24,12 @@ public class UnitSquare extends JPanel{
     private ImageIcon pieceTexture;
     private JLabel pieceLabel;
     
-    public UnitSquare(int x, int y, int width, int height, ImageIcon base, 
-            ImageIcon piece){
+    public UnitSquare(int player, String pieceTypeName, int x, int y,
+            int width, int height, ImageIcon base, ImageIcon piece){
     
+        this.player = player;
+        this.pieceTypeName = pieceTypeName;
+        
         squareBase = new JPanel();
         squareBase.setBounds(x, y, width, height);
         baseLabel = new JLabel(baseTexture);
@@ -58,6 +62,11 @@ public class UnitSquare extends JPanel{
         // all pieces including empty square (by null piece object) are stored 
         //  outside of the square object by reference    
         pieceTexture = newPiece;
+    }
+    
+    public String getPieceTypeName(){
+    
+        return pieceTypeName;
     }
     
     public int getPlayer(){

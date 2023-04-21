@@ -189,6 +189,7 @@ public class GUIView implements IGameUI{
         
         String action = "";
         board.alternateActivePlayer();
+        boolean castlingAllowed = false;
         
         while(true){
         
@@ -197,9 +198,16 @@ public class GUIView implements IGameUI{
             
             if((machineBegins && board.getPlayerActionSquare().getPlayer() < 0)
                 || (!machineBegins && board.getPlayerActionSquare().getPlayer() > 0)){
-
-                System.out.println("Illegal selection, choose another.");
+                
+                if(board.pieceEquals(board.getPlayerActionResult(), "king")){
+                
+                    castlingAllowed = true;
+                }
+                
                 break;
+            }
+            else{
+                System.out.println("Illegal selection, choose another.");
             }
         }
         
@@ -211,10 +219,24 @@ public class GUIView implements IGameUI{
             playerBoardActionCond.await();
     
             if((machineBegins && board.getPlayerActionSquare().getPlayer() > 0) 
-                || (!machineBegins && board.getPlayerActionSquare().getPlayer() < 0)){
-            
-                System.out.println("Illegal selection, choose another.");
+                || (!machineBegins && board.getPlayerActionSquare().getPlayer() < 0
+                || (board.pieceEquals(board.getPlayerActionResult(), "rook")))){
+                
                 break;
+            }
+            else{
+            
+                if(castlingAllowed && ((machineBegins && board.getPlayerActionSquare().getPlayer() < 0)
+                    || (!machineBegins && board.getPlayerActionSquare().getPlayer() > 0))){
+
+                    if(board.pieceEquals(board.getPlayerActionResult(), "rook")){
+
+                        castlingAllowed = false;
+                        break;
+                    }
+                }
+                
+                System.out.println("Illegal selection, choose another.");
             }
         }
         

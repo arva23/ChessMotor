@@ -241,4 +241,10 @@ public class GameBoard implements IGameBoard {
         board[rank][file].setNewPiece((isAlly ? -1 : 1), 
                 pieceTypes.get(pieceType));
     }
+    
+    public boolean pieceEquals(String pos, String pieceTypeName){
+    
+        return board[pos.charAt(0)][pos.charAt(1)].getPieceTypeName()
+                .equals(pieceTypeName);
+    }
 }

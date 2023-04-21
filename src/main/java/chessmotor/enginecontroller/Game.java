@@ -594,19 +594,109 @@ public class Game{
             throw new Exception("Illegal selected step by chosen piece.");
         }
         
-        // in case of hit as well
+        // case of castling
+        boolean castlingOccurred = false;
+        GenPiece selectedRook = new GenPiece();
+        
+        if(selectedPiece.getTypeName().contains("king") 
+                && (selectedRook = pieces[gameBoard[targetSelectedRank][targetSelectedFile]]).getTypeName().contains("rook") 
+                && selectedPiece.getRank() == 7 && selectedRook.getRank() == 7){
+        
+            // suboptimal condition tests
+            
+            // selectedRook = pieces[gameBoard[targetSelectedRank][targetSelectedFile]];
+            boolean emptyInterFiles = true;
+            
+            if(selectedPiece.getFile() < selectedRook.getFile()){
+            
+                
+                for(int fileInd = 5; fileInd < 7 && emptyInterFiles; ++fileInd){
+                
+                    emptyInterFiles = gameBoard[7][fileInd] == -1;
+                }
+                
+                if(emptyInterFiles){
+                
+                    // perform castling
+                    sourceStepHistory.add(new DualStep(11 + 16, 15 + 16,
+                            7, 4, 7, 7, 0.0,
+                            0, 0.0));
 
-        selectedPiece.setRank(targetSelectedRank);
-        selectedPiece.setFile(targetSelectedFile);
+                    gameBoard[7][4] = -1;
+                    selectedPiece.setFile(6);
+                    gameBoard[7][6] = 11 + 16;
+                    gameBoard[7][7] = -1;
+                    selectedRook.setFile(5);
+                    gameBoard[7][5] = 15 + 16;
+                    
+                    castlingOccurred = true;
+                }
+            }
+            else{
+                
+                for(int fileInd = 1; fileInd < 4 && emptyInterFiles; ++fileInd){
+                 
+                    emptyInterFiles = gameBoard[7][fileInd] == -1;
+                }
+                
+                if(emptyInterFiles){
+                
+                    // perform castling
+                    sourceStepHistory.add(new DualStep(16 + 11, 8 + 16, 
+                            7, 4, 7, 0, 0.0,
+                            0, 0.0));
+                    
+                    gameBoard[7][4] = -1;
+                    selectedPiece.setFile(1);
+                    gameBoard[7][2] = 11 + 16;
+                    gameBoard[7][0] = -1;
+                    selectedRook.setFile(2);
+                    gameBoard[7][3] = 8 + 16;
+                    
+                    castlingOccurred = true;
+                }
+                else{
+                
+                }
+            }
+            
+            if(!emptyInterFiles){
+            
+                throw new Exception("Castling cannot be executed due to occupied squares.");
+            }
+        }
+        else{
+        
+            // in case of hit as well
 
-        gameBoard[targetSelectedRank][targetSelectedFile] = 
-            gameBoard[sourceSelectedRank][sourceSelectedFile];
+            selectedPiece.setRank(targetSelectedRank);
+            selectedPiece.setFile(targetSelectedFile);
 
-        sourceStepHistory.add(new Step(gameBoard[sourceSelectedRank][sourceSelectedFile],
-        sourceSelectedRank, sourceSelectedFile, 0.0,
-            0, 0.0));
-        gameBoard[sourceSelectedRank][sourceSelectedFile] = -1;
+            gameBoard[targetSelectedRank][targetSelectedFile] = 
+                gameBoard[sourceSelectedRank][sourceSelectedFile];
 
+            sourceStepHistory.add(new Step(gameBoard[sourceSelectedRank][sourceSelectedFile],
+            sourceSelectedRank, sourceSelectedFile, 0.0,
+                0, 0.0));
+            gameBoard[sourceSelectedRank][sourceSelectedFile] = -1;
+        }
+        
+        Step currStep;
+        if(castlingOccurred){
+        
+            currStep = new DualStep(selectedPiece.getPieceId(), 
+                    selectedRook.getPieceId(), selectedPiece.getRank(),
+                    selectedPiece.getFile(), selectedRook.getRank(), 
+                    selectedRook.getFile(), 0.0, 0,
+                    0.0);
+        }
+        else{
+            
+            currStep  = new Step(selectedPiece.getPieceId(), 
+                    targetSelectedRank, targetSelectedFile, 0.0,
+                    0, 0.0);// comparing currently created step
+        }
+        
         Step selectedStep = new Step();
         
         if(stepSequences.size() > 2){
@@ -622,8 +712,7 @@ public class Game{
 
                 selectedStep = stepSequences.getByKey(levelKeys.get(i));
 
-                if(selectedStep.getRank() == targetSelectedRank 
-                        && selectedStep.getFile() == targetSelectedFile){
+                if(selectedStep.equals(currStep)){
 
                     break;
                 }
@@ -632,9 +721,20 @@ public class Game{
             // TASK) shift tree with one level, throw root away (root displacement)
             stepSequences.setNewRootByKey(levelKeys.get(i));
             
-            targetStepHistory.add(stepSequences.getByKey(levelKeys.get(i)));
+            if(castlingOccurred){
             
-            // TASK) TODO rename step node keys/identifiers (cyclic renaming)
+                targetStepHistory.add(new DualStep(selectedPiece.getPieceId(), 
+                        selectedRook.getPieceId(), selectedPiece.getRank(),
+                        selectedPiece.getFile(), selectedRook.getRank(), 
+                        selectedRook.getFile(), 0.0, 0,
+                        0.0));
+            }
+            else{
+            
+                targetStepHistory.add(stepSequences.getByKey(levelKeys.get(i)));
+            }
+            
+            // TASK) rename step node keys/identifiers (cyclic renaming)
             //       in order to limit the key length (comparison optimization)
             stepSequences.trimKeys();
             
