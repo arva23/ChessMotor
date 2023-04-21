@@ -10,9 +10,9 @@ public class Bishop extends GenPiece{
         super();
     }
     
-    public Bishop(boolean isWhite, double value, int rank, int file){
+    public Bishop(int pieceId, boolean isWhite, double value, int rank, int file){
     
-        super(isWhite ? "whitebishop" : "blackbishop", value, rank, file);
+        super(pieceId, isWhite ? "whitebishop" : "blackbishop", value, rank, file);
     }
     
     @Override

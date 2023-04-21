@@ -139,21 +139,21 @@ public class Game{
 
             for(int i = 0; i < 8; ++i){
 
-                pieces[i] = new Pawn(machineBegins, -3.0, 1, i);
+                pieces[i] = new Pawn(i, machineBegins, -3.0, 1, i);
                 gameBoard[1][i] = i;
                 
-                pieces[16 + i] = new Pawn(!machineBegins, 3.0, 6, i);
+                pieces[16 + i] = new Pawn(16 + i, !machineBegins, 3.0, 6, i);
                 gameBoard[6][i] = 16 + i;
             }
 
-            pieces[8] = new Rook(machineBegins, -14.0, 0, 0);
-            pieces[9] = new Knight(machineBegins, -8.0, 0, 1);
-            pieces[10] = new Bishop(machineBegins, -14.0, 0, 2);
-            pieces[11] = new King(machineBegins, -8.0, 0, 3);
-            pieces[12] = new Queen(machineBegins, -28.0, 0, 4);
-            pieces[13] = new Bishop(machineBegins, -14.0, 0, 5);
-            pieces[14] = new Knight(machineBegins, -8.0, 0, 6);
-            pieces[15] = new Rook(machineBegins, -14.0, 0, 7);
+            pieces[8] = new Rook(8, machineBegins, -14.0, 0, 0);
+            pieces[9] = new Knight(9, machineBegins, -8.0, 0, 1);
+            pieces[10] = new Bishop(10, machineBegins, -14.0, 0, 2);
+            pieces[11] = new King(11, machineBegins, -8.0, 0, 3);
+            pieces[12] = new Queen(12, machineBegins, -28.0, 0, 4);
+            pieces[13] = new Bishop(13, machineBegins, -14.0, 0, 5);
+            pieces[14] = new Knight(14, machineBegins, -8.0, 0, 6);
+            pieces[15] = new Rook(15, machineBegins, -14.0, 0, 7);
             
             gameBoard[0][0] = 8;
             gameBoard[0][1] = 9;
@@ -166,14 +166,14 @@ public class Game{
 
             // initializing human pieces
 
-            pieces[16 + 8] = new Rook(!machineBegins, 14.0, 7, 0);
-            pieces[16 + 9] = new Knight(!machineBegins, 8.0, 7, 1);
-            pieces[16 + 10] = new Bishop(!machineBegins, 14.0, 7, 2);
-            pieces[16 + 11] = new King(!machineBegins, 8.0, 7, 3);
-            pieces[16 + 12] = new Queen(!machineBegins, 28.0, 7, 4);
-            pieces[16 + 13] = new Bishop(!machineBegins, 14.0, 7, 5);
-            pieces[16 + 14] = new Knight(!machineBegins, 8.0, 7, 6);
-            pieces[16 + 15] = new Rook(!machineBegins, 14.0, 7, 7);
+            pieces[16 + 8] = new Rook(16 + 8, !machineBegins, 14.0, 7, 0);
+            pieces[16 + 9] = new Knight(16 + 9, !machineBegins, 8.0, 7, 1);
+            pieces[16 + 10] = new Bishop(16 + 10, !machineBegins, 14.0, 7, 2);
+            pieces[16 + 11] = new King(16 + 11, !machineBegins, 8.0, 7, 3);
+            pieces[16 + 12] = new Queen(16 + 12, !machineBegins, 28.0, 7, 4);
+            pieces[16 + 13] = new Bishop(16 + 13, !machineBegins, 14.0, 7, 5);
+            pieces[16 + 14] = new Knight(16 + 14, !machineBegins, 8.0, 7, 6);
+            pieces[16 + 15] = new Rook(16 + 15, !machineBegins, 14.0, 7, 7);
 
             gameBoard[7][0] = 16 + 8;
             gameBoard[7][1] = 16 + 9;

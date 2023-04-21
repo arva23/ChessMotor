@@ -10,9 +10,9 @@ public class Pawn extends GenPiece{
         super();
     }
     
-    public Pawn(boolean isWhite, double value, int rank, int file){
+    public Pawn(int pieceId, boolean isWhite, double value, int rank, int file){
     
-        super(isWhite ? "whitepawn" : "blackpawn", value, rank, file);
+        super(pieceId, isWhite ? "whitepawn" : "blackpawn", value, rank, file);
     }
     
     @Override

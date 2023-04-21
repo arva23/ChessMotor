@@ -10,9 +10,9 @@ public class King extends GenPiece{
         super();
     }
     
-    public King(boolean isWhite, double value, int rank, int file){
+    public King(int pieceId, boolean isWhite, double value, int rank, int file){
     
-        super(isWhite ? "whiteking" : "blackking", value, rank, file);
+        super(pieceId, isWhite ? "whiteking" : "blackking", value, rank, file);
     }
     
     @Override

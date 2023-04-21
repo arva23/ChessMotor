@@ -9,6 +9,7 @@ import java.util.ArrayList;
 // neutral empty piece
 public class GenPiece {
     
+    private int pieceId;
     private String typeName;
     private double value;// penalty value for machine
     protected int rank;
@@ -18,8 +19,9 @@ public class GenPiece {
     
     }
     
-    public GenPiece(String typeName, double value, int rank, int file) {
+    public GenPiece(int pieceId, String typeName, double value, int rank, int file) {
     
+        this.pieceId = pieceId;
         this.typeName = typeName;
         this.value = value;
         this.rank = rank;
@@ -47,6 +49,16 @@ public class GenPiece {
         // todo
         
         return collisions;
+    }
+    
+    public int getPieceId(){
+    
+        return pieceId;
+    }
+    
+    public String getTypeName(){
+    
+        return typeName;
     }
     
     public double getValue(){
