@@ -16,7 +16,7 @@ public class King extends GenPiece{
     }
     
     @Override
-    public ArrayList<Pair> generateSteps(int gameBoard[][]){
+    public ArrayList<Pair> generateSteps(Integer gameBoard[][]){
     
         ArrayList<Pair> steps = new ArrayList<Pair>();
 
@@ -104,7 +104,7 @@ public class King extends GenPiece{
         return steps;
     }
     
-    public ArrayList<Pair> testForCollisions(int gameBoard[][]){
+    public ArrayList<Pair> testForCollisions(Integer gameBoard[][]){
     
         ArrayList<Pair> collisions = new ArrayList<Pair>();
         

@@ -28,7 +28,7 @@ public class GenPiece {
         this.file = file;
     }
     
-    public ArrayList<Pair> generateSteps(int gameBoard[][]){
+    public ArrayList<Pair> generateSteps(Integer gameBoard[][]){
     
         // It generates steps according to the limitations of other piece barriers 
         //  and gamefield boundaries.
@@ -42,7 +42,7 @@ public class GenPiece {
     }
     
     
-    public ArrayList<Pair> testForCollisions(int gameBoard[][]){
+    public ArrayList<Pair> testForCollisions(Integer gameBoard[][]){
         
         ArrayList<Pair> collisions = new ArrayList<Pair>();
         

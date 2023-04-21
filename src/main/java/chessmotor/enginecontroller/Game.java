@@ -56,7 +56,8 @@ public class Game{
     // active in game piece container
     private GenPiece pieces[];
     // the actual game board to operate with
-    private int[][] gameBoard;
+    //  use of int instead of String due to less memory usage
+    private Integer[][] gameBoard;
     // recent status of generated (arbirary incomplete n-ary tree) step sequences 
     //  for further step decisions
     // explicit step n-ary decision tree is requied in order to trace further steps
@@ -102,7 +103,7 @@ public class Game{
             gameStatus = "OK";
 
             pieces = new GenPiece[32];
-            gameBoard = new int[8][8];
+            gameBoard = new Integer[8][8];
             sourceStepHistory = new Stack<Step>();
             targetStepHistory = new Stack<Step>();
             removedHumanPieces = new Stack<Integer>();

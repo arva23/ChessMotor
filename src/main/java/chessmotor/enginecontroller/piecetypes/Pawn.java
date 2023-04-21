@@ -16,7 +16,7 @@ public class Pawn extends GenPiece{
     }
     
     @Override
-    public ArrayList<Pair> generateSteps(int gameBoard[][]){
+    public ArrayList<Pair> generateSteps(Integer gameBoard[][]){
     
         ArrayList<Pair> steps = new ArrayList<Pair>();
 
@@ -103,7 +103,7 @@ public class Pawn extends GenPiece{
     }
     
     @Override
-    public ArrayList<Pair> testForCollisions(int gameBoard[][]){
+    public ArrayList<Pair> testForCollisions(Integer gameBoard[][]){
     
         ArrayList<Pair> collisions = new ArrayList<Pair>();
         

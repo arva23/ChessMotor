@@ -15,7 +15,7 @@ public class StepDecisionTree implements Runnable{
     private boolean machineBegins;
     private GenPiece[] piecesRef;
     private Stack<Step> stepHistoryRef;
-    private int[][] gameBoardRef;
+    private Integer[][] gameBoardRef;
     
     // number of steps to be generated (look ahead with N steps), as an upper 
     // bound of step sequence generation
@@ -42,7 +42,7 @@ public class StepDecisionTree implements Runnable{
     private int fracs;
     private int no;
     public StepDecisionTree(boolean machineBegins, GenPiece[] pieces, 
-            Stack<Step> stepHistory, int[][] gameBoard, int depth, 
+            Stack<Step> stepHistory, Integer[][] gameBoard, int depth, 
             int cumulativeNegativeChangeThreshold, double minConvThreshold, int fracs, 
             int no, long memLimit) throws Exception{
     
@@ -712,7 +712,7 @@ public class StepDecisionTree implements Runnable{
                     key = leafMachineKeys.get(i);
                 }
                 
-                int[][] gameBoardCopy = gameBoardRef;
+                Integer[][] gameBoardCopy = gameBoardRef;
                 int sizeOfTakenSteps = gameBoardHistoryContinuation.get(i).size();
 
                 // conditioning game table according to selected step sequence
