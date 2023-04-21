@@ -141,6 +141,7 @@ public class GameBoard implements IGameBoard {
             squareBgs[2] = squareBgs[0];
         }
         
+        // default initialization of game board
         board = new UnitSquare[8][8];
         int squareTypeId = 0;
         

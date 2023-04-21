@@ -247,17 +247,11 @@ public class Game{
     }
     
     
+    // entry point of this game handler controller class
     public void runGame() throws Exception{
     
-        // TODO get to know the number of concurrent theads
-        // https://stackoverflow.com/questions/4759570/finding-number-of-cores-in-java
-        
-        // TODO create step sequence tree builder operator class as a Runnable 
-        // to thread pooling. This relies on heap pass by reference.
-    
         if(!initialized) throw new Exception("Uninitialized game.");
-        // TODO
-    
+        
         //gameStatus = 0;
         //playGame = true;
         Step sourceStep;
@@ -505,13 +499,6 @@ public class Game{
     
     
     private void requestHumanPlayerAction() throws Exception{
-    
-        // TODO refactor method by a from-to square position pair
-        
-        // TODO listen for player action within a determined timeout, validate 
-        //      action and return control to machine player
-        
-        //BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in)); 
         
         String action;
         action = gameUI.readPlayerAction();
@@ -990,7 +977,7 @@ public class Game{
         
         targetStepHistory.add(stepSequences.getByKey(levelKeys.get(maxI)));
         
-        // TASK) TODO rename step node keys/identifiers (cyclic renaming)
+        // TASK) rename step node keys/identifiers (cyclic renaming)
         //       in order to limit the key length (comparison optimization)
         stepSequences.trimKeys();
         
@@ -998,7 +985,7 @@ public class Game{
         
         ++stepId;
         
-        // TASK) TODO yield control to human player (asynchronous tasks)
+        // TASK) yield control to human player (asynchronous tasks)
     }
 
     

@@ -313,19 +313,13 @@ public class StepDecisionTree implements Runnable{
     }
     
     
-    ////////////////////////////////////////////////////////////////////////////
-    // TODO generate subsection multiple root based tree
-    
     // TODO count check status too
     @Override
     public void run(){
         
         // TODO: optimize, refactor Game.GenStep, Pair, LinTreeMap.Pair
         
-        // It always starts from root node due to root removal at each step 
-        //      of ally decision
-        
-        // TODO Generate these treebuilding utilizing the available concurrent 
+        // TASK Generate these treebuilding utilizing the available concurrent 
         //      threads using mutexes
         
         // generating steps for levels
@@ -659,7 +653,7 @@ public class StepDecisionTree implements Runnable{
             throw new Exception("Decision tree has not been generated.");
         }
         
-        // TODO place leaf level generation after root node offset displacement
+        // TASK place leaf level generation after root node offset displacement
         
         // continuing generation by generator
         
