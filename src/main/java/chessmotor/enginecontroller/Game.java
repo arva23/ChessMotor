@@ -31,7 +31,7 @@ import java.util.concurrent.locks.Condition;
 //  > Improved version of the above along width piece type strength weight seeking
 //    for maximizing the most n valuable pieces.
 
-public class Game{
+public class Game implements IGame{
     
     private Condition statusUpdateLock;
     private Condition statusSaveLock;
@@ -252,6 +252,7 @@ public class Game{
     
     
     // entry point of this game handler controller class
+    @Override
     public void runGame() throws Exception{
     
         if(!initialized) throw new Exception("Uninitialized game.");
@@ -1022,21 +1023,25 @@ public class Game{
         return targetStepHistory;
     }
     
+    @Override
     public void waitForDataRead() throws InterruptedException{
     
         statusUpdateLock.await();
     }
     
+    @Override
     public void signalForDataRead(){
     
         statusUpdateLock.signal();
     }
     
+    @Override
     public void waitForDataSave() throws Exception{
     
         statusSaveLock.await();
     }
     
+    @Override
     public void signalForDataSave() throws Exception{
     
         statusSaveLock.signal();
