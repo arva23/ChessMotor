@@ -23,10 +23,10 @@ public class GUIView implements IGameUI{
     
     // GAME BOARD MANAGEMENT
     private boolean machineBegins;
-    private GameBoard board;
     private Condition playerBoardWaitCond;
     private Condition playerBoardActionCond;
     
+    private GameBoardView board;
     // PLAYER CLOCK MANAGEMENT
     private PlayerClock playerClocks;
     private ExecutorService playerClocksExecutor;
@@ -129,8 +129,8 @@ public class GUIView implements IGameUI{
             }
         }
         
-        board = new GameBoard(boardX, boardY, boardWidth, boardHeight, 
-                playerBoardWaitCond, playerBoardActionCond, machineBegins, boardSquareStatus);
+        board = new GameBoardView(boardX, boardY, boardWidth, boardHeight,
+                machineBegins, boardSquareStatus);
         elementContainer.add(board.getMainPanel());
         
         int playerClocksX = boardWidth + 1;

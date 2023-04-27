@@ -2,25 +2,21 @@ package chessmotor.view;
 
 // this class represents the game board that is consisted of squared
 
+import chessmotor.enginecontroller.ComplexGameStatus;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.EventListener;
 import java.util.HashMap;
 import java.util.concurrent.locks.Condition;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 // the squares are managed by pooling the events, only one event is by event 
 //  types to avoid overwhelmingly loaded listener cases
-public class GameBoard implements IGameBoard {
+public class GameBoardView implements IGameBoardView {
 
     // square type
     private ImageIcon[] squareBgs;// 0 white, 1 black
@@ -49,9 +45,8 @@ public class GameBoard implements IGameBoard {
     private int recentFile;
     private UnitSquare recentSquare;
     
-    public GameBoard(int x, int y, int width, int height, 
-            Condition playerBoardWaitCond, Condition playerBoardActionCond,
-            boolean machineComes, String[][] boardSquareStatus) throws Exception{
+    public GameBoardView(int x, int y, int width, int height, boolean machineComes, 
+            String[][] boardSquareStatus) throws Exception{
     
         try {
             
@@ -128,9 +123,6 @@ public class GameBoard implements IGameBoard {
         eventHandlerPanel = new JPanel();
         eventHandlerPanel.setBounds(x, y, width, height);
 
-        this.playerBoardWaitCond = playerBoardWaitCond;
-        this.playerBoardActionCond = playerBoardActionCond;
-        
         this.machineComes = machineComes;
         this.machineBegins = machineComes;
         
@@ -143,21 +135,6 @@ public class GameBoard implements IGameBoard {
         
         // default initialization of game board
         board = new UnitSquare[8][8];
-        int squareTypeId = 0;
-        
-        for(int rankInd = 0; rankInd < 8; ++rankInd){
-        
-            for(int fileInd = 0; fileInd < 8; ++fileInd){
-            
-                squareTypeId = fileInd % 2 + rankInd % 2;
-                
-                board[rankInd][fileInd] = new UnitSquare(
-                        rankInd * squareHeight, fileInd * squareWidth, 
-                        squareWidth, squareHeight, squareBgs[squareTypeId],
-                        pieceTypes.get(boardSquareStatus[rankInd][fileInd]));
-            }
-        }
-        
         eventHandlerPanel.addMouseListener(new MouseAdapter(){
         
             @Override
@@ -192,9 +169,7 @@ public class GameBoard implements IGameBoard {
     }
     
     @Override
-    public void setGameBoard(String[][] boardSquareStatus, boolean machineBegins,
-            boolean machineComes){
-    
+    public void setGameBoard(ComplexGameStatus gameStatus){
     }
     
     @Override
@@ -248,4 +223,5 @@ public class GameBoard implements IGameBoard {
         return board[pos.charAt(0)][pos.charAt(1)].getPieceTypeName()
                 .equals(pieceTypeName);
     }
+    
 }
