@@ -212,6 +212,47 @@ public class GameBoardView implements IGameBoardView {
     
     @Override
     public void setGameBoard(ComplexGameStatus gameStatus){
+    
+        // recent values are preserved but not used due to immediate modification 
+        //  by new values
+        this.machineComes = gameStatus.getMachineComes();
+        this.machineBegins = gameStatus.getMachineBegins();
+        
+        String[][] boardSquareStatus = gameStatus.getBoardSquareStatus();
+        
+        int squareTypeId = 0;
+        char machineCmp = machineBegins ? 'w' : 'b';
+        char humanCmp = !machineBegins ? 'b' : 'w';
+        int player = 0;
+        String typeName = "empty";
+        
+        for(int rankInd = 0; rankInd < 8; ++rankInd){
+        
+            for(int fileInd = 0; fileInd < 8; ++fileInd){
+            
+                squareTypeId = fileInd % 2 + rankInd + 2;
+                typeName = boardSquareStatus[rankInd][fileInd];
+                
+                if(typeName.charAt(0) == machineCmp){
+                
+                    player = -1;
+                }
+                else if(typeName.charAt(0) == humanCmp){
+                
+                    player = 1;
+                }
+                else{
+                    // neutral piece (empty square))
+                    player = 0;
+                }
+                
+                board[rankInd][fileInd] = new UnitSquare(
+                        player, typeName, fileInd * squareWidth, 
+                        rankInd * squareHeight, squareWidth, 
+                        squareHeight, squareBgs[squareTypeId],
+                        pieceTypes.get(typeName));
+            }
+        }
     }
     
     @Override

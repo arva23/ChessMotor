@@ -1,6 +1,7 @@
 package chessmotor.view;
 
 
+import chessmotor.enginecontroller.ComplexGameStatus;
 import chessmotor.enginecontroller.GameController;
 import java.awt.Container;
 import java.util.concurrent.ExecutorService;
@@ -151,9 +152,17 @@ public class GUIView implements IGameUI{
     }
     
     @Override
-    public void loadGame(String[][] boardSquareStatus, int whitePlayerTime, 
-            int blackPlayerTime, boolean whitePlayerComes, boolean allyBegins, 
-            boolean allyComes){
+    public void loadGame(ComplexGameStatus gameStatus){
+    
+        playerClocks.stop();
+        playerClocksExecutor.shutdown();
+        board.setGameBoard(gameStatus);
+        playerClocks.setPlayersClock(
+                gameStatus.getWhitePlayerTime(), 
+                gameStatus.getBlackPlayerTime(), 
+                gameStatus.getWhitePlayerComes());
+        playerClocksExecutor.execute(playerClocks);
+        playerClocks.start();
     }
 
     @Override

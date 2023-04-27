@@ -211,6 +211,68 @@ public class Game implements IGame{
         }
     }
     
+    @Override
+    public void setStatus(GenericSaveStatus saveStatus){
+    
+        GameStatus gameStatus = (GameStatus)saveStatus;
+        
+        gameName = gameStatus.getGameName();
+        machineBegins = gameStatus.getMachineBegins();
+        machineComes = gameStatus.getMachineComes();
+        machineTime = gameStatus.getMachineTime();
+        humanTime = gameStatus.getHumanTime();
+        machineIsInCheck = gameStatus.getMachineIsInCheck();
+        humanIsInCheck = gameStatus.getHumanIsInCheck();
+        this.gameStatus = gameStatus.getGameStatus();
+        pieces = gameStatus.getPieces();
+        gameBoard = gameStatus.getGameBoard();
+        stepSequences = gameStatus.getStepSequences();
+        stepId = gameStatus.getStepId();
+        sourceStepHistory = gameStatus.getSourceStepHistory();
+        targetStepHistory = gameStatus.getTargetStepHistory();
+    }
+    
+    @Override
+    public GenericSaveStatus getStatus() throws Exception{
+    
+        ComplexGameStatus gameStatus = new ComplexGameStatus();
+        gameStatus.setGameName("testSave");
+        gameStatus.setMachineBegins(machineBegins);
+        gameStatus.setMachineComes(machineComes);
+        gameStatus.setMachineTime(machineTime);
+        gameStatus.setHumanTime(humanTime);
+        gameStatus.setMachineIsInCheck(machineIsInCheck);
+        gameStatus.setHumanIsInCheck(humanIsInCheck);
+        gameStatus.setGameStatus(this.gameStatus);
+        gameStatus.setPieces(pieces);
+        gameStatus.setGameBoard(gameBoard);
+        gameStatus.setStepSequences(stepSequences);
+        gameStatus.setStepId(stepId);
+        gameStatus.setSourceStepHistory(sourceStepHistory);
+        gameStatus.setTargetStepHistory(targetStepHistory);
+        
+        String[][] boardSquareStatus = new String[8][8];
+        
+        for(int rankInd = 0; rankInd < 8; ++rankInd){
+        
+            for(int fileInd = 0; fileInd < 8; ++fileInd){
+            
+                if(gameBoard.get(rankInd, fileInd) != -1){
+                    
+                    boardSquareStatus[rankInd][fileInd] = pieces.get(
+                            gameBoard.get(rankInd, fileInd)).getTypeName();
+                }
+                else{
+                    
+                    boardSquareStatus[rankInd][fileInd] = "empty";
+                }
+            }
+        }
+        
+        gameStatus.setBoardSquareStatus(boardSquareStatus);
+        // todo, implement status saver
+        return new GameStatus();
+    }
     
     private void buildMachineStrategy() throws Exception{
     

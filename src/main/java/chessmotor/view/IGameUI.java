@@ -1,12 +1,10 @@
 package chessmotor.view;
 
-import java.time.Duration;
+import chessmotor.enginecontroller.ComplexGameStatus;
 
 public interface IGameUI {
 
-    public void loadGame(String[][] boardSquareStatus, int whitePlayerTime, 
-            int blackPlayerTime, boolean whitePlayerComes, boolean machineBegins,
-            boolean machineComes);
+    public void loadGame(ComplexGameStatus gameStatus);
     
     public void run();
     
