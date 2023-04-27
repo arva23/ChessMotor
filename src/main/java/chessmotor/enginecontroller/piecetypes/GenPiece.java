@@ -2,6 +2,7 @@ package chessmotor.enginecontroller.piecetypes;
 
 // ecapsulate square pieces for further improvements
 
+import chessmotor.enginecontroller.GameBoardData;
 import chessmotor.enginecontroller.Pair;
 import java.util.ArrayList;
 
@@ -28,7 +29,7 @@ public class GenPiece {
         this.file = file;
     }
     
-    public ArrayList<Pair> generateSteps(Integer gameBoard[][]){
+    public ArrayList<Pair> generateSteps(GameBoardData gameBoard){
     
         // It generates steps according to the limitations of other piece barriers 
         //  and gamefield boundaries.
@@ -42,7 +43,7 @@ public class GenPiece {
     }
     
     
-    public ArrayList<Pair> testForCollisions(Integer gameBoard[][]){
+    public ArrayList<Pair> testForCollisions(GameBoardData gameBoard){
         
         ArrayList<Pair> collisions = new ArrayList<Pair>();
         
@@ -84,10 +85,5 @@ public class GenPiece {
     public void setFile(int file){
     
         this.file = file;
-    }
-    
-    public String getTypeName(){
-    
-        return typeName;
     }
 }

@@ -57,7 +57,7 @@ public class Game{
     private GenPiece pieces[];
     // the actual game board to operate with
     //  use of int instead of String due to less memory usage
-    private Integer[][] gameBoard;
+    private GameBoardData gameBoard;
     // recent status of generated (arbirary incomplete n-ary tree) step sequences 
     //  for further step decisions
     // explicit step n-ary decision tree is requied in order to trace further steps
@@ -103,7 +103,7 @@ public class Game{
             gameStatus = "OK";
 
             pieces = new GenPiece[32];
-            gameBoard = new Integer[8][8];
+            gameBoard = new GameBoardData();
             sourceStepHistory = new Stack<Step>();
             targetStepHistory = new Stack<Step>();
             removedHumanPieces = new Stack<Integer>();
@@ -141,10 +141,9 @@ public class Game{
             for(int i = 0; i < 8; ++i){
 
                 pieces[i] = new Pawn(i, machineBegins, -3.0, 1, i);
-                gameBoard[1][i] = i;
+                gameBoard.set(1, i, i);
                 
                 pieces[16 + i] = new Pawn(16 + i, !machineBegins, 3.0, 6, i);
-                gameBoard[6][i] = 16 + i;
             }
 
             pieces[8] = new Rook(8, machineBegins, -14.0, 0, 0);
@@ -155,15 +154,16 @@ public class Game{
             pieces[13] = new Bishop(13, machineBegins, -14.0, 0, 5);
             pieces[14] = new Knight(14, machineBegins, -8.0, 0, 6);
             pieces[15] = new Rook(15, machineBegins, -14.0, 0, 7);
+                gameBoard.set(6, i, 16 + i);
             
-            gameBoard[0][0] = 8;
-            gameBoard[0][1] = 9;
-            gameBoard[0][2] = 10;
-            gameBoard[0][3] = 11;
-            gameBoard[0][4] = 12;
-            gameBoard[0][5] = 13;
-            gameBoard[0][6] = 14;
-            gameBoard[0][7] = 15;
+            gameBoard.set(0, 0, 8);
+            gameBoard.set(0, 1, 9);
+            gameBoard.set(0, 2, 10);
+            gameBoard.set(0, 3, 11);
+            gameBoard.set(0, 4, 12);
+            gameBoard.set(0, 5, 13);
+            gameBoard.set(0, 6, 14);
+            gameBoard.set(0, 7, 15);
 
             // initializing human pieces
 
@@ -176,21 +176,21 @@ public class Game{
             pieces[16 + 14] = new Knight(16 + 14, !machineBegins, 8.0, 7, 6);
             pieces[16 + 15] = new Rook(16 + 15, !machineBegins, 14.0, 7, 7);
 
-            gameBoard[7][0] = 16 + 8;
-            gameBoard[7][1] = 16 + 9;
-            gameBoard[7][2] = 16 + 10;
-            gameBoard[7][3] = 16 + 11;
-            gameBoard[7][4] = 16 + 12;
-            gameBoard[7][5] = 16 + 13;
-            gameBoard[7][6] = 16 + 14;
-            gameBoard[7][7] = 16 + 15;
+            gameBoard.set(7, 0, 16 + 8);
+            gameBoard.set(7, 1, 16 + 9);
+            gameBoard.set(7, 2, 16 + 10);
+            gameBoard.set(7, 3, 16 + 11);
+            gameBoard.set(7, 4, 16 + 12);
+            gameBoard.set(7, 5, 16 + 13);
+            gameBoard.set(7, 6, 16 + 14);
+            gameBoard.set(7, 7, 16 + 15);
 
             // filling empty squares
             for(int rankInd = 2; rankInd < 6; ++rankInd){
 
                 for(int fileInd = 0; fileInd < 8; ++fileInd){
 
-                    gameBoard[rankInd][fileInd] = -1;
+                    gameBoard.set(rankInd, fileInd, -1);
                 }
             }
             
@@ -546,7 +546,7 @@ public class Game{
         
         sourceSelectedFile = (int)param[0].charAt(1);
         
-        if(humanIsInCheck && gameBoard[sourceSelectedRank][sourceSelectedFile] != 11){
+        if(humanIsInCheck && gameBoard.get(sourceSelectedRank, sourceSelectedFile) != 11){
         
             throw new Exception("Player is in check. Resolve check.");
         }
@@ -600,7 +600,7 @@ public class Game{
                 
                 for(int fileInd = 5; fileInd < 7 && emptyInterFiles; ++fileInd){
                 
-                    emptyInterFiles = gameBoard[7][fileInd] == -1;
+                    emptyInterFiles = gameBoard.get(7, fileInd) == -1;
                 }
                 
                 if(emptyInterFiles){
@@ -610,12 +610,12 @@ public class Game{
                             7, 4, 7, 7, 0.0,
                             0, 0.0));
 
-                    gameBoard[7][4] = -1;
+                    gameBoard.set(7, 4, -1);
                     selectedPiece.setFile(6);
-                    gameBoard[7][6] = 11 + 16;
-                    gameBoard[7][7] = -1;
+                    gameBoard.set(7, 6, 11 + 16);
+                    gameBoard.set(7, 7, -1);
                     selectedRook.setFile(5);
-                    gameBoard[7][5] = 15 + 16;
+                    gameBoard.set(7, 5, 15 + 16);
                     
                     castlingOccurred = true;
                 }
@@ -624,7 +624,7 @@ public class Game{
                 
                 for(int fileInd = 1; fileInd < 4 && emptyInterFiles; ++fileInd){
                  
-                    emptyInterFiles = gameBoard[7][fileInd] == -1;
+                    emptyInterFiles = gameBoard.get(7, fileInd) == -1;
                 }
                 
                 if(emptyInterFiles){
@@ -634,12 +634,12 @@ public class Game{
                             7, 4, 7, 0, 0.0,
                             0, 0.0));
                     
-                    gameBoard[7][4] = -1;
+                    gameBoard.set(7, 4, -1);
                     selectedPiece.setFile(1);
-                    gameBoard[7][2] = 11 + 16;
-                    gameBoard[7][0] = -1;
+                    gameBoard.set(7, 2, 11 + 16);
+                    gameBoard.set(7, 0, -1);
                     selectedRook.setFile(2);
-                    gameBoard[7][3] = 8 + 16;
+                    gameBoard.set(7, 3, 8 + 16);
                     
                     castlingOccurred = true;
                 }
@@ -660,13 +660,14 @@ public class Game{
             selectedPiece.setRank(targetSelectedRank);
             selectedPiece.setFile(targetSelectedFile);
 
-            gameBoard[targetSelectedRank][targetSelectedFile] = 
-                gameBoard[sourceSelectedRank][sourceSelectedFile];
+            gameBoard.set(targetSelectedRank, targetSelectedFile, 
+                gameBoard.get(sourceSelectedRank, sourceSelectedFile));
 
-            sourceStepHistory.add(new Step(gameBoard[sourceSelectedRank][sourceSelectedFile],
-            sourceSelectedRank, sourceSelectedFile, 0.0,
+            sourceStepHistory.add(new Step(
+                    gameBoard.get(sourceSelectedRank, sourceSelectedFile),
+                    sourceSelectedRank, sourceSelectedFile, 0.0,
                 0, 0.0));
-            gameBoard[sourceSelectedRank][sourceSelectedFile] = -1;
+            gameBoard.set(sourceSelectedRank, sourceSelectedFile, -1);
         }
         
         Step currStep;
@@ -730,9 +731,11 @@ public class Game{
         }
         else{
             
-            selectedStep = new Step(gameBoard[targetSelectedRank][targetSelectedFile], 
-                    targetSelectedRank, targetSelectedFile, selectedPiece.getValue(), 
-                    0, selectedPiece.getValue());
+            selectedStep = new Step(
+                    gameBoard.get(targetSelectedRank, targetSelectedFile), 
+                    targetSelectedRank, targetSelectedFile, 
+                    selectedPiece.getValue(), 0,
+                    selectedPiece.getValue());
             if(machineBegins){
                 
                 stepSequences.addOne(new GenStepKey("a"), 
@@ -754,9 +757,10 @@ public class Game{
         }
         
         // piece removal in case of hit
-        if(gameBoard[targetSelectedRank][targetSelectedFile] != -1){
+        if(gameBoard.get(targetSelectedRank, targetSelectedFile) != -1){
         
-            removedMachinePieces.add(gameBoard[targetSelectedRank][targetSelectedFile]);
+            removedMachinePieces.add(
+                    gameBoard.get(targetSelectedRank, targetSelectedFile));
         }
         
         // pawn replacement with earlier hit piece
@@ -786,7 +790,7 @@ public class Game{
             selectedI = removedHumanPieces.get(selectedI);
             pieces[selectedI].setRank(targetSelectedRank);
             pieces[selectedI].setFile(targetSelectedFile);
-            gameBoard[targetSelectedRank][targetSelectedFile] = selectedI;
+            gameBoard.set(targetSelectedRank, targetSelectedFile, selectedI);
             selectedStep.setPieceId(selectedI);
             removedHumanPieces.remove(selectedI);
         }
@@ -808,7 +812,7 @@ public class Game{
 
             step = stepSequences.getByKey(levelKeys.get(i));
 
-            if(gameBoard[step.getRank()][step.getFile()] == 11 + 16){
+            if(gameBoard.get(step.getRank(), step.getFile()) == 11 + 16){
 
                 // human king is in check
                 humanIsInCheck = true;
@@ -838,7 +842,7 @@ public class Game{
         
             step = stepSequences.getByKey(levelKeys.get(i));
             
-            if(gameBoard[step.getRank()][step.getFile()] == 11){
+            if(gameBoard.get(step.getRank(), step.getFile()) == 11){
             
                 // machine king is in check
                 machineIsInCheck = true;
@@ -938,9 +942,9 @@ public class Game{
         Step step = stepSequences.getByKey(levelKeys.get(maxI));
         
         // piece removal in case of hit
-        if(gameBoard[step.getRank()][step.getFile()] != -1){
+        if(gameBoard.get(step.getRank(), step.getFile()) != -1){
         
-            removedHumanPieces.add(gameBoard[step.getRank()][step.getFile()]);
+            removedHumanPieces.add(gameBoard.get(step.getRank(), step.getFile()));
         }
         
         // pawn replacement with earlier hit piece
@@ -964,7 +968,7 @@ public class Game{
             selectedI = removedMachinePieces.get(selectedI);
             pieces[selectedI].setRank(step.getRank());
             pieces[selectedI].setFile(step.getFile());
-            gameBoard[step.getRank()][step.getFile()] = selectedI;
+            gameBoard.set(step.getRank(), step.getFile(), selectedI);
             // a priori piece type replacement
             step.setPieceId(selectedI);
             removedMachinePieces.remove(selectedI);
