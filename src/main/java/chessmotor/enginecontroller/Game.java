@@ -42,6 +42,7 @@ public class Game implements IGame{
     private boolean initialized;
     // which player begins with the white pieces
     private boolean machineBegins;
+    private boolean machineComes;
     
     private double machineScore;
     private double humanScore;
@@ -98,7 +99,8 @@ public class Game implements IGame{
             initialized = true;
 
             this.machineBegins = machineBegins;
-
+            this.machineComes = machineBegins;
+            
             machineScore = 0.0;
             humanScore = 0.0;
             machineIsInCheck = false;
@@ -331,7 +333,10 @@ public class Game implements IGame{
         if(machineBegins){
             
             intervalStartMachine = LocalDateTime.now();
+            
             waitForDataSave();
+            machineComes = true;
+            
             stepSequences.generateFirstMachineStep();
             selectNextMachineStep();
             
@@ -359,7 +364,10 @@ public class Game implements IGame{
             
             // waiting for player action
             intervalStartHuman = LocalDateTime.now();
-            waitForDataSave();
+            
+            waitForDataSave();  
+            machineComes = false;
+            
             requestHumanPlayerAction();
             
             humanTime.plus(LocalDateTime.now().until(
@@ -373,7 +381,9 @@ public class Game implements IGame{
                     targetStep.getPieceId()).getTypeName(), 
                     sourceStep.getRank(), sourceStep.getFile(),
                     targetStep.getRank(), targetStep.getFile());
+            
             signalForDataRead();
+            
             if(timeLimit.compareTo(humanTime) <= 0){
             
                 playGame = false;
@@ -385,7 +395,10 @@ public class Game implements IGame{
             gameUI.switchPlayerClock();
             
             intervalStartMachine = LocalDateTime.now();
+            
             waitForDataSave();
+            machineComes = true;
+            
             buildMachineStrategy();
             selectNextMachineStep();
             
@@ -401,6 +414,7 @@ public class Game implements IGame{
                     sourceStep.getRank(), sourceStep.getFile(),
                     targetStep.getRank(), targetStep.getFile());
             signalForDataRead();
+            
             if(timeLimit.compareTo(machineTime) <= 0){
             
                 playGame = false;
@@ -414,7 +428,10 @@ public class Game implements IGame{
             
             // waiting for player action
             intervalStartHuman = LocalDateTime.now();
-            waitForDataSave();  
+            
+            waitForDataSave();
+            machineComes = false;
+            
             requestHumanPlayerAction();
             
             humanTime.plus(LocalDateTime.now().until(
@@ -428,7 +445,9 @@ public class Game implements IGame{
                     pieces.get(targetStep.getPieceId()).getTypeName(),
                     sourceStep.getRank(), sourceStep.getFile(),
                     targetStep.getRank(), targetStep.getFile());
+            
             signalForDataRead();
+            
             if(timeLimit.compareTo(humanTime) <= 0){
             
                 playGame = false;
@@ -440,7 +459,10 @@ public class Game implements IGame{
             gameUI.switchPlayerClock();
             
             intervalStartMachine = LocalDateTime.now();
+            
             waitForDataSave();
+            machineComes = true;
+            
             stepSequences.generateFirstMachineStep();
             selectNextMachineStep();
             buildMachineStrategy();
@@ -456,7 +478,9 @@ public class Game implements IGame{
                     pieces.get(targetStep.getPieceId()).getTypeName(),
                     sourceStep.getRank(), sourceStep.getFile(),
                     targetStep.getRank(), targetStep.getFile());
+            
             signalForDataRead();
+            
             if(timeLimit.compareTo(machineTime) <= 0){
             
                 playGame = false;
@@ -472,6 +496,7 @@ public class Game implements IGame{
         
             intervalStartHuman = LocalDateTime.now();
             waitForDataSave();
+            machineComes = false;
             requestHumanPlayerAction();
 
             humanTime.plus(LocalDateTime.now().until(
@@ -498,6 +523,7 @@ public class Game implements IGame{
             
             intervalStartMachine = LocalDateTime.now();
             waitForDataSave();
+            machineComes = true;
             stepSequences.continueMachineStepSequences();
             selectNextMachineStep();
             
@@ -512,7 +538,9 @@ public class Game implements IGame{
                     pieces.get(targetStep.getPieceId()).getTypeName(),
                     sourceStep.getRank(), sourceStep.getFile(),
                     targetStep.getRank(), targetStep.getFile());
+            
             signalForDataRead();
+            
             if(timeLimit.compareTo(machineTime) <= 0){
             
                 playGame = false;
