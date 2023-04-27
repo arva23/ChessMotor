@@ -135,6 +135,48 @@ public class GameBoardView implements IGameBoardView {
         
         // default initialization of game board
         board = new UnitSquare[8][8];
+        int squareTypeId = 0;
+        
+        for(int rankInd = 0; rankInd < 2; ++rankInd){
+        
+            for(int fileInd = 0; fileInd < 8; ++fileInd){
+            
+                squareTypeId = fileInd % 2 + rankInd + 2;
+                board[rankInd][fileInd] = new UnitSquare(
+                        machineBegins ? 1 : 0,
+                        boardSquareStatus[rankInd][fileInd],
+                        fileInd * squareWidth, rankInd * squareHeight,
+                        squareWidth, squareHeight, squareBgs[squareTypeId],
+                        pieceTypes.get(boardSquareStatus[rankInd][fileInd]));
+            }
+        }
+        
+        for(int rankInd = 2; rankInd < 6; ++rankInd){
+        
+            for(int fileInd = 0; fileInd < 8; ++fileInd){
+                
+                squareTypeId = fileInd % 2 + rankInd % 2;
+                board[rankInd][fileInd] = new UnitSquare(0, 
+                        boardSquareStatus[rankInd][fileInd],
+                        fileInd * squareWidth, rankInd * squareHeight, 
+                        squareWidth, squareHeight, squareBgs[squareTypeId],
+                        pieceTypes.get(boardSquareStatus[rankInd][fileInd]));
+            }
+        }
+        
+        for(int rankInd = 6; rankInd < 8; ++rankInd){
+        
+            for(int fileInd = 0; fileInd < 8; ++fileInd){
+            
+                squareTypeId = fileInd % 2 + rankInd + 2;
+                board[rankInd][fileInd] = new UnitSquare(
+                        machineBegins ? 0 : 1, boardSquareStatus[rankInd][fileInd],
+                        fileInd * squareWidth, rankInd * squareHeight,
+                        squareWidth, squareHeight, squareBgs[squareTypeId],
+                        pieceTypes.get(boardSquareStatus[rankInd][fileInd]));
+            }
+        }
+        
         eventHandlerPanel.addMouseListener(new MouseAdapter(){
         
             @Override
