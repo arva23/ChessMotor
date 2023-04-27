@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Stack;
+import java.util.concurrent.locks.Condition;
 
 // evolution of engine
 
@@ -31,6 +32,9 @@ import java.util.Stack;
 //    for maximizing the most n valuable pieces.
 
 public class Game{
+    
+    private Condition statusUpdateLock;
+    private Condition statusSaveLock;
     
     private IGameUI gameUI;
     
@@ -1018,4 +1022,23 @@ public class Game{
         return targetStepHistory;
     }
     
+    public void waitForDataRead() throws InterruptedException{
+    
+        statusUpdateLock.await();
+    }
+    
+    public void signalForDataRead(){
+    
+        statusUpdateLock.signal();
+    }
+    
+    public void waitForDataSave() throws Exception{
+    
+        statusSaveLock.await();
+    }
+    
+    public void signalForDataSave() throws Exception{
+    
+        statusSaveLock.signal();
+    }
 }
