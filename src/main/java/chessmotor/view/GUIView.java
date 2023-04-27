@@ -6,7 +6,6 @@ import java.awt.Container;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import java.util.concurrent.locks.Condition;
 import javax.swing.JFrame;
 
 public class GUIView implements IGameUI{
@@ -23,10 +22,8 @@ public class GUIView implements IGameUI{
     
     // GAME BOARD MANAGEMENT
     private boolean machineBegins;
-    private Condition playerBoardWaitCond;
-    private Condition playerBoardActionCond;
-    
     private GameBoardView board;
+
     // PLAYER CLOCK MANAGEMENT
     private PlayerClock playerClocks;
     private ExecutorService playerClocksExecutor;
@@ -193,8 +190,8 @@ public class GUIView implements IGameUI{
         
         while(true){
         
-            playerBoardWaitCond.signal();
-            playerBoardActionCond.await();
+            board.signalForBoard();
+            board.waitForAction();
             
             if((machineBegins && board.getPlayerActionSquare().getPlayer() < 0)
                 || (!machineBegins && board.getPlayerActionSquare().getPlayer() > 0)){
@@ -215,8 +212,8 @@ public class GUIView implements IGameUI{
 
         while(true){
         
-            playerBoardWaitCond.signal();
-            playerBoardActionCond.await();
+            board.signalForBoard();
+            board.waitForAction();
     
             if((machineBegins && board.getPlayerActionSquare().getPlayer() > 0) 
                 || (!machineBegins && board.getPlayerActionSquare().getPlayer() < 0

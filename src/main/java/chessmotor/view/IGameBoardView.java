@@ -18,4 +18,11 @@ public interface IGameBoardView {
     public void setSquare(boolean machineBegins, String pieceType, int targetRank,
             int targetFile) throws Exception;
     
+    public void waitForBoard() throws Exception;
+    
+    public void signalForBoard() throws Exception;
+    
+    public void waitForAction() throws Exception;
+    
+    public void signalForAction() throws Exception;
 }

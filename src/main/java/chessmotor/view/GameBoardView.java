@@ -266,4 +266,27 @@ public class GameBoardView implements IGameBoardView {
                 .equals(pieceTypeName);
     }
     
+    @Override
+    public void waitForBoard() throws InterruptedException{
+    
+        playerBoardWaitCond.await();
+    }
+    
+    @Override
+    public void signalForBoard() throws InterruptedException{
+    
+        playerBoardWaitCond.signal();
+    }
+    
+    @Override
+    public void waitForAction() throws InterruptedException{
+    
+        playerBoardActionCond.await();
+    }
+    
+    @Override
+    public void signalForAction() throws InterruptedException{
+    
+        playerBoardActionCond.signal();
+    }
 }
