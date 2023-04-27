@@ -54,7 +54,7 @@ public class Game{
     private boolean playGame;
     private String gameStatus;
     // active in game piece container
-    private GenPiece pieces[];
+    private PieceContainer pieces;
     // the actual game board to operate with
     //  use of int instead of String due to less memory usage
     private GameBoardData gameBoard;
@@ -102,7 +102,7 @@ public class Game{
             playGame = true;
             gameStatus = "OK";
 
-            pieces = new GenPiece[32];
+            pieces = new PieceContainer();
             gameBoard = new GameBoardData();
             sourceStepHistory = new Stack<Step>();
             targetStepHistory = new Stack<Step>();
@@ -140,21 +140,21 @@ public class Game{
 
             for(int i = 0; i < 8; ++i){
 
-                pieces[i] = new Pawn(i, machineBegins, -3.0, 1, i);
+                pieces.set(i, new Pawn(i, machineBegins, -3.0, 1, i));
                 gameBoard.set(1, i, i);
                 
-                pieces[16 + i] = new Pawn(16 + i, !machineBegins, 3.0, 6, i);
+                pieces.set(16 + i, new Pawn(16 + i, !machineBegins, 3.0, 6, i));
+                gameBoard.set(6, i, 16 + i);
             }
 
-            pieces[8] = new Rook(8, machineBegins, -14.0, 0, 0);
-            pieces[9] = new Knight(9, machineBegins, -8.0, 0, 1);
-            pieces[10] = new Bishop(10, machineBegins, -14.0, 0, 2);
-            pieces[11] = new King(11, machineBegins, -8.0, 0, 3);
-            pieces[12] = new Queen(12, machineBegins, -28.0, 0, 4);
-            pieces[13] = new Bishop(13, machineBegins, -14.0, 0, 5);
-            pieces[14] = new Knight(14, machineBegins, -8.0, 0, 6);
-            pieces[15] = new Rook(15, machineBegins, -14.0, 0, 7);
-                gameBoard.set(6, i, 16 + i);
+            pieces.set(8, new Rook(8, machineBegins, -14.0, 0, 0));
+            pieces.set(9, new Knight(9, machineBegins, -8.0, 0, 1));
+            pieces.set(10, new Bishop(10, machineBegins, -14.0, 0, 2));
+            pieces.set(11, new King(11, machineBegins, -8.0, 0, 3));
+            pieces.set(12, new Queen(12, machineBegins, -28.0, 0, 4));
+            pieces.set(13, new Bishop(13, machineBegins, -14.0, 0, 5));
+            pieces.set(14, new Knight(14, machineBegins, -8.0, 0, 6));
+            pieces.set(15, new Rook(15, machineBegins, -14.0, 0, 7));
             
             gameBoard.set(0, 0, 8);
             gameBoard.set(0, 1, 9);
@@ -167,14 +167,14 @@ public class Game{
 
             // initializing human pieces
 
-            pieces[16 + 8] = new Rook(16 + 8, !machineBegins, 14.0, 7, 0);
-            pieces[16 + 9] = new Knight(16 + 9, !machineBegins, 8.0, 7, 1);
-            pieces[16 + 10] = new Bishop(16 + 10, !machineBegins, 14.0, 7, 2);
-            pieces[16 + 11] = new King(16 + 11, !machineBegins, 8.0, 7, 3);
-            pieces[16 + 12] = new Queen(16 + 12, !machineBegins, 28.0, 7, 4);
-            pieces[16 + 13] = new Bishop(16 + 13, !machineBegins, 14.0, 7, 5);
-            pieces[16 + 14] = new Knight(16 + 14, !machineBegins, 8.0, 7, 6);
-            pieces[16 + 15] = new Rook(16 + 15, !machineBegins, 14.0, 7, 7);
+            pieces.set(16 + 8, new Rook(16 + 8, !machineBegins, 14.0, 7, 0));
+            pieces.set(16 + 9, new Knight(16 + 9, !machineBegins, 8.0, 7, 1));
+            pieces.set(16 + 10, new Bishop(16 + 10, !machineBegins, 14.0, 7, 2));
+            pieces.set(16 + 11, new King(16 + 11, !machineBegins, 8.0, 7, 3));
+            pieces.set(16 + 12, new Queen(16 + 12, !machineBegins, 28.0, 7, 4));
+            pieces.set(16 + 13, new Bishop(16 + 13, !machineBegins, 14.0, 7, 5));
+            pieces.set(16 + 14, new Knight(16 + 14, !machineBegins, 8.0, 7, 6));
+            pieces.set(16 + 15, new Rook(16 + 15, !machineBegins, 14.0, 7, 7));
 
             gameBoard.set(7, 0, 16 + 8);
             gameBoard.set(7, 1, 16 + 9);
@@ -275,9 +275,10 @@ public class Game{
 
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
-            gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(), 
-                sourceStep.getRank(), sourceStep.getFile(),
-                targetStep.getRank(), targetStep.getFile());    
+            gameUI.applyGenPlayerAction(pieces.get(
+                    targetStep.getPieceId()).getTypeName(), 
+                    sourceStep.getRank(), sourceStep.getFile(),
+                    targetStep.getRank(), targetStep.getFile());    
             
             if(timeLimit.compareTo(machineTime) <= 0){
             
@@ -301,9 +302,11 @@ public class Game{
             
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
-            gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(), 
-                sourceStep.getRank(), sourceStep.getFile(),
-                targetStep.getRank(), targetStep.getFile());
+            gameUI.applyGenPlayerAction(
+                    pieces.get(targetStep.getPieceId()).getTypeName(), 
+                    sourceStep.getRank(), sourceStep.getFile(),
+                    targetStep.getRank(), targetStep.getFile());
+            
             
             if(timeLimit.compareTo(humanTime) <= 0){
             
@@ -327,9 +330,11 @@ public class Game{
 
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
-            gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(),
-                sourceStep.getRank(), sourceStep.getFile(),
-                targetStep.getRank(), targetStep.getFile());
+            gameUI.applyGenPlayerAction(
+                    pieces.get(targetStep.getPieceId()).getTypeName(),
+                    sourceStep.getRank(), sourceStep.getFile(),
+                    targetStep.getRank(), targetStep.getFile());
+            
             
             if(timeLimit.compareTo(machineTime) <= 0){
             
@@ -354,9 +359,11 @@ public class Game{
             
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
-            gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(),
-                sourceStep.getRank(), sourceStep.getFile(),
-                targetStep.getRank(), targetStep.getFile());
+            gameUI.applyGenPlayerAction(
+                    pieces.get(targetStep.getPieceId()).getTypeName(),
+                    sourceStep.getRank(), sourceStep.getFile(),
+                    targetStep.getRank(), targetStep.getFile());
+            
             
             if(timeLimit.compareTo(humanTime) <= 0){
             
@@ -381,9 +388,11 @@ public class Game{
             
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
-            gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(),
-                sourceStep.getRank(), sourceStep.getFile(),
-                targetStep.getRank(), targetStep.getFile());
+            gameUI.applyGenPlayerAction(
+                    pieces.get(targetStep.getPieceId()).getTypeName(),
+                    sourceStep.getRank(), sourceStep.getFile(),
+                    targetStep.getRank(), targetStep.getFile());
+            
             
             if(timeLimit.compareTo(machineTime) <= 0){
             
@@ -409,9 +418,11 @@ public class Game{
             
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
-            gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(), 
-                sourceStep.getRank(), sourceStep.getFile(),
-                targetStep.getRank(), targetStep.getFile());
+            gameUI.applyGenPlayerAction(pieces.get(
+                    targetStep.getPieceId()).getTypeName(), 
+                    sourceStep.getRank(), sourceStep.getFile(),
+                    targetStep.getRank(), targetStep.getFile());
+            
             
             if(timeLimit.compareTo(humanTime) <= 0){
             
@@ -435,9 +446,11 @@ public class Game{
         
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
-            gameUI.applyGenPlayerAction(pieces[targetStep.getPieceId()].getTypeName(),
-                sourceStep.getRank(), sourceStep.getFile(),
-                targetStep.getRank(), targetStep.getFile());
+            gameUI.applyGenPlayerAction(
+                    pieces.get(targetStep.getPieceId()).getTypeName(),
+                    sourceStep.getRank(), sourceStep.getFile(),
+                    targetStep.getRank(), targetStep.getFile());
+            
             
             if(timeLimit.compareTo(machineTime) <= 0){
             
@@ -552,7 +565,7 @@ public class Game{
         }
         
         GenPiece selectedPiece = 
-            pieces[gameBoard[sourceSelectedRank][sourceSelectedFile]];
+            pieces.get(gameBoard.get(sourceSelectedRank, sourceSelectedFile));
         
         if(param[1].length() != 2){
         
@@ -587,7 +600,8 @@ public class Game{
         GenPiece selectedRook = new GenPiece();
         
         if(selectedPiece.getTypeName().contains("king") 
-                && (selectedRook = pieces[gameBoard[targetSelectedRank][targetSelectedFile]]).getTypeName().contains("rook") 
+                && (selectedRook = pieces.get(gameBoard.get(targetSelectedRank, targetSelectedFile)))
+                        .getTypeName().contains("rook") 
                 && selectedPiece.getRank() == 7 && selectedRook.getRank() == 7){
         
             // suboptimal condition tests
@@ -779,7 +793,7 @@ public class Game{
             
             for(int i = 1; i < sizeOfRemovedHumanPieces && pieceTypeFound; ++i){
             
-                if(pieces[removedHumanPieces.get(i)].getTypeName().equals(
+                if(pieces.get(removedHumanPieces.get(i)).getTypeName().equals(
                         selectedTypeName)){
                 
                     selectedI = i;
@@ -788,8 +802,8 @@ public class Game{
             }
             
             selectedI = removedHumanPieces.get(selectedI);
-            pieces[selectedI].setRank(targetSelectedRank);
-            pieces[selectedI].setFile(targetSelectedFile);
+            pieces.get(selectedI).setRank(targetSelectedRank);
+            pieces.get(selectedI).setFile(targetSelectedFile);
             gameBoard.set(targetSelectedRank, targetSelectedFile, selectedI);
             selectedStep.setPieceId(selectedI);
             removedHumanPieces.remove(selectedI);
@@ -819,7 +833,7 @@ public class Game{
             }
         }
         
-        if(humanIsInCheck && pieces[11 + 16].generateSteps(gameBoard).isEmpty()){
+        if(humanIsInCheck && pieces.get(11 + 16).generateSteps(gameBoard).isEmpty()){
         
             playGame = false;
             gameStatus = "LOSE";
@@ -849,7 +863,7 @@ public class Game{
             }
         }
         
-        if(machineIsInCheck && pieces[11].generateSteps(gameBoard).isEmpty()){
+        if(machineIsInCheck && pieces.get(11).generateSteps(gameBoard).isEmpty()){
         
             playGame = false;
             gameStatus = "WIN";
@@ -934,7 +948,7 @@ public class Game{
         }
         
         int pieceId = stepSequences.getByKey(levelKeys.get(maxI)).getPieceId();
-        GenPiece piece = pieces[pieceId];
+        GenPiece piece = pieces.get(pieceId);
         sourceStepHistory.add(new Step(pieceId, piece.getRank(), piece.getFile(), 
                 piece.getValue(), 0, piece.getValue()));
         sourceStepHistory.add(stepSequences.getByKey(levelKeys.get(maxI)));
@@ -958,16 +972,16 @@ public class Game{
             
             for(int i = 1; i < sizeOfRemovedMachinePieces; ++i){
             
-                if(pieces[removedMachinePieces.get(i)].getValue() > 
-                        pieces[removedMachinePieces.get(selectedI)].getValue()){
+                if(pieces.get(removedMachinePieces.get(i)).getValue() > 
+                        pieces.get(removedMachinePieces.get(selectedI)).getValue()){
                 
                     selectedI = i;
                 }
             }
             
             selectedI = removedMachinePieces.get(selectedI);
-            pieces[selectedI].setRank(step.getRank());
-            pieces[selectedI].setFile(step.getFile());
+            pieces.get(selectedI).setRank(step.getRank());
+            pieces.get(selectedI).setFile(step.getFile());
             gameBoard.set(step.getRank(), step.getFile(), selectedI);
             // a priori piece type replacement
             step.setPieceId(selectedI);

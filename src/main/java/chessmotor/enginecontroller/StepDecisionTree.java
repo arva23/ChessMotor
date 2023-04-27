@@ -13,7 +13,7 @@ public class StepDecisionTree implements Runnable{
     private IncArbTree<GenStepKey, Step> stepDecisionTree;
     
     private boolean machineBegins;
-    private GenPiece[] piecesRef;
+    private PieceContainer piecesRef;
     private Stack<Step> stepHistoryRef;
     private GameBoardData gameBoardRef;
     
@@ -41,10 +41,10 @@ public class StepDecisionTree implements Runnable{
     
     private int fracs;
     private int no;
-    public StepDecisionTree(boolean machineBegins, GenPiece[] pieces, 
-            Stack<Step> stepHistory, Integer[][] gameBoard, int depth, 
-            int cumulativeNegativeChangeThreshold, double minConvThreshold, int fracs, 
-            int no, long memLimit) throws Exception{
+    public StepDecisionTree(boolean machineBegins, PieceContainer pieces, 
+            Stack<Step> stepHistory, GameBoardData gameBoard, int depth, 
+            int cumulativeNegativeChangeThreshold, double minConvThreshold, 
+            int fracs, int no, long memLimit) throws Exception{
     
         super();
         
@@ -271,14 +271,14 @@ public class StepDecisionTree implements Runnable{
 
         for(int i = 0; i < 16; ++i){
 
-            if(piecesRef[i].generateSteps(gameBoardRef).size() > 0){
+            if(piecesRef.get(i).generateSteps(gameBoardRef).size() > 0){
 
                 step = new Step(i, 1 - (int)Math.floor(i / 8), i % 8,
-                piecesRef[i].getValue(), 0,
-                piecesRef[i].getValue());
+                piecesRef.get(i).getValue(), 0,
+                piecesRef.get(i).getValue());
 
                 sortedGeneratedSteps.add(
-                        new GenTmpStepKey(piecesRef[i].getValue()), step);
+                        new GenTmpStepKey(piecesRef.get(i).getValue()), step);
             }
         }
 
@@ -380,8 +380,8 @@ public class StepDecisionTree implements Runnable{
 
                     generatedLevelNodeSteps.add(new ArrayList<Step>());
 
-                    ArrayList<Pair> generatedSteps = 
-                            piecesRef[step.getPieceId()].generateSteps(gameBoardRef);
+                    ArrayList<Pair> generatedSteps = piecesRef.get(
+                            step.getPieceId()).generateSteps(gameBoardRef);
                     
                     sortedGeneratedSteps.removeAll();
 
@@ -400,18 +400,18 @@ public class StepDecisionTree implements Runnable{
                     Step allocatedGeneratedStep;
                     
                     // special step case: castling option
-                    if(piecesRef[step.getPieceId()].getTypeName().equals("king")
-                            || piecesRef[step.getPieceId()].getTypeName().equals("rook")){
+                    if(piecesRef.get(step.getPieceId()).getTypeName().equals("king")
+                            || piecesRef.get(step.getPieceId()).getTypeName().equals("rook")){
                     
                         int playerIndOffset = humanSide ? 16 : 0;
                         int playerPosRank = humanSide ? 7 : 0;
                         boolean emptyInterFiles = true;
                         
                         
-                        if(piecesRef[playerIndOffset + 8].getRank() == playerPosRank 
-                                && piecesRef[playerIndOffset + 8].getFile() == 0
-                                && piecesRef[playerIndOffset + 11].getRank() == playerPosRank 
-                                && piecesRef[playerIndOffset + 11].getFile() == 4){
+                        if(piecesRef.get(playerIndOffset + 8).getRank() == playerPosRank 
+                                && piecesRef.get(playerIndOffset + 8).getFile() == 0
+                                && piecesRef.get(playerIndOffset + 11).getRank() == playerPosRank 
+                                && piecesRef.get(playerIndOffset + 11).getFile() == 4){
                         
                             
                             for(int fileInd = 5; fileInd < 7 && emptyInterFiles; ++fileInd){
@@ -426,7 +426,7 @@ public class StepDecisionTree implements Runnable{
                                     allocatedGeneratedStep = new DualStep(
                                             11, 0, playerPosRank, 
                                             4, playerPosRank, 7, 
-                                            piecesRef[11].getValue(), 0, 
+                                            piecesRef.get(11).getValue(), 0, 
                                             step.getCumulativeValue());
                                     
                                     generatedLevelNodeSteps.get(lvl).add(allocatedGeneratedStep);
@@ -437,10 +437,10 @@ public class StepDecisionTree implements Runnable{
                                 }
                             }
                         }
-                        else if(piecesRef[playerIndOffset + 15].getRank() == playerPosRank 
-                                && piecesRef[playerIndOffset + 16].getFile() == 7
-                                && piecesRef[playerIndOffset + 11].getRank() == playerPosRank
-                                && piecesRef[playerIndOffset + 11].getFile() == 4){
+                        else if(piecesRef.get(playerIndOffset + 15).getRank() == playerPosRank 
+                                && piecesRef.get(playerIndOffset + 16).getFile() == 7
+                                && piecesRef.get(playerIndOffset + 11).getRank() == playerPosRank
+                                && piecesRef.get(playerIndOffset + 11).getFile() == 4){
                         
                             for(int fileInd = 0; fileInd < 5; ++fileInd){
                             
@@ -454,7 +454,7 @@ public class StepDecisionTree implements Runnable{
                                     allocatedGeneratedStep = new DualStep(
                                             11, 8, playerPosRank, 4, 
                                             playerPosRank, 7,
-                                            piecesRef[11].getValue(), 0,
+                                            piecesRef.get(11).getValue(), 0,
                                             step.getCumulativeValue());
                                     
                                     generatedLevelNodeSteps.get(lvl).add(allocatedGeneratedStep);
@@ -488,7 +488,7 @@ public class StepDecisionTree implements Runnable{
 
                             // human score addition comes
                             if(humanSide &&
-                                (-1.0) * step.getValue() + minConvThreshold < piecesRef[pieceInd].getValue()){
+                                (-1.0) * step.getValue() + minConvThreshold < piecesRef.get(pieceInd).getValue()){
 
                                 ++cumulativeNegativeChange;
                             }
@@ -504,12 +504,12 @@ public class StepDecisionTree implements Runnable{
 
                                     allocatedGeneratedStep = new Step(
                                     step.getPieceId(), generatedStep.rank, 
-                                    generatedStep.file, piecesRef[pieceInd].getValue(),
+                                    generatedStep.file, piecesRef.get(pieceInd).getValue(),
                                     cumulativeNegativeChange,  
-                                    cumulativeValue + piecesRef[pieceInd].getValue());
+                                    cumulativeValue + piecesRef.get(pieceInd).getValue());
 
                                     // 1000 - vlaue due to reversed order (decreasing values)
-                                    value = 1000.0 - piecesRef[pieceInd].getValue();
+                                    value = 1000.0 - piecesRef.get(pieceInd).getValue();
                                     sortedGeneratedSteps.add(new GenTmpStepKey(value), 
                                         allocatedGeneratedStep);
                                 }
@@ -721,8 +721,8 @@ public class StepDecisionTree implements Runnable{
                         gameBoardHistoryContinuation.get(i).get(j));
                 }
 
-                ArrayList<Pair> generatedSteps =
-                        piecesRef[step.getPieceId()].generateSteps(gameBoardCopy);
+                ArrayList<Pair> generatedSteps = piecesRef.get(
+                        step.getPieceId()).generateSteps(gameBoardCopy);
 
                 sortedGeneratedSteps.removeAll();
 
@@ -743,7 +743,7 @@ public class StepDecisionTree implements Runnable{
                     if(pieceInd != -1){
 
                         if(humanSide &&
-                            (-1.0) * step.getValue() + minConvThreshold < piecesRef[pieceInd].getValue()){
+                            (-1.0) * step.getValue() + minConvThreshold < piecesRef.get(pieceInd).getValue()){
 
                             ++cumulativeNegativeChange;
                         }
@@ -754,11 +754,11 @@ public class StepDecisionTree implements Runnable{
 
                                 allocatedGeneratedStep = new Step(
                                 step.getPieceId(), generatedStep.rank, 
-                                generatedStep.file, piecesRef[pieceInd].getValue(),
+                                generatedStep.file, piecesRef.get(pieceInd).getValue(),
                                 cumulativeNegativeChange,  
-                                cumulativeValue + piecesRef[pieceInd].getValue());
+                                cumulativeValue + piecesRef.get(pieceInd).getValue());
 
-                                value = 1000.0 - piecesRef[pieceInd].getValue();
+                                value = 1000.0 - piecesRef.get(pieceInd).getValue();
                                 sortedGeneratedSteps.add(new GenTmpStepKey(value), 
                                     allocatedGeneratedStep);
                             }
@@ -774,7 +774,7 @@ public class StepDecisionTree implements Runnable{
 
                             allocatedGeneratedStep = new Step(
                             step.getPieceId(), generatedStep.rank,
-                            generatedStep.file, piecesRef[pieceInd].getValue(), 
+                            generatedStep.file, piecesRef.get(pieceInd).getValue(), 
                             cumulativeNegativeChange, 
                             cumulativeValue + 0.0);
 
