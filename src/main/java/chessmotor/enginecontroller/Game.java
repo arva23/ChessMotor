@@ -691,19 +691,19 @@ public class Game implements IGame{
         
         // case of castling
         boolean castlingOccurred = false;
-        GenPiece selectedRook = new GenPiece();
+        GenPiece selectedSecondPiece = new GenPiece();
         
         if(selectedPiece.getTypeName().contains("king") 
-                && (selectedRook = pieces.get(gameBoard.get(targetSelectedRank, targetSelectedFile)))
+                && (selectedSecondPiece = pieces.get(gameBoard.get(targetSelectedRank, targetSelectedFile)))
                         .getTypeName().contains("rook") 
-                && selectedPiece.getRank() == 7 && selectedRook.getRank() == 7){
+                && selectedPiece.getRank() == 7 && selectedSecondPiece.getRank() == 7){
         
             // suboptimal condition tests
             
             // selectedRook = pieces[gameBoard[targetSelectedRank][targetSelectedFile]];
             boolean emptyInterFiles = true;
             
-            if(selectedPiece.getFile() < selectedRook.getFile()){
+            if(selectedPiece.getFile() < selectedSecondPiece.getFile()){
             
                 
                 for(int fileInd = 5; fileInd < 7 && emptyInterFiles; ++fileInd){
@@ -722,7 +722,7 @@ public class Game implements IGame{
                     selectedPiece.setFile(6);
                     gameBoard.set(7, 6, 11 + 16);
                     gameBoard.set(7, 7, -1);
-                    selectedRook.setFile(5);
+                    selectedSecondPiece.setFile(5);
                     gameBoard.set(7, 5, 15 + 16);
                     
                     castlingOccurred = true;
@@ -746,7 +746,7 @@ public class Game implements IGame{
                     selectedPiece.setFile(1);
                     gameBoard.set(7, 2, 11 + 16);
                     gameBoard.set(7, 0, -1);
-                    selectedRook.setFile(2);
+                    selectedSecondPiece.setFile(2);
                     gameBoard.set(7, 3, 8 + 16);
                     
                     castlingOccurred = true;
@@ -782,9 +782,9 @@ public class Game implements IGame{
         if(castlingOccurred){
         
             currStep = new DualStep(selectedPiece.getPieceId(), 
-                    selectedRook.getPieceId(), selectedPiece.getRank(),
-                    selectedPiece.getFile(), selectedRook.getRank(), 
-                    selectedRook.getFile(), 0.0, 0,
+                    selectedSecondPiece.getPieceId(), selectedPiece.getRank(),
+                    selectedPiece.getFile(), selectedSecondPiece.getRank(), 
+                    selectedSecondPiece.getFile(), 0.0, 0,
                     0.0);
         }
         else{
