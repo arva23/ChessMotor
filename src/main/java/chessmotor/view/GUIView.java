@@ -18,6 +18,9 @@ public class GUIView implements IGameUI{
     private int windowHeight;
     private double boardRatio;
     
+    private String machineColor = "white";
+    private String oppColor = "black";
+    
     private JFrame mainWindow;
     private Container elementContainer;
     
@@ -85,8 +88,8 @@ public class GUIView implements IGameUI{
         // default initialization of game board status
         String[][] boardSquareStatus = new String[8][8];
         
-        String machineColor = "white";
-        String oppColor = "black";
+        machineColor = "white";
+        oppColor = "black";
         
         // board is rotated at game board
         if(machineBegins){
