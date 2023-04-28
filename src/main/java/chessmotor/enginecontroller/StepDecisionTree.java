@@ -150,8 +150,11 @@ public class StepDecisionTree implements Runnable{
         
         this.stepHistoryStack = orig.stepHistoryStack;
         this.keyHistoryStack = orig.keyHistoryStack;
-        this.leafSteps = orig.leafSteps;
-        this.leafKeys = orig.leafKeys;
+        
+        this.leafMachineSteps = orig.leafMachineSteps;
+        this.leafMachineKeys = orig.leafMachineKeys;
+        this.leafHumanSteps = orig.leafHumanSteps;
+        this.leafHumanKeys = orig.leafHumanKeys;
         this.gameBoardHistoryContinuation = orig.gameBoardHistoryContinuation;
         
         this.fracs = orig.fracs;
