@@ -648,6 +648,11 @@ public class Game implements IGame{
         
         sourceSelectedFile = (int)param[0].charAt(1);
         
+        if(gameBoard.get(sourceSelectedRank, sourceSelectedFile) == -1){
+        
+            throw new Exception("No available piece in the provided position.");
+        }
+        
         if(humanIsInCheck && gameBoard.get(sourceSelectedRank, sourceSelectedFile) != 11){
         
             throw new Exception("Player is in check. Resolve check.");
