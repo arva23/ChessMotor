@@ -41,6 +41,10 @@ public class StepDecisionTree implements Runnable{
     
     private int fracs;
     private int no;
+    
+    private Stack<Integer> removedHumanPieces;
+    private Stack<Integer> removedMachinePieces;
+    
     public StepDecisionTree(boolean machineBegins, PieceContainer pieces, 
             Stack<Step> stepHistory, GameBoardData gameBoard, int depth, 
             int cumulativeNegativeChangeThreshold, double minConvThreshold, 
@@ -121,6 +125,9 @@ public class StepDecisionTree implements Runnable{
         
         gameBoardHistoryContinuation = new ArrayList<ArrayList<Integer>>();
         
+        removedHumanPieces = new Stack<Integer>();
+        removedMachinePieces = new Stack<Integer>();
+        
     }
     
     public void StepDecisionTree(StepDecisionTree orig){
@@ -149,6 +156,9 @@ public class StepDecisionTree implements Runnable{
         
         this.fracs = orig.fracs;
         this.no = orig.no;
+        
+        this.removedHumanPieces = orig.removedHumanPieces;
+        this.removedMachinePieces = orig.removedMachinePieces;
     }
     
     
@@ -512,6 +522,15 @@ public class StepDecisionTree implements Runnable{
                                     value = 1000.0 - piecesRef.get(pieceInd).getValue();
                                     sortedGeneratedSteps.add(new GenTmpStepKey(value), 
                                         allocatedGeneratedStep);
+                                    
+                                    if(humanSide){
+                                    
+                                        removedHumanPieces.add(pieceInd);
+                                    }
+                                    else{
+                                    
+                                        removedMachinePieces.add(pieceInd);
+                                    }
                                 }
                                 catch(Exception e){
 
@@ -761,6 +780,15 @@ public class StepDecisionTree implements Runnable{
                                 value = 1000.0 - piecesRef.get(pieceInd).getValue();
                                 sortedGeneratedSteps.add(new GenTmpStepKey(value), 
                                     allocatedGeneratedStep);
+                            
+                                if(humanSide){
+                                    
+                                    removedHumanPieces.add(pieceInd);
+                                }
+                                else{
+
+                                    removedMachinePieces.add(pieceInd);
+                                }
                             }
                             catch(Exception e){
 
