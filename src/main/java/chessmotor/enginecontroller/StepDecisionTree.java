@@ -820,6 +820,9 @@ public class StepDecisionTree implements Runnable{
         ArrayList<ArrayList<Integer>> recentGameBoardHistoryContinuation =
             new ArrayList<ArrayList<Integer>>();
         
+        Stack<Integer> currRemovedHumanPieces = new Stack<Integer>();
+        Stack<Integer> currRemovedMachinePieces = new Stack<Integer>();
+        
         //if(gameBoardHistoryContinuation.size() > 0)
         for(; lvl < lvlLimit; ++lvl){
             
@@ -829,11 +832,13 @@ public class StepDecisionTree implements Runnable{
                     
                     step = leafHumanSteps.get(i);
                     key = leafHumanKeys.get(i);
+                    currRemovedHumanPieces = removedHumanPiecesContinuation.get(lvl);
                 }
                 else{
                     
                     step = leafMachineSteps.get(i);
                     key = leafMachineKeys.get(i);
+                    currRemovedMachinePieces = removedMachinePiecesContinuation.get(lvl);
                 }
                 
                 GameBoardData gameBoardCopy = gameBoardRef;
@@ -860,6 +865,147 @@ public class StepDecisionTree implements Runnable{
                 cumulativeNegativeChange = step.getCumulativeChangeCount();
                 cumulativeValue = step.getCumulativeValue();
 
+                // special step case: castling option
+                if(piecesRef.get(step.getPieceId()).getTypeName().contains("king")
+                        || piecesRef.get(step.getPieceId()).getTypeName().contains("rook")){
+
+                    int playerIndOffset = humanSide ? 16 : 0;
+                    int playerPosRank = humanSide ? 7 : 0;
+                    boolean emptyInterFiles = true;
+
+                    if(piecesRef.get(playerIndOffset + 8).getRank() == playerPosRank 
+                            && piecesRef.get(playerIndOffset + 8).getFile() == 0
+                            && piecesRef.get(playerIndOffset + 11).getRank() == playerPosRank 
+                            && piecesRef.get(playerIndOffset + 11).getFile() == 4){
+
+
+                        for(int fileInd = 5; fileInd < 7 && emptyInterFiles; ++fileInd){
+
+                            emptyInterFiles = gameBoardRef.get(playerPosRank, fileInd) == -1;
+                        }
+
+                        if(emptyInterFiles){
+
+                            try{
+
+                                allocatedGeneratedStep = new DualStep(
+                                        "castling", 11, 
+                                        0, playerPosRank, 
+                                        4, playerPosRank, 7, 
+                                        piecesRef.get(11).getValue(), 
+                                        0, 
+                                        step.getCumulativeValue());
+
+                                // 1000 - vlaue due to reversed order (decreasing values)
+                                value = 1000.0 - allocatedGeneratedStep.getValue();
+                                sortedGeneratedSteps.add(new GenTmpStepKey(value), 
+                                    allocatedGeneratedStep);
+                            }
+                            catch(Exception e){
+
+                                System.out.println("Cold not add dual step (" + e.getMessage() + ")");
+                            }
+                        }
+                    }
+                    else if(piecesRef.get(playerIndOffset + 15).getRank() == playerPosRank 
+                            && piecesRef.get(playerIndOffset + 16).getFile() == 7
+                            && piecesRef.get(playerIndOffset + 11).getRank() == playerPosRank
+                            && piecesRef.get(playerIndOffset + 11).getFile() == 4){
+
+                        for(int fileInd = 0; fileInd < 5; ++fileInd){
+
+                            emptyInterFiles = gameBoardRef.get(playerPosRank, fileInd) == -1;
+                        }
+
+                        if(emptyInterFiles){
+
+                            try{
+
+                                allocatedGeneratedStep = new DualStep(
+                                        "castling", 11, 
+                                        8, playerPosRank, 4, 
+                                        playerPosRank, 7,
+                                        piecesRef.get(11).getValue(), 0,
+                                        step.getCumulativeValue());
+
+                                // 1000 - vlaue due to reversed order (decreasing values)
+                                value = 1000.0 - allocatedGeneratedStep.getValue();
+                                sortedGeneratedSteps.add(new GenTmpStepKey(value), 
+                                    allocatedGeneratedStep);
+                            }
+                            catch(Exception e){
+
+                                System.out.println("Could not add dual step (" + e.getMessage() + ")");
+                            }
+                        }
+                    }
+                }
+                else if(piecesRef.get(step.getPieceId()).getTypeName().contains("pawn")){
+
+                    if(humanSide && step.getRank() == 0){
+
+                        currRemovedHumanPieces = removedHumanPiecesContinuation.get(key);
+
+                        int sizeOfCurrRemovedHumanPiecesContinuation = 
+                                currRemovedHumanPieces.size();
+
+                        for(int j = 0; j < sizeOfCurrRemovedHumanPiecesContinuation; ++j){
+
+                            try{
+
+                                allocatedGeneratedStep = new DualStep(
+                                        "promition", step.getPieceId(), 
+                                        currRemovedHumanPieces.get(j),
+                                        step.getRank(), step.getFile(), 
+                                        step.getRank(), step.getFile(), 
+                                        piecesRef.get(currRemovedHumanPieces.get(j)).getValue(),
+                                        step.getCumulativeChangeCount(), 
+                                        piecesRef.get(currRemovedHumanPieces.get(j)).getValue());
+
+                                // 1000 - vlaue due to reversed order (decreasing values)
+                                value = 1000.0 - allocatedGeneratedStep.getValue();
+                                sortedGeneratedSteps.add(new GenTmpStepKey(value), 
+                                    allocatedGeneratedStep);
+                            }
+                            catch(Exception e){
+
+                                System.out.println("Could not add dual step (" + e.getMessage() + ")");
+                            }
+                        }
+                    }
+                    else if(!humanSide && step.getRank() == 7){
+
+                        currRemovedMachinePieces = removedMachinePiecesContinuation.get(key);
+
+                        int sizeOfCurrRemovedMachinePieces = 
+                                currRemovedMachinePieces.size();
+
+                        for(int j = 0; j < sizeOfCurrRemovedMachinePieces; ++j){
+
+                            try{
+
+                                allocatedGeneratedStep = new DualStep(
+                                        "promition", step.getPieceId(),
+                                        currRemovedMachinePieces.get(j),
+                                        step.getRank(), step.getFile(),
+                                        step.getRank(), step.getFile(),
+                                        piecesRef.get(currRemovedMachinePieces.get(j)).getValue(),
+                                        step.getCumulativeChangeCount(),
+                                        piecesRef.get(currRemovedMachinePieces.get(j)).getValue());
+
+                                // 1000 - vlaue due to reversed order (decreasing values)
+                                value = 1000.0 - allocatedGeneratedStep.getValue();
+                                sortedGeneratedSteps.add(new GenTmpStepKey(value), 
+                                    allocatedGeneratedStep);
+                            }
+                            catch(Exception e){
+
+                                System.out.println("Could not add dual step (" + e.getMessage() + ")");
+                            }
+                        }                            
+                    }
+                }
+                
                 for(int stepI = 0; stepI < sizeOfGeneratedSteps; ++stepI){
 
                     generatedStep = generatedSteps.get(stepI);
@@ -878,8 +1024,9 @@ public class StepDecisionTree implements Runnable{
                             try{
 
                                 allocatedGeneratedStep = new Step(
-                                step.getPieceId(), generatedStep.rank, 
-                                generatedStep.file, piecesRef.get(pieceInd).getValue(),
+                                step.getStepType(), step.getPieceId(), 
+                                generatedStep.rank, generatedStep.file, 
+                                piecesRef.get(pieceInd).getValue(),
                                 cumulativeNegativeChange,  
                                 cumulativeValue + piecesRef.get(pieceInd).getValue());
 
@@ -889,11 +1036,11 @@ public class StepDecisionTree implements Runnable{
                             
                                 if(humanSide){
                                     
-                                    removedHumanPieces.add(pieceInd);
+                                    currRemovedHumanPieces.add(pieceInd);
                                 }
                                 else{
 
-                                    removedMachinePieces.add(pieceInd);
+                                    currRemovedMachinePieces.add(pieceInd);
                                 }
                             }
                             catch(Exception e){
@@ -907,8 +1054,9 @@ public class StepDecisionTree implements Runnable{
                         try{
 
                             allocatedGeneratedStep = new Step(
-                            step.getPieceId(), generatedStep.rank,
-                            generatedStep.file, piecesRef.get(pieceInd).getValue(), 
+                            "standard", step.getPieceId(), 
+                            generatedStep.rank, generatedStep.file, 
+                            piecesRef.get(pieceInd).getValue(), 
                             cumulativeNegativeChange, 
                             cumulativeValue + 0.0);
 
@@ -953,11 +1101,13 @@ public class StepDecisionTree implements Runnable{
                             
                             recentLeafHumanSteps.add(generatedLevelNodeSteps.get(j));
                             recentLeafHumanKeys.add(newKey);
+                            removedHumanPiecesContinuation.put(newKey, currRemovedHumanPieces);
                         }
                         else{
                         
                             recentLeafMachineSteps.add(generatedLevelNodeSteps.get(j));
                             recentLeafMachineKeys.add(newKey);
+                            removedMachinePiecesContinuation.put(newKey, currRemovedMachinePieces);
                         }
                         
                         recentGameBoardHistoryContinuation.add(
