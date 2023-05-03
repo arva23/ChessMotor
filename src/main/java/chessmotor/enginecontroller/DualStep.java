@@ -2,9 +2,9 @@ package chessmotor.enginecontroller;
 
 public class DualStep extends Step{
     
-    int rankB;
-    int fileB;
-    int pieceIdB;
+    private int rankB;
+    private int fileB;
+    private int pieceIdB;
     
     public DualStep(){
     
@@ -14,10 +14,11 @@ public class DualStep extends Step{
         pieceIdB = -1;
     }
     
-    public DualStep(int pieceIdA, int pieceIdB, int rankA, int fileA, int rankB, 
-            int fileB, double value, int cumulativeChangeCount, double cumulativeValue) throws Exception{
+    public DualStep(String stepType, int pieceIdA, int pieceIdB, int rankA, 
+            int fileA, int rankB, int fileB, double value, int cumulativeChangeCount, 
+            double cumulativeValue) throws Exception{
     
-        super(pieceIdA, rankA, fileA, value, cumulativeChangeCount,
+        super(stepType, pieceIdA, rankA, fileA, value, cumulativeChangeCount,
                 cumulativeValue);
         
         this.pieceIdB = pieceIdB;
@@ -31,6 +32,21 @@ public class DualStep extends Step{
         this.rankB = rankB;
         
         this.fileB = fileB;
+    }
+    
+    public int getSecondPieceId(){
+    
+        return pieceIdB;
+    }
+    
+    public int getSecondRank(){
+    
+        return rankB;
+    }
+    
+    public int getSecondFile(){
+    
+        return fileB;
     }
     
     @Override

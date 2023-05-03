@@ -691,6 +691,7 @@ public class Game implements IGame{
         
         // case of castling
         boolean castlingOccurred = false;
+        boolean pawnReplacementOccurred = false;
         GenPiece selectedSecondPiece = new GenPiece();
         
         if(selectedPiece.getTypeName().contains("king") 
@@ -714,9 +715,10 @@ public class Game implements IGame{
                 if(emptyInterFiles){
                 
                     // perform castling
-                    sourceStepHistory.add(new DualStep(11 + 16, 15 + 16,
-                            7, 4, 7, 7, 0.0,
-                            0, 0.0));
+                    sourceStepHistory.add(new DualStep("castling", 
+                            11 + 16, 15 + 16, 7, 4, 7, 
+                            7, 0.0, 0,
+                            0.0));
 
                     gameBoard.set(7, 4, -1);
                     selectedPiece.setFile(6);
@@ -738,9 +740,10 @@ public class Game implements IGame{
                 if(emptyInterFiles){
                 
                     // perform castling
-                    sourceStepHistory.add(new DualStep(16 + 11, 8 + 16, 
-                            7, 4, 7, 0, 0.0,
-                            0, 0.0));
+                    sourceStepHistory.add(new DualStep("castling", 
+                            16 + 11, 8 + 16, 7, 4, 7, 
+                            0, 0.0, 0,
+                            0.0));
                     
                     gameBoard.set(7, 4, -1);
                     selectedPiece.setFile(1);
@@ -761,6 +764,48 @@ public class Game implements IGame{
                 throw new Exception("Castling cannot be executed due to occupied squares.");
             }
         }
+        else if(selectedPiece.getTypeName().contains("pawn") 
+                && sourceSelectedRank == 0 
+                && sourceSelectedRank == targetSelectedRank 
+                && sourceSelectedFile == targetSelectedFile){
+       
+            // the visualized removed pieces are weakly coupled with index based
+            //  explicit removed pieces conatiner, in this case type search is 
+            //  required to select a proper piece from container
+            String selectedTypeName = gameUI.selectPawnReplacement();
+        
+            int sizeOfRemovedHumanPieces = removedHumanPieces.size();
+            
+            for(int i = 0; i < sizeOfRemovedHumanPieces; ++i){
+                
+                if(pieces.get(removedHumanPieces.get(i))
+                        .getTypeName().equals(selectedTypeName)){
+                
+                    pawnReplacementOccurred = true;
+                    
+                    selectedSecondPiece = pieces.get(removedHumanPieces.get(i));
+                    
+                    sourceStepHistory.add(new DualStep(
+                            "promotion", selectedPiece.getPieceId(), 
+                            selectedSecondPiece.getPieceId(),
+                            sourceSelectedRank, sourceSelectedFile, 
+                            targetSelectedRank, targetSelectedFile,
+                            0.0, 0, 0.0));
+                    
+                    selectedPiece.setRank(sourceSelectedRank);
+                    selectedPiece.setFile(sourceSelectedFile);
+                    selectedSecondPiece.setRank(targetSelectedRank);
+                    selectedSecondPiece.setFile(targetSelectedFile);
+                    gameBoard.set(targetSelectedRank, targetSelectedFile, 
+                            removedHumanPieces.get(i));
+                    
+                    removedHumanPieces.removeElementAt(i);
+                    removedHumanPieces.add(selectedPiece.getPieceId());
+                    
+                    break;
+                }
+            }
+        }
         else{
         
             // in case of hit as well
@@ -771,25 +816,34 @@ public class Game implements IGame{
             gameBoard.set(targetSelectedRank, targetSelectedFile, 
                 gameBoard.get(sourceSelectedRank, sourceSelectedFile));
 
-            sourceStepHistory.add(new Step(
-                    gameBoard.get(sourceSelectedRank, sourceSelectedFile),
-                    sourceSelectedRank, sourceSelectedFile, 0.0,
-                0, 0.0));
+            sourceStepHistory.add(new Step("hit", 
+                    gameBoard.get(sourceSelectedRank, 
+                    sourceSelectedFile), sourceSelectedRank, 
+                    sourceSelectedFile, 0.0,
+                    0, 0.0));
             gameBoard.set(sourceSelectedRank, sourceSelectedFile, -1);
         }
         
         Step currStep;
         if(castlingOccurred){
         
-            currStep = new DualStep(selectedPiece.getPieceId(), 
+            currStep = new DualStep("castling", selectedPiece.getPieceId(), 
                     selectedSecondPiece.getPieceId(), selectedPiece.getRank(),
                     selectedPiece.getFile(), selectedSecondPiece.getRank(), 
                     selectedSecondPiece.getFile(), 0.0, 0,
                     0.0);
         }
+        else if(pawnReplacementOccurred){
+        
+            currStep = new DualStep("promotion", selectedPiece.getPieceId(),
+                    selectedSecondPiece.getPieceId(), sourceSelectedRank,
+                    sourceSelectedFile, targetSelectedRank, 
+                    targetSelectedFile, 0.0, 0,
+                    0.0);
+        }
         else{
             
-            currStep  = new Step(selectedPiece.getPieceId(), 
+            currStep  = new Step("standard", selectedPiece.getPieceId(), 
                     targetSelectedRank, targetSelectedFile, 0.0,
                     0, 0.0);// comparing currently created step
         }
@@ -818,18 +872,7 @@ public class Game implements IGame{
             // TASK) shift tree with one level, throw root away (root displacement)
             stepSequences.setNewRootByKey(levelKeys.get(i));
             
-            if(castlingOccurred){
-            
-                targetStepHistory.add(new DualStep(selectedPiece.getPieceId(), 
-                        selectedRook.getPieceId(), selectedPiece.getRank(),
-                        selectedPiece.getFile(), selectedRook.getRank(), 
-                        selectedRook.getFile(), 0.0, 0,
-                        0.0));
-            }
-            else{
-            
-                targetStepHistory.add(stepSequences.getByKey(levelKeys.get(i)));
-            }
+            targetStepHistory.add(stepSequences.getByKey(levelKeys.get(i)));
             
             // TASK) rename step node keys/identifiers (cyclic renaming)
             //       in order to limit the key length (comparison optimization)
@@ -839,7 +882,7 @@ public class Game implements IGame{
         }
         else{
             
-            selectedStep = new Step(
+            selectedStep = new Step("standard",
                     gameBoard.get(targetSelectedRank, targetSelectedFile), 
                     targetSelectedRank, targetSelectedFile, 
                     selectedPiece.getValue(), 0,
@@ -869,38 +912,6 @@ public class Game implements IGame{
         
             removedMachinePieces.add(
                     gameBoard.get(targetSelectedRank, targetSelectedFile));
-        }
-        
-        // pawn replacement with earlier hit piece
-        int pieceId = selectedStep.getPieceId();
-        
-        if(0 <= pieceId && pieceId <= 7 && selectedStep.getRank() == 0){
-        
-            // selection strategy is via user action
-            // the typename selection is aave because typenames are selected 
-            //  from removed pieces list
-            String selectedTypeName = gameUI.selectPawnReplacement();
-            
-            int sizeOfRemovedHumanPieces = removedHumanPieces.size();
-            int selectedI = 0;
-            boolean pieceTypeFound = false;
-            
-            for(int i = 1; i < sizeOfRemovedHumanPieces && pieceTypeFound; ++i){
-            
-                if(pieces.get(removedHumanPieces.get(i)).getTypeName().equals(
-                        selectedTypeName)){
-                
-                    selectedI = i;
-                    pieceTypeFound = true;
-                }
-            }
-            
-            selectedI = removedHumanPieces.get(selectedI);
-            pieces.get(selectedI).setRank(targetSelectedRank);
-            pieces.get(selectedI).setFile(targetSelectedFile);
-            gameBoard.set(targetSelectedRank, targetSelectedFile, selectedI);
-            selectedStep.setPieceId(selectedI);
-            removedHumanPieces.remove(selectedI);
         }
         
         ++stepId;
@@ -1041,45 +1052,84 @@ public class Game implements IGame{
             }
         }
         
-        int pieceId = stepSequences.getByKey(levelKeys.get(maxI)).getPieceId();
-        GenPiece piece = pieces.get(pieceId);
-        sourceStepHistory.add(new Step(pieceId, piece.getRank(), piece.getFile(), 
-                piece.getValue(), 0, piece.getValue()));
-        sourceStepHistory.add(stepSequences.getByKey(levelKeys.get(maxI)));
-
         Step step = stepSequences.getByKey(levelKeys.get(maxI));
         
-        // piece removal in case of hit
-        if(gameBoard.get(step.getRank(), step.getFile()) != -1){
+        int pieceId = step.getPieceId();
+        GenPiece selectedPiece = pieces.get(pieceId);
+        GenPiece selectedSecondPiece = new GenPiece();
         
-            removedHumanPieces.add(gameBoard.get(step.getRank(), step.getFile()));
-        }
+        if(step instanceof DualStep){
         
-        // pawn replacement with earlier hit piece
-        pieceId = step.getPieceId();
-        
-        if(0 <= pieceId && pieceId <= 7 && step.getRank() == 7){
-        
-            // selection strategy: select piece with the highest value
-            int sizeOfRemovedMachinePieces  = removedMachinePieces.size();
-            int selectedI = 0;
+            DualStep dualStep = (DualStep)step;
+            selectedSecondPiece = pieces.get(dualStep.getSecondPieceId());
             
-            for(int i = 1; i < sizeOfRemovedMachinePieces; ++i){
+            if((selectedPiece.getTypeName().contains("king") 
+                    || selectedPiece.getTypeName().contains("rook"))){
             
-                if(pieces.get(removedMachinePieces.get(i)).getValue() > 
-                        pieces.get(removedMachinePieces.get(selectedI)).getValue()){
+                // castling option
+                        
+                sourceStepHistory.add(new DualStep(
+                        "castling", selectedPiece.getPieceId(),
+                        selectedSecondPiece.getPieceId(), 
+                        selectedPiece.getRank(), selectedPiece.getFile(), 
+                        selectedSecondPiece.getRank(), selectedSecondPiece.getFile(), 
+                        0.0, 0, 0.0));
                 
-                    selectedI = i;
-                }
+                gameBoard.set(selectedPiece.getRank(), 
+                        selectedPiece.getFile(), -1);
+                gameBoard.set(selectedSecondPiece.getRank(), 
+                        selectedSecondPiece.getFile(), -1);
+                
+                selectedPiece.setRank(dualStep.getRank());
+                selectedPiece.setFile(dualStep.getFile());
+                selectedSecondPiece.setRank(dualStep.getSecondRank());
+                selectedSecondPiece.setFile(dualStep.getSecondFile());
+                
+                gameBoard.set(selectedPiece.getRank(), 
+                        selectedPiece.getFile(),
+                        selectedPiece.getPieceId());
+                gameBoard.set(selectedSecondPiece.getRank(), 
+                        selectedSecondPiece.getFile(), 
+                        selectedSecondPiece.getPieceId());
+            }
+            else if(selectedPiece.getTypeName().contains("pawn")){
+                
+                sourceStepHistory.add(new DualStep(
+                        "promotion", selectedPiece.getPieceId(),
+                        selectedSecondPiece.getPieceId(), 
+                        selectedPiece.getRank(), selectedPiece.getFile(), 
+                        selectedSecondPiece.getRank(), selectedSecondPiece.getFile(), 
+                        0.0, 0, 0.0));
+                
+                selectedPiece.setRank(dualStep.getRank());
+                selectedPiece.setFile(dualStep.getFile());
+                selectedSecondPiece.setRank(dualStep.getSecondRank());
+                selectedSecondPiece.setFile(dualStep.getSecondFile());
+                gameBoard.set(dualStep.getSecondRank(), dualStep.getSecondFile(), 
+                        dualStep.getSecondPieceId());
+            
+                removedMachinePieces.remove(selectedSecondPiece.getPieceId());
+                removedMachinePieces.add(selectedPiece.getPieceId());
+            }   
+        }
+        else{
+            
+            // piece removal in case of hit
+            if(gameBoard.get(step.getRank(), step.getFile()) != -1){
+
+                removedHumanPieces.add(
+                        gameBoard.get(step.getRank(), step.getFile()));
             }
             
-            selectedI = removedMachinePieces.get(selectedI);
-            pieces.get(selectedI).setRank(step.getRank());
-            pieces.get(selectedI).setFile(step.getFile());
-            gameBoard.set(step.getRank(), step.getFile(), selectedI);
-            // a priori piece type replacement
-            step.setPieceId(selectedI);
-            removedMachinePieces.remove(selectedI);
+            sourceStepHistory.add(new Step("standard", 
+                    pieceId, selectedPiece.getRank(), 
+                    selectedPiece.getFile(), selectedPiece.getValue(),
+                    0, selectedPiece.getValue()));
+            
+            selectedPiece.setRank(step.getRank());
+            selectedPiece.setFile(step.getFile());
+            gameBoard.set(selectedPiece.getRank(), selectedPiece.getFile(), 
+                    selectedPiece.getPieceId());
         }
         
         // TASK) shift tree with one level, throw root away (root displacement)
