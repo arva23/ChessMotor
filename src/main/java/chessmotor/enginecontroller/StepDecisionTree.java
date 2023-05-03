@@ -284,7 +284,7 @@ public class StepDecisionTree implements Runnable{
 
         for(int i = 0; i < 16; ++i){
 
-            if(piecesRef.get(i).generateSteps(gameBoardRef).size() > 0){
+            if(!(piecesRef.get(i).generateSteps(gameBoardRef)).isEmpty()){
 
                 step = new Step("standard", i, 1 - (int)Math.floor(i / 8), i % 8,
                 piecesRef.get(i).getValue(), 0,
@@ -516,7 +516,7 @@ public class StepDecisionTree implements Runnable{
         
         boolean divInit = true;
         
-        while(stepHistoryStack.size() > 0){
+        while(!stepHistoryStack.isEmpty()){
             
             humanSide = !humanSide;
             
