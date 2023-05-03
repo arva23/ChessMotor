@@ -325,11 +325,14 @@ public class StepDecisionTree implements Runnable{
         gameBoardRef.set(step.getRank(), step.getFile(), step.getPieceId());
     }
     
-    private void evaluateSpecialStepCases(String key, Step step, Boolean humanSide, 
-            Step allocatedGeneratedStep, Double value, 
-            LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps, 
+    private void evaluateSpecialStepCases(String key, Step step, Boolean humanSide,
             Stack<Integer> currRemovedHumanPieces, 
-            Stack<Integer> currRemovedMachinePieces){
+            Stack<Integer> currRemovedMachinePieces, 
+            LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps){
+        
+        
+        double value = 1000.0;
+        Step allocatedGeneratedStep;
     
         // special step case: castling option
         if(piecesRef.get(step.getPieceId()).getTypeName().contains("king")
@@ -468,7 +471,10 @@ public class StepDecisionTree implements Runnable{
 
                         System.out.println("Could not add dual step (" + e.getMessage() + ")");
                     }
-                }                            
+                }
+            }
+        }
+    }
             }
         }
     }
