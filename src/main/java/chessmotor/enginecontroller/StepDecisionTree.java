@@ -1,12 +1,10 @@
 package chessmotor.enginecontroller;
 
-import chessmotor.enginecontroller.piecetypes.GenPiece;
-import genmath.GenStepKey;
-import genmath.GenTmpStepKey;
 import genmath.IncArbTree;
 import genmath.LinTreeMultiMap;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.TreeMap;
 
 public class StepDecisionTree implements Runnable{
     
@@ -42,8 +40,9 @@ public class StepDecisionTree implements Runnable{
     private int fracs;
     private int no;
     
-    private Stack<Integer> removedHumanPieces;
-    private Stack<Integer> removedMachinePieces;
+    private TreeMap<String, Stack<Integer>> removedHumanPiecesContinuation;
+    private TreeMap<String, Stack<Integer>> removedMachinePiecesContinuation;
+    
     
     public StepDecisionTree(boolean machineBegins, PieceContainer pieces, 
             Stack<Step> stepHistory, GameBoardData gameBoard, int depth, 
@@ -125,8 +124,9 @@ public class StepDecisionTree implements Runnable{
         
         gameBoardHistoryContinuation = new ArrayList<ArrayList<Integer>>();
         
-        removedHumanPieces = new Stack<Integer>();
-        removedMachinePieces = new Stack<Integer>();
+        removedHumanPiecesContinuation = new TreeMap<String, Stack<Integer>>();
+        removedMachinePiecesContinuation = new TreeMap<String, Stack<Integer>>();
+        
         
     }
     
@@ -160,8 +160,8 @@ public class StepDecisionTree implements Runnable{
         this.fracs = orig.fracs;
         this.no = orig.no;
         
-        this.removedHumanPieces = orig.removedHumanPieces;
-        this.removedMachinePieces = orig.removedMachinePieces;
+        this.removedHumanPiecesContinuation = orig.removedHumanPiecesContinuation;
+        this.removedMachinePiecesContinuation = orig.removedMachinePiecesContinuation;
     }
     
     
@@ -286,7 +286,7 @@ public class StepDecisionTree implements Runnable{
 
             if(piecesRef.get(i).generateSteps(gameBoardRef).size() > 0){
 
-                step = new Step(i, 1 - (int)Math.floor(i / 8), i % 8,
+                step = new Step("standard", i, 1 - (int)Math.floor(i / 8), i % 8,
                 piecesRef.get(i).getValue(), 0,
                 piecesRef.get(i).getValue());
 
@@ -351,6 +351,9 @@ public class StepDecisionTree implements Runnable{
         ArrayList<ArrayList<Step> > generatedLevelNodeSteps =
             new ArrayList<ArrayList<Step> >();
         
+        Stack<Integer> currRemovedHumanPieces = new Stack<Integer>();
+        Stack<Integer> currRemovedMachinePieces = new Stack<Integer>();
+        
         ArrayList<Integer> gameBoardHistory = new ArrayList<Integer>();
         
         boolean wasStepBack = false;
@@ -383,6 +386,16 @@ public class StepDecisionTree implements Runnable{
             // continuous key generation key by key after each other
             key = keyHistoryStack.get(lvl);
             
+            // changing actual available removed pieces player specifically
+            if(humanSide){
+            
+                currRemovedHumanPieces = removedHumanPiecesContinuation.get(lvl);
+            }
+            else{
+                
+                currRemovedMachinePieces = removedMachinePiecesContinuation.get(lvl);
+            }
+            
             // preconditional evaluation due to avoidance of unneccesary 
             // generations
             if(lvl < lvlLimit){
@@ -392,7 +405,7 @@ public class StepDecisionTree implements Runnable{
                     // TASK) sort generated steps
 
                     generatedLevelNodeSteps.add(new ArrayList<Step>());
-
+                    
                     ArrayList<Pair> generatedSteps = piecesRef.get(
                             step.getPieceId()).generateSteps(gameBoardRef);
                     
@@ -411,15 +424,19 @@ public class StepDecisionTree implements Runnable{
                     }
                     
                     Step allocatedGeneratedStep;
+                    int pieceInd;
+                    Pair generatedStep;
+                    double value;
+                    cumulativeNegativeChange = step.getCumulativeChangeCount();
+                    cumulativeValue = step.getCumulativeValue();
                     
                     // special step case: castling option
-                    if(piecesRef.get(step.getPieceId()).getTypeName().equals("king")
-                            || piecesRef.get(step.getPieceId()).getTypeName().equals("rook")){
-                    
+                    if(piecesRef.get(step.getPieceId()).getTypeName().contains("king")
+                            || piecesRef.get(step.getPieceId()).getTypeName().contains("rook")){
+                        
                         int playerIndOffset = humanSide ? 16 : 0;
                         int playerPosRank = humanSide ? 7 : 0;
                         boolean emptyInterFiles = true;
-                        
                         
                         if(piecesRef.get(playerIndOffset + 8).getRank() == playerPosRank 
                                 && piecesRef.get(playerIndOffset + 8).getFile() == 0
@@ -437,12 +454,17 @@ public class StepDecisionTree implements Runnable{
                                 try{
                                 
                                     allocatedGeneratedStep = new DualStep(
-                                            11, 0, playerPosRank, 
+                                            "castling", 11, 
+                                            0, playerPosRank, 
                                             4, playerPosRank, 7, 
-                                            piecesRef.get(11).getValue(), 0, 
+                                            piecesRef.get(11).getValue(), 
+                                            0, 
                                             step.getCumulativeValue());
                                     
-                                    generatedLevelNodeSteps.get(lvl).add(allocatedGeneratedStep);
+                                    // 1000 - vlaue due to reversed order (decreasing values)
+                                    value = 1000.0 - allocatedGeneratedStep.getValue();
+                                    sortedGeneratedSteps.add(new GenTmpStepKey(value), 
+                                        allocatedGeneratedStep);
                                 }
                                 catch(Exception e){
                                 
@@ -465,12 +487,16 @@ public class StepDecisionTree implements Runnable{
                                 try{
                                 
                                     allocatedGeneratedStep = new DualStep(
-                                            11, 8, playerPosRank, 4, 
+                                            "castling", 11, 
+                                            8, playerPosRank, 4, 
                                             playerPosRank, 7,
                                             piecesRef.get(11).getValue(), 0,
                                             step.getCumulativeValue());
                                     
-                                    generatedLevelNodeSteps.get(lvl).add(allocatedGeneratedStep);
+                                    // 1000 - vlaue due to reversed order (decreasing values)
+                                    value = 1000.0 - allocatedGeneratedStep.getValue();
+                                    sortedGeneratedSteps.add(new GenTmpStepKey(value), 
+                                        allocatedGeneratedStep);
                                 }
                                 catch(Exception e){
                                 
@@ -479,12 +505,71 @@ public class StepDecisionTree implements Runnable{
                             }
                         }
                     }
-                    
-                    int pieceInd;
-                    Pair generatedStep;
-                    double value;
-                    cumulativeNegativeChange = step.getCumulativeChangeCount();
-                    cumulativeValue = step.getCumulativeValue();
+                    else if(piecesRef.get(step.getPieceId()).getTypeName().contains("pawn")){
+                        
+                        if(humanSide && step.getRank() == 0){
+                        
+                            currRemovedHumanPieces = removedHumanPiecesContinuation.get(key);
+
+                            int sizeOfCurrRemovedHumanPiecesContinuation = 
+                                    currRemovedHumanPieces.size();
+                            
+                            for(int i = 0; i < sizeOfCurrRemovedHumanPiecesContinuation; ++i){
+                            
+                                try{
+                            
+                                    allocatedGeneratedStep = new DualStep(
+                                            "promition", step.getPieceId(), 
+                                            currRemovedHumanPieces.get(i),
+                                            step.getRank(), step.getFile(), 
+                                            step.getRank(), step.getFile(), 
+                                            piecesRef.get(currRemovedHumanPieces.get(i)).getValue(),
+                                            step.getCumulativeChangeCount(), 
+                                            piecesRef.get(currRemovedHumanPieces.get(i)).getValue());
+                                
+                                    // 1000 - vlaue due to reversed order (decreasing values)
+                                    value = 1000.0 - allocatedGeneratedStep.getValue();
+                                    sortedGeneratedSteps.add(new GenTmpStepKey(value), 
+                                        allocatedGeneratedStep);
+                                }
+                                catch(Exception e){
+
+                                    System.out.println("Could not add dual step (" + e.getMessage() + ")");
+                                }
+                            }
+                        }
+                        else if(!humanSide && step.getRank() == 7){
+                            
+                            currRemovedMachinePieces = removedMachinePiecesContinuation.get(key);
+                        
+                            int sizeOfCurrRemovedMachinePieces = 
+                                    currRemovedMachinePieces.size();
+                            
+                            for(int i = 0; i < sizeOfCurrRemovedMachinePieces; ++i){
+                            
+                                try{
+                                    
+                                    allocatedGeneratedStep = new DualStep(
+                                            "promition", step.getPieceId(),
+                                            currRemovedMachinePieces.get(i),
+                                            step.getRank(), step.getFile(),
+                                            step.getRank(), step.getFile(),
+                                            piecesRef.get(currRemovedMachinePieces.get(i)).getValue(),
+                                            step.getCumulativeChangeCount(),
+                                            piecesRef.get(currRemovedMachinePieces.get(i)).getValue());
+                                    
+                                    // 1000 - vlaue due to reversed order (decreasing values)
+                                    value = 1000.0 - allocatedGeneratedStep.getValue();
+                                    sortedGeneratedSteps.add(new GenTmpStepKey(value), 
+                                        allocatedGeneratedStep);
+                                }
+                                catch(Exception e){
+
+                                    System.out.println("Could not add dual step (" + e.getMessage() + ")");
+                                }
+                            }                            
+                        }
+                    }
 
                     // TASK) iterate through available further lookAhead(1) steps according to 
                     //    collision states collect available steps
@@ -512,10 +597,11 @@ public class StepDecisionTree implements Runnable{
                             //  contribute at node generation (not removed from the tree)
                             //  See else case
                             if(cumulativeNegativeChange <= cumulativeNegativeChangeThreshold){
-
+                                
                                 try{
 
                                     allocatedGeneratedStep = new Step(
+                                    step.getStepType(),
                                     step.getPieceId(), generatedStep.rank, 
                                     generatedStep.file, piecesRef.get(pieceInd).getValue(),
                                     cumulativeNegativeChange,  
@@ -528,11 +614,11 @@ public class StepDecisionTree implements Runnable{
                                     
                                     if(humanSide){
                                     
-                                        removedHumanPieces.add(pieceInd);
+                                        currRemovedHumanPieces.add(pieceInd);
                                     }
                                     else{
                                     
-                                        removedMachinePieces.add(pieceInd);
+                                        currRemovedMachinePieces.add(pieceInd);
                                     }
                                 }
                                 catch(Exception e){
@@ -558,9 +644,9 @@ public class StepDecisionTree implements Runnable{
                             try{
 
                                 allocatedGeneratedStep = new Step(
-                                step.getPieceId(), generatedStep.rank,
-                                generatedStep.file, 0, 
-                                cumulativeNegativeChange, 
+                                "standard", step.getPieceId(), 
+                                generatedStep.rank, generatedStep.file, 
+                                0, cumulativeNegativeChange, 
                                 cumulativeValue + 0.0);
 
                                 sortedGeneratedSteps.add(new GenTmpStepKey(1000.0), 
@@ -583,7 +669,7 @@ public class StepDecisionTree implements Runnable{
                         try{
 
                             generatedLevelNodeSteps.get(lvl).add(
-                            sortedGeneratedSteps.getByInd(sortedI));
+                                    sortedGeneratedSteps.getByInd(sortedI));
                         }
                         catch(Exception e){
 
@@ -630,6 +716,11 @@ public class StepDecisionTree implements Runnable{
                 
                 gameBoardHistory.remove(lvl);
                 generatedLevelNodeSteps.remove(lvl);
+                
+                // trace removed pieces on each level (removed pieces stack removal)
+                removedHumanPiecesContinuation.remove(lvl);
+                removedMachinePiecesContinuation.remove(lvl);
+
                 --lvl;
                 wasStepBack = true;
             }
@@ -647,8 +738,20 @@ public class StepDecisionTree implements Runnable{
                 // insert step into decision tree
                 try{
                 
+                    String newKey = key + (++incKey);
                     stepDecisionTree.addOne(new GenStepKey(key), 
-                        new GenStepKey(key + (++incKey)), selectedStep);
+                        new GenStepKey(newKey), selectedStep);
+                    
+                    if(humanSide){
+                    
+                        removedHumanPiecesContinuation.put(
+                                newKey, currRemovedHumanPieces);
+                    }
+                    else{
+                    
+                        removedMachinePiecesContinuation.put(
+                                newKey, currRemovedMachinePieces);
+                    }
                 }
                 catch(Exception e){
                 
