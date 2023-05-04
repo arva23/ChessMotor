@@ -19,7 +19,7 @@ public class Knight extends GenPiece{
     @Override
     public ArrayList<Pair> generateSteps(GameBoardData gameBoard){
     
-        ArrayList<Pair> steps = new ArrayList<Pair>();
+        ArrayList<Pair> steps = new ArrayList<>();
 
         int lowerBound = 16;
         int upperBound = 32;

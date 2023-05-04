@@ -99,14 +99,14 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     public IncArbTree(){
 
         size = 0;
-        cumulativeChildNodeOffsetRegistry = new ArrayList<Integer>();
+        cumulativeChildNodeOffsetRegistry = new ArrayList<>();
         cumulativeChildNodeOffsetRegistry.add(0);
-        nodeSizeChildRegistry = new ArrayList<Integer>();
+        nodeSizeChildRegistry = new ArrayList<>();
         nodeSizeChildRegistry.add(0);
-        container = new ArrayList<Pair<K, V>>();
+        container = new ArrayList<>();
         
-        nodeIndHist = new ArrayList<Integer>();
-        childNodeIndHist = new ArrayList<Integer>();
+        nodeIndHist = new ArrayList<>();
+        childNodeIndHist = new ArrayList<>();
         travI = 0;
         travJ = 0;
         prevIndShift = 1;
@@ -151,7 +151,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             cumulativeChildNodeOffsetRegistry.set(0, 1);
             nodeSizeChildRegistry.set(0, 1);
             
-            container.add(new Pair<K, V>(nKey, value));
+            container.add(new Pair<>(nKey, value));
             cumulativeChildNodeOffsetRegistry.add(0);
             nodeSizeChildRegistry.add(0);
             
@@ -166,7 +166,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             int i = 0;
             int j = 0;
             int level = 0;
-            ArrayList<Integer> nodeShiftIndTrace = new ArrayList<Integer>();
+            ArrayList<Integer> nodeShiftIndTrace = new ArrayList<>();
             
             while(nodeSizeChildRegistry.get(i) > 0){
                 
@@ -237,7 +237,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             
             // increasing capacity of stroage
             // adding new node next to existing ones (not only leaf level)
-            container.add(j, new Pair<K, V>(nKey, value));
+            container.add(j, new Pair<>(nKey, value));
             nodeSizeChildRegistry.add(j, 0);
             cumulativeChildNodeOffsetRegistry.add(j, 0);
             
@@ -310,7 +310,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             int i = 0;
             int j = 0;
             int level = 0;
-            ArrayList<Integer> nodeShiftIndTrace = new ArrayList<Integer>();
+            ArrayList<Integer> nodeShiftIndTrace = new ArrayList<>();
             
             while(nodeSizeChildRegistry.get(i) > 0){
             
@@ -432,10 +432,10 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
                 throw new Exception("The provided root node can not be found in the current tree.");
             }
             
-            ArrayList<K> nodeKeyHistory = new ArrayList<K>();
+            ArrayList<K> nodeKeyHistory = new ArrayList<>();
             nodeKeyHistory.add((K)chunk.getKeyByOrdInd(0));
             
-            Pair<K, V> node = new Pair<K, V>();
+            Pair<K, V> node;
             
             chunk.initDFS();
             
@@ -695,8 +695,8 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     // DFS methods
     public void initDFS(){
     
-        nodeIndHist = new ArrayList<Integer>();
-        childNodeIndHist = new ArrayList<Integer>();
+        nodeIndHist = new ArrayList<>();
+        childNodeIndHist = new ArrayList<>();
 
         if(size > 0){
         
@@ -717,7 +717,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
 
         if(size == 0){
         
-            return new Pair<K, V>();
+            return new Pair<>();
         }
         
         retI = travI;
@@ -813,7 +813,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
 
     public ArrayList<K> getLevelKeys(int levelId){
 
-        ArrayList<K> levelKeys = new ArrayList<K>();
+        ArrayList<K> levelKeys = new ArrayList<>();
         
         if(size <= levelId){
         
@@ -855,7 +855,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
 
     public ArrayList<K> getLeafLevelKeys(){
     
-        ArrayList<K> leafLevelKeys = new ArrayList<K>();
+        ArrayList<K> leafLevelKeys = new ArrayList<>();
         
         // it also includes leaf nodes on different tree levels
         for(int i = size - 1; i >= 0; --i){

@@ -110,10 +110,10 @@ public class Game implements IGame{
 
             pieces = new PieceContainer();
             gameBoard = new GameBoardData();
-            sourceStepHistory = new Stack<Step>();
-            targetStepHistory = new Stack<Step>();
-            removedHumanPieces = new Stack<Integer>();
-            removedMachinePieces = new Stack<Integer>();
+            sourceStepHistory = new Stack<>();
+            targetStepHistory = new Stack<>();
+            removedHumanPieces = new Stack<>();
+            removedMachinePieces = new Stack<>();
             
             if(memLimit <= 0){
             
@@ -289,7 +289,7 @@ public class Game implements IGame{
         // executor service is only used at parallel generation
         ExecutorService generatorMgr = Executors.newFixedThreadPool(numberOfThreads);
         StepDecisionTree initStepSequences = new StepDecisionTree(stepSequences);
-        ArrayList<StepDecisionTree> stepSequencesChunks = new ArrayList<StepDecisionTree>();
+        ArrayList<StepDecisionTree> stepSequencesChunks = new ArrayList<>();
        
         // build step decision tree in parallel mode for the first time
         

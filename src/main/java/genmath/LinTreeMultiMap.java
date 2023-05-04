@@ -21,7 +21,7 @@ public class LinTreeMultiMap<K extends ComparableKey<K>, V> extends LinTreeMap<K
 
         if (size == 0) {
 
-            container.add(new Pair<K, V>(key, value));
+            container.add(new Pair<>(key, value));
             ++size;
             return 0;
         } else if (size == 1) {
@@ -30,12 +30,12 @@ public class LinTreeMultiMap<K extends ComparableKey<K>, V> extends LinTreeMap<K
 
             if (cmpRes <= 0) {
 
-                container.add(0, new Pair<K, V>(key, value));
+                container.add(0, new Pair<>(key, value));
                 ++size;
                 return 0;
             } else {
 
-                container.add(new Pair<K, V>(key, value));
+                container.add(new Pair<>(key, value));
                 ++size;
                 return 1;
             }
@@ -69,7 +69,7 @@ public class LinTreeMultiMap<K extends ComparableKey<K>, V> extends LinTreeMap<K
                 }
             }
 
-            container.add(lowerKeyI + 1, new Pair<K, V>(key, value));
+            container.add(lowerKeyI + 1, new Pair<>(key, value));
 
             ++size;
 
@@ -229,7 +229,7 @@ public class LinTreeMultiMap<K extends ComparableKey<K>, V> extends LinTreeMap<K
 
             int level = getLevelByKey(key, occ);
             int step = (int) Math.ceil(size / Math.pow(2, level));
-            container = new ArrayList<Pair<K, V>>(
+            container = new ArrayList<>(
                     container.subList(ind - (int) step, ind + (int) step));
         }
     }

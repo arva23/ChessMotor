@@ -50,7 +50,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
     public LinTreeMap() {
 
         size = 0;
-        container = new ArrayList<Pair<K, V>>();
+        container = new ArrayList<>();
     }
 
     public LinTreeMap(LinTreeMap<K, V> orig) {
@@ -65,7 +65,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
 
         if (size == 0) {
 
-            container.add(new Pair<K, V>(key, value));
+            container.add(new Pair<>(key, value));
             ++size;
             return 0;
         } else if (size == 1) {
@@ -77,12 +77,12 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
                 throw new Exception("The item has already been inserted earlier (redundancy is not allowed).");
             } else if (cmpRes < 0) {
 
-                container.add(0, new Pair<K, V>(key, value));
+                container.add(0, new Pair<>(key, value));
                 ++size;
                 return 0;
             } else {
 
-                container.add(new Pair<K, V>(key, value));
+                container.add(new Pair<>(key, value));
                 ++size;
                 return 1;
             }
@@ -122,7 +122,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
             }
 
             // balancing tree
-            container.add(lowerKeyI + 1, new Pair<K, V>(key, value));
+            container.add(lowerKeyI + 1, new Pair<>(key, value));
 
             ++size;
             // the order of the tree is balanced, it does not require any sort
@@ -142,7 +142,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
 
         if (size == 0) {
 
-            container.add(new Pair<K, V>(key, value));
+            container.add(new Pair<>(key, value));
             ++size;
             return 0;
         } else if (size == 1) {
@@ -158,12 +158,12 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
                 return 0;
             } else if (cmpRes < 0) {
 
-                container.add(0, new Pair<K, V>(key, value));
+                container.add(0, new Pair<>(key, value));
                 ++size;
                 return 0;
             } else {
 
-                container.add(new Pair<K, V>(key, value));
+                container.add(new Pair<>(key, value));
                 ++size;
                 return 1;
             }
@@ -209,7 +209,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
             }
 
             // balancing tree
-            container.add(lowerKeyI + 1, new Pair<K, V>(key, value));
+            container.add(lowerKeyI + 1, new Pair<>(key, value));
 
             ++size;
             // the order of the tree is balanced, it does not require any sort
@@ -489,7 +489,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
     public LinTreeMap<K, V> subMap(K lowerKeyBound, K upperKeyBound) throws Exception {
 
         int i = 0;
-        LinTreeMap<K, V> resMap = new LinTreeMap<K, V>();
+        LinTreeMap<K, V> resMap = new LinTreeMap<>();
 
         if (size == 0) {
             throw new Exception("Empty container.");
@@ -533,7 +533,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
 
                 step = (int) Math.ceil(step / 2.0);
 
-                container = new ArrayList<Pair<K, V>>(
+                container = new ArrayList<>(
                         container.subList(i - (int) step, i + (int) step));
 
                 return;
@@ -568,7 +568,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
 
     public void sort() throws Exception {
 
-        LinTreeMap<K, V> tmp = new LinTreeMap<K, V>();
+        LinTreeMap<K, V> tmp = new LinTreeMap<>();
 
         for (int i = 0; i < size; ++i) {
             tmp.add(container.get(i));

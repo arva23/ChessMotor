@@ -51,7 +51,7 @@ public class StepDecisionTree implements Runnable{
     
         super();
         
-        stepDecisionTree = new IncArbTree<GenStepKey, Step>();
+        stepDecisionTree = new IncArbTree<>();
         this.machineBegins = machineBegins;
         
         if(pieces == null){
@@ -114,18 +114,18 @@ public class StepDecisionTree implements Runnable{
     
         this.no = no;
         
-        stepHistoryStack = new ArrayList<Step>();
-        keyHistoryStack = new ArrayList<String>();
+        stepHistoryStack = new ArrayList<>();
+        keyHistoryStack = new ArrayList<>();
         
-        leafMachineSteps = new ArrayList<Step>();
-        leafMachineKeys = new ArrayList<String>();
-        leafHumanSteps = new ArrayList<Step>();
-        leafHumanKeys = new ArrayList<String>();
+        leafMachineSteps = new ArrayList<>();
+        leafMachineKeys = new ArrayList<>();
+        leafHumanSteps = new ArrayList<>();
+        leafHumanKeys = new ArrayList<>();
         
-        gameBoardHistoryContinuation = new ArrayList<ArrayList<Integer>>();
+        gameBoardHistoryContinuation = new ArrayList<>();
         
-        removedHumanPiecesContinuation = new TreeMap<String, Stack<Integer>>();
-        removedMachinePiecesContinuation = new TreeMap<String, Stack<Integer>>();
+        removedHumanPiecesContinuation = new TreeMap<>();
+        removedMachinePiecesContinuation = new TreeMap<>();
         
         
     }
@@ -279,7 +279,7 @@ public class StepDecisionTree implements Runnable{
     public void generateFirstMachineStep() throws Exception{
 
         LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps = 
-            new LinTreeMultiMap<GenTmpStepKey, Step>();
+            new LinTreeMultiMap<>();
 
         Step step;
 
@@ -591,7 +591,7 @@ public class StepDecisionTree implements Runnable{
         // generating steps for levels
         
         LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps =
-                new LinTreeMultiMap<GenTmpStepKey, Step>();
+                new LinTreeMultiMap<>();
         
         Step step;
         
@@ -602,12 +602,12 @@ public class StepDecisionTree implements Runnable{
         boolean humanSide = !machineBegins;
         
         ArrayList<ArrayList<Step> > generatedLevelNodeSteps =
-            new ArrayList<ArrayList<Step> >();
+            new ArrayList< >();
         
-        Stack<Integer> currRemovedHumanPieces = new Stack<Integer>();
-        Stack<Integer> currRemovedMachinePieces = new Stack<Integer>();
+        Stack<Integer> currRemovedHumanPieces = new Stack<>();
+        Stack<Integer> currRemovedMachinePieces = new Stack<>();
         
-        ArrayList<Integer> gameBoardHistory = new ArrayList<Integer>();
+        ArrayList<Integer> gameBoardHistory = new ArrayList<>();
         
         boolean wasStepBack = false;
         
@@ -655,7 +655,7 @@ public class StepDecisionTree implements Runnable{
 
                     // TASK) sort generated steps
 
-                    generatedLevelNodeSteps.add(new ArrayList<Step>());
+                    generatedLevelNodeSteps.add(new ArrayList<>());
                     
                     ArrayList<Pair> generatedSteps = piecesRef.get(
                             step.getPieceId()).generateSteps(gameBoardRef);
@@ -825,14 +825,14 @@ public class StepDecisionTree implements Runnable{
         boolean humanSide = false;
         
         LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps =
-            new LinTreeMultiMap<GenTmpStepKey, Step>();
+            new LinTreeMultiMap<>();
         
         Step step;
         
-        ArrayList<Step> generatedLevelNodeSteps = new ArrayList<Step>();
         ArrayList<Integer> gameBoardHistory = new ArrayList<Integer>();
         
         boolean wasStepBack = false;
+        ArrayList<Step> generatedLevelNodeSteps = new ArrayList<>();
         
         int lvl = depth - 2;// -1 for machine and human
         int lvlLimit = depth;
@@ -845,15 +845,15 @@ public class StepDecisionTree implements Runnable{
         
         int sizeOfLeafLevel = leafMachineSteps.size();
         
-        ArrayList<Step> recentLeafMachineSteps = new ArrayList<Step>();
-        ArrayList<String> recentLeafMachineKeys = new ArrayList<String>();
-        ArrayList<Step> recentLeafHumanSteps = new ArrayList<Step>();
-        ArrayList<String> recentLeafHumanKeys = new ArrayList<String>();
+        ArrayList<Step> recentLeafMachineSteps = new ArrayList<>();
+        ArrayList<String> recentLeafMachineKeys = new ArrayList<>();
+        ArrayList<Step> recentLeafHumanSteps = new ArrayList<>();
+        ArrayList<String> recentLeafHumanKeys = new ArrayList<>();
         ArrayList<ArrayList<Integer>> recentGameBoardHistoryContinuation =
-            new ArrayList<ArrayList<Integer>>();
+            new ArrayList<>();
         
-        Stack<Integer> currRemovedHumanPieces = new Stack<Integer>();
-        Stack<Integer> currRemovedMachinePieces = new Stack<Integer>();
+        Stack<Integer> currRemovedHumanPieces = new Stack<>();
+        Stack<Integer> currRemovedMachinePieces = new Stack<>();
         
         //if(gameBoardHistoryContinuation.size() > 0)
         for(; lvl < lvlLimit; ++lvl){

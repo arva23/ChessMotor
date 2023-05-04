@@ -26,9 +26,9 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
         travStep = 0.0;
         travLen = 0;
         wasStepBack = false;
-        stepDirHist = new ArrayList<Boolean>();
-        stepHist = new ArrayList<Double>();
-        stepIndHist = new ArrayList<Integer>();
+        stepDirHist = new ArrayList<>();
+        stepHist = new ArrayList<>();
+        stepIndHist = new ArrayList<>();
         numOfCumulatedStepBacks = 0;
     }
 
@@ -55,9 +55,9 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
 
         for (int i = 0; i < insertionLimit; ++i) {
 
-            container.add(insertionShift, new Pair<K, V>());
+            container.add(insertionShift, new Pair<>());
             insertionShift += 2;
-            container.add(insertionShift, new Pair<K, V>());
+            container.add(insertionShift, new Pair<>());
             insertionShift += 2;
         }
 
@@ -72,7 +72,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
 
         if (size == 0) {
 
-            container.add(new Pair<K, V>(key, value));
+            container.add(new Pair<>(key, value));
             ++size;
             return 0;
         } else if (size == 1) {
@@ -84,12 +84,12 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
                 throw new Exception("The item has already been inserted.");
             } else if (cmpRes < 0) {
 
-                container.add(0, new Pair<K, V>(key, value));
+                container.add(0, new Pair<>(key, value));
                 ++size;
                 return 0;
             } else {
 
-                container.add(new Pair<K, V>(key, value));
+                container.add(new Pair<>(key, value));
                 ++size;
                 return 1;
             }
@@ -134,7 +134,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
                 increaseCapacity();
             }
 
-            container.set(lowerKeyI + 1, new Pair<K, V>(key, value));
+            container.set(lowerKeyI + 1, new Pair<>(key, value));
 
             ++size;
 
@@ -155,7 +155,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
 
         if (size == 0) {
 
-            container.add(new Pair<K, V>(key, value));
+            container.add(new Pair<>(key, value));
             ++size;
             return 0;
         } else if (size == 1) {
@@ -172,12 +172,12 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
                 return 0;
             } else if (cmpRes < 0) {
 
-                container.add(0, new Pair<K, V>(key, value));
+                container.add(0, new Pair<>(key, value));
                 ++size;
                 return 0;
             } else {
 
-                container.add(new Pair<K, V>(key, value));
+                container.add(new Pair<>(key, value));
                 ++size;
                 return 1;
             }
@@ -228,7 +228,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
                 increaseCapacity();
             }
 
-            container.set(lowerKeyI + 1, new Pair<K, V>(key, value));
+            container.set(lowerKeyI + 1, new Pair<>(key, value));
 
             ++size;
 
@@ -326,7 +326,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
     public IncBinTree<K, V> subMap(K lowerKeyBound, K upperKeyBound) throws Exception {
 
         // submap by leaf level interval
-        IncBinTree<K, V> resMap = new IncBinTree<K, V>(this);
+        IncBinTree<K, V> resMap = new IncBinTree<>(this);
 
         if (size == 0) {
             throw new Exception("Empty container.");
@@ -351,8 +351,8 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
         double step = size / 2.0;
         int cmpRes = 0;
 
-        ArrayList<Integer> minIList = new ArrayList<Integer>();
-        ArrayList<Integer> maxIList = new ArrayList<Integer>();
+        ArrayList<Integer> minIList = new ArrayList<>();
+        ArrayList<Integer> maxIList = new ArrayList<>();
 
         // defining lower bounds
         while (0 <= i && i < size && step > 0.5) {
@@ -428,11 +428,11 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
             indStep = (int) Math.pow(2, sizeOfLimits - i);
 
             for (int j = startInd; j < minIList.get(i); j += indStep) {
-                container.set(j, new Pair<K, V>());
+                container.set(j, new Pair<>());
             }
 
             for (int j = size - startInd; j > maxIList.get(i); j -= indStep) {
-                container.set(j, new Pair<K, V>());
+                container.set(j, new Pair<>());
             }
         }
 
@@ -447,9 +447,9 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
 
     public void initDFS() {
 
-        stepDirHist = new ArrayList<Boolean>();
-        stepHist = new ArrayList<Double>();
-        stepIndHist = new ArrayList<Integer>();
+        stepDirHist = new ArrayList<>();
+        stepHist = new ArrayList<>();
+        stepIndHist = new ArrayList<>();
 
         travI = (int) Math.ceil(size / 2.0);
         travStep = (int) Math.ceil(size / 2.0);
@@ -466,7 +466,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
     public Pair<K, V> getNextItemDFS() {
 
         if (size == 0) {
-            return new Pair<K, V>();
+            return new Pair<>();
         }
 
         if (travI >= size) {
@@ -489,7 +489,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
             }
 
             if (travLen == 0) {
-                return new Pair<K, V>();
+                return new Pair<>();
             }
 
             stepDirHist.set(travLen - 1, false);

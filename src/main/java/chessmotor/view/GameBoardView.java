@@ -59,7 +59,7 @@ public class GameBoardView implements IGameBoardView {
             squareBgs[2] = squareBgs[0];
         
             // loading piece textures
-            pieceTypes = new HashMap<String, ImageIcon>();
+            pieceTypes = new HashMap<>();
             pieceTypes.put("empty", new ImageIcon(ImageIO.read(
                     new File(Paths.get("board", "emptyPiece.png").toString()))));
             pieceTypes.put("whitepawn", new ImageIcon(ImageIO.read(

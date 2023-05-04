@@ -8,7 +8,7 @@ public abstract class GenericSaveStatus {
     
     public GenericSaveStatus(){
     
-        entries = new TreeMap<String, Object>();
+        entries = new TreeMap<>();
     }
     
     public Object get(String entryId) throws Exception{

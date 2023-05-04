@@ -35,7 +35,7 @@ public class GenPiece {
         //  and gamefield boundaries.
         // Hit steps are also included.
         // It can only detect empty squares or occupied squares.
-        ArrayList<Pair> steps = new ArrayList<Pair>();
+        ArrayList<Pair> steps = new ArrayList<>();
 
         // todo, generate routes in aware of different sign of value of human pieces
         

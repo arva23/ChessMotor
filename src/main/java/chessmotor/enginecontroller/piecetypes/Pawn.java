@@ -19,7 +19,7 @@ public class Pawn extends GenPiece{
     @Override
     public ArrayList<Pair> generateSteps(GameBoardData gameBoard){
     
-        ArrayList<Pair> steps = new ArrayList<Pair>();
+        ArrayList<Pair> steps = new ArrayList<>();
 
         // pawn steps are symmetric comparing to human pawn steps
         
