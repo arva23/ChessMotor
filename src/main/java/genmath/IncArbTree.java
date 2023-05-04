@@ -164,7 +164,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             int insertionInd = 0;
             int prevShift = 0;
             int i = 0;
-            int j = 0;
+            int j;
             int level = 0;
             ArrayList<Integer> nodeShiftIndTrace = new ArrayList<>();
             
@@ -246,7 +246,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             
             // trace length changes according to traversal depth
             int sizeOfShiftIndTrace = nodeShiftIndTrace.size();
-            int cumulativeInd = 0;
+            int cumulativeInd;
             
             // backpropagating index offset change
             for(j = sizeOfShiftIndTrace - 1; j >= 0; --j){
@@ -373,7 +373,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             }
             
             // trace length is according to traversal depth
-            int cumulativeInd = 0;
+            int cumulativeInd;
             
             for(j = 0; j <sizeOfShiftIndTrace; ++j){
             
@@ -539,7 +539,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         int insertionInd = 0;
         int prevShift = 1;
         int i = 0;
-        int j = 0;
+        int j;
         int level = 0;
         
         while(nodeSizeChildRegistry.get(i) > 0){

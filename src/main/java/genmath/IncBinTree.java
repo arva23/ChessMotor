@@ -68,7 +68,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
     @Override
     public int add(K key, V value) throws Exception {
 
-        int cmpRes = 0;
+        int cmpRes;
 
         if (size == 0) {
 
@@ -99,7 +99,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
             int i = (int) Math.ceil(size / 2.0);
             double step = size / 2.0;
             K higherDiff = key.maxVal();
-            K tmpDiff = key.maxVal();
+            K tmpDiff;
 
             while (0 <= i && i < size && step > 0.5) {
 
@@ -151,7 +151,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
     @Override
     public int setOrAddByKey(K key, V value) throws Exception {
 
-        int cmpRes = 0;
+        int cmpRes;
 
         if (size == 0) {
 
@@ -187,7 +187,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
             int i = (int) Math.ceil(size / 2.0);
             double step = size / 2.0;
             K higherDiff = key.maxVal();
-            K tmpDiff = key.maxVal();
+            K tmpDiff;
 
             while (0 <= i && i < size && step > 0.5) {
 
@@ -349,7 +349,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
         // finding minimum node by index
         int i = (int) Math.ceil(size / 2.0);
         double step = size / 2.0;
-        int cmpRes = 0;
+        int cmpRes;
 
         ArrayList<Integer> minIList = new ArrayList<>();
         ArrayList<Integer> maxIList = new ArrayList<>();
@@ -420,7 +420,7 @@ public class IncBinTree<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> 
         // nulling not selected nodes
         int sizeOfLimits = minIList.size();
         int startInd = 0;
-        int indStep = 0;
+        int indStep;
 
         for (i = 0; i < sizeOfLimits; ++i) {
 

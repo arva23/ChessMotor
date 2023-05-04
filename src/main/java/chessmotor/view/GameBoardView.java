@@ -135,7 +135,7 @@ public class GameBoardView implements IGameBoardView {
         
         // default initialization of game board
         board = new UnitSquare[8][8];
-        int squareTypeId = 0;
+        int squareTypeId;
         
         for(int rankInd = 0; rankInd < 2; ++rankInd){
         
@@ -220,11 +220,11 @@ public class GameBoardView implements IGameBoardView {
         
         String[][] boardSquareStatus = gameStatus.getBoardSquareStatus();
         
-        int squareTypeId = 0;
+        int squareTypeId;
         char machineCmp = machineBegins ? 'w' : 'b';
         char humanCmp = !machineBegins ? 'b' : 'w';
-        int player = 0;
-        String typeName = "empty";
+        int player;
+        String typeName;
         
         for(int rankInd = 0; rankInd < 8; ++rankInd){
         

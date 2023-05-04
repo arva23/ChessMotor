@@ -631,7 +631,7 @@ public class Game implements IGame{
             throw new Exception("Ill given source position.");
         }
         
-        int sourceSelectedRank = 0;
+        int sourceSelectedRank;
         
         if(param[0].charAt(0) < 0 || param[0].charAt(0) > 7){
         
@@ -639,7 +639,7 @@ public class Game implements IGame{
         }
         
         sourceSelectedRank = (int)param[0].charAt(0);
-        int sourceSelectedFile = 0;
+        int sourceSelectedFile;
         
         if(param[0].charAt(1) < 1 || param[0].charAt(1) > 7){
         
@@ -666,7 +666,7 @@ public class Game implements IGame{
             throw new Exception("Ill given target position.");
         }
         
-        int targetSelectedRank = 0;
+        int targetSelectedRank;
         
         if(param[1].charAt(0) < '0' || param[1].charAt(0) > '7'){
         
@@ -674,7 +674,7 @@ public class Game implements IGame{
         }
         
         targetSelectedRank = (int)param[1].charAt(0);
-        int targetSelectedFile = 0;
+        int targetSelectedFile;
         
         if(param[1].charAt(1) < 1 || param[1].charAt(1) > 8){
         
@@ -848,7 +848,7 @@ public class Game implements IGame{
                     0, 0.0);// comparing currently created step
         }
         
-        Step selectedStep = new Step();
+        Step selectedStep;
         
         if(stepSequences.size() > 2){
         
@@ -998,7 +998,7 @@ public class Game implements IGame{
         
         int sizeOfLeafSteps = levelKeys.size();
         int maxI = 0;
-        double currCumulativeValue = 0.0;
+        double currCumulativeValue;
         double maxCumulativeValue = stepSequences.getByKey(
                 levelKeys.get(maxI)).getCumulativeValue();
         
@@ -1056,7 +1056,7 @@ public class Game implements IGame{
         
         int pieceId = step.getPieceId();
         GenPiece selectedPiece = pieces.get(pieceId);
-        GenPiece selectedSecondPiece = new GenPiece();
+        GenPiece selectedSecondPiece;
         
         if(step instanceof DualStep){
         

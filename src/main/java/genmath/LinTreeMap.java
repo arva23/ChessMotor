@@ -61,7 +61,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
 
     public int add(K key, V value) throws Exception {
 
-        int cmpRes = 0;
+        int cmpRes;
 
         if (size == 0) {
 
@@ -92,7 +92,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
             int i = (int) Math.ceil(size / 2.0);
             double step = size / 2.0;
             K lowerDiff = key.maxVal();
-            K tmpDiff = key.maxVal();
+            K tmpDiff;
 
             while (0 <= i && i < size && step > 0.5) {
 
@@ -138,7 +138,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
 
     public int setOrAddByKey(K key, V value) throws Exception {
 
-        int cmpRes = 0;
+        int cmpRes;
 
         if (size == 0) {
 
@@ -173,7 +173,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
             int i = (int) Math.ceil(size / 2.0);
             double step = size / 2.0;
             K lowerDiff = key.maxVal();
-            K tmpDiff = key.maxVal();
+            K tmpDiff;
 
             while (0 <= i && i < size && step > 0.5) {
 
@@ -285,7 +285,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
 
         int i = (int) Math.ceil(size / 2.0);
         double step = size / 2.0;
-        int cmpRes = 0;
+        int cmpRes;
 
         while (0 <= i && i < size && step > 0.5) {
 
@@ -315,7 +315,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
 
         int i = (int) Math.ceil(size / 2.0);
         double step = size / 2.0;
-        int cmpRes = 0;
+        int cmpRes;
 
         while (0 <= i && i < size && step > 0.5) {
 
@@ -355,9 +355,9 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
             int lowerKeyI = 0;
             int i = (int) Math.ceil(size / 2.0);
             double step = size / 2.0;
-            int cmpRes = 0;
+            int cmpRes;
             K diff = key.maxVal();
-            K tmpDiff = key.maxVal();
+            K tmpDiff;
 
             while (0 <= i && i < size && step > 0.5) {
 
@@ -400,9 +400,9 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
             int higherKeyI = size - 1;
             int i = (int) Math.ceil(size / 2.0);
             double step = size / 2.0;
-            int cmpRes = 0;
+            int cmpRes;
             K diff = container.get(0).key;
-            K tmpDiff = container.get(0).key;
+            K tmpDiff;
 
             while (0 <= i && i < size && step > 0.5) {
 
@@ -442,7 +442,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
 
         int i = (int) Math.ceil(size / 2.0);
         double step = size / 2.0;
-        int cmpRes = 0;
+        int cmpRes;
         int level = 0;
 
         while (0 <= i && i < size && step > 0.5) {
@@ -523,7 +523,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
         int level = 0;
         int i = (int) Math.ceil(size / 2.0);
         double step = size / 2.0;
-        int cmpRes = 0;
+        int cmpRes;
 
         while (0 <= i && i < size && step > 0.5) {
 

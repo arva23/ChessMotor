@@ -332,7 +332,7 @@ public class StepDecisionTree implements Runnable{
             LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps){
         
         
-        double value = 1000.0;
+        double value;
         Step allocatedGeneratedStep;
     
         // special step case: castling option
@@ -483,12 +483,12 @@ public class StepDecisionTree implements Runnable{
             Stack<Integer> currRemovedMachinePieces,
             LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps){
     
-        int pieceInd = 0;
+        int pieceInd;
         Pair generatedStep;
-        double value = 1000.0;
+        double value;
         int cumulativeNegativeChange = step.getCumulativeChangeCount();
         double cumulativeValue = step.getCumulativeValue();
-        Step allocatedGeneratedStep = new Step();
+        Step allocatedGeneratedStep;
         
         // TASK) iterate through available further lookAhead(1) steps according to 
         //    collision states collect available steps
@@ -837,7 +837,7 @@ public class StepDecisionTree implements Runnable{
         int lvl = depth - 2;// -1 for machine and human
         int lvlLimit = depth;
         
-        String key = new String();
+        String key;
         char incKey = 'a';
         Step selectedStep = new Step();
         
@@ -918,7 +918,7 @@ public class StepDecisionTree implements Runnable{
 
                 try{
 
-                    String  newKey = new String();
+                    String  newKey;
                     
                     for(int j  = 0; j < sizeOfGeneratedLevelNodeSteps; ++j){
 

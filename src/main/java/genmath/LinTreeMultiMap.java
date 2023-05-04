@@ -17,7 +17,7 @@ public class LinTreeMultiMap<K extends ComparableKey<K>, V> extends LinTreeMap<K
     @Override
     public int add(K key, V value) throws Exception {
 
-        int cmpRes = 0;
+        int cmpRes;
 
         if (size == 0) {
 
@@ -45,7 +45,7 @@ public class LinTreeMultiMap<K extends ComparableKey<K>, V> extends LinTreeMap<K
             int i = (int) Math.ceil(size / 2.0);
             double step = size / 2.0;
             K lowerDiff = key.maxVal();
-            K tmpDiff = key.maxVal();
+            K tmpDiff;
             while (0 <= i && i < size && step > 0.5) {
 
                 cmpRes = key.compareTo(container.get(i).key);
@@ -101,7 +101,7 @@ public class LinTreeMultiMap<K extends ComparableKey<K>, V> extends LinTreeMap<K
 
         int i = (int) Math.ceil(size / 2.0);
         double step = size / 2.0;
-        int cmpRes = 0;
+        int cmpRes;
         int occCount = 0;
         int prevResInd = 0;
 
@@ -138,7 +138,7 @@ public class LinTreeMultiMap<K extends ComparableKey<K>, V> extends LinTreeMap<K
 
         int i = (int) Math.ceil(size / 2.0);
         double step = size / 2.0;
-        int cmpRes = 0;
+        int cmpRes;
         int occCount = 0;
         int prevResInd = 0;
 
@@ -175,7 +175,7 @@ public class LinTreeMultiMap<K extends ComparableKey<K>, V> extends LinTreeMap<K
 
         int i = (int) Math.ceil(size / 2.0);
         double step = size / 2.0;
-        int cmpRes = 0;
+        int cmpRes;
         int level = -1;
         int occCount = 0;
         int prevLevel = 0;
