@@ -14,7 +14,7 @@ public class GameStatus extends GenericSaveStatus {
     //Duration getHumanTime
     //boolean machineIsInCheck
     //boolean humanIsInCheck
-    //String gameStatus
+    //String gamePlayStatus
     //PieceContainer pieces
     //GameBoardData gameBoard
     //StepDecisionTree stepSequences
@@ -63,9 +63,9 @@ public class GameStatus extends GenericSaveStatus {
         return (boolean)entries.get("humanIsInCheck");
     }
 
-    public String getGameStatus() {
+    public String getGamePlayStatus() {
         
-        return (String)entries.get("gameStatus");
+        return (String)entries.get("gamePlayStatus");
     }
 
     public PieceContainer getPieces() {
@@ -135,9 +135,9 @@ public class GameStatus extends GenericSaveStatus {
         entries.put("humanIsInCheck", humanIsInCheck);
     }
 
-    public void setGameStatus(String gameStatus) {
+    public void setGamePlayStatus(String gamePlayStatus) {
         
-        entries.put("gameStatus", gameStatus);
+        entries.put("gamePlayStatus", gamePlayStatus);
     }
 
     public void setPieces(PieceContainer pieces) {
