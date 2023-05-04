@@ -42,16 +42,6 @@ public class GenPiece {
         return steps;
     }
     
-    
-    public ArrayList<Pair> testForCollisions(GameBoardData gameBoard){
-        
-        ArrayList<Pair> collisions = new ArrayList<Pair>();
-        
-        // todo
-        
-        return collisions;
-    }
-    
     public int getPieceId(){
     
         return pieceId;

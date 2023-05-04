@@ -104,14 +104,4 @@ public class King extends GenPiece{
         
         return steps;
     }
-    
-    @Override
-    public ArrayList<Pair> testForCollisions(GameBoardData gameBoard){
-    
-        ArrayList<Pair> collisions = new ArrayList<Pair>();
-        
-        // todo
-        
-        return collisions;
-    }
 }
