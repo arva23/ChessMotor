@@ -2,6 +2,7 @@ package chessmotor.enginecontroller;
 
 public class Step{
 
+    private String stepType;
     private int pieceId;
     private int rank;
     private int file;
@@ -17,9 +18,11 @@ public class Step{
         file = -1;
     }
 
-    public Step(int pieceId, int rank, int file, double value, 
+    public Step(String stepType, int pieceId, int rank, int file, double value, 
             int cumulativeChangeCount, double cumulativeValue) throws Exception{
 
+        this.stepType = stepType;
+        
         this.pieceId = pieceId;
 
         if(rank < 0 || 7 < rank)
@@ -36,10 +39,10 @@ public class Step{
 
         this.cumulativeValue = cumulativeValue;
     }
-
-    public boolean isStep(){
-
-        return true;
+    
+    public String getStepType(){
+    
+        return stepType;
     }
 
     public int getPieceId(){
