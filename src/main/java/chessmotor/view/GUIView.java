@@ -3,7 +3,9 @@ package chessmotor.view;
 
 import chessmotor.enginecontroller.ComplexGameStatus;
 import chessmotor.enginecontroller.GameController;
+import chessmotor.enginecontroller.IGame;
 import java.awt.Container;
+import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -12,6 +14,7 @@ import javax.swing.JFrame;
 public class GUIView implements IGameUI{
     
     private GameController gameCtl;
+    private IGame gameInstance;
     private int windowX;
     private int windowY;
     private int windowWidth;
@@ -34,9 +37,9 @@ public class GUIView implements IGameUI{
     
     // GAME STATUS MANAGEMENT
     private GameStatusMgr gameStatusMgr;
-    
-    public GUIView(GameController gameCtl, int windowX, int windowY, 
-            int windowWidth, int windowHeight) throws Exception{
+   
+    public GUIView(GameController gameCtl, IGame gameInstance, int windowX,
+            int windowY, int windowWidth, int windowHeight) throws Exception{
     
         if(gameCtl == null){
         
@@ -44,6 +47,13 @@ public class GUIView implements IGameUI{
         }
         
         this.gameCtl = gameCtl;
+        
+        if(gameInstance == null){
+        
+            throw new Exception("Current game controller object is null.");
+        }
+        
+        this.gameInstance = gameInstance;
         
         if(windowWidth < 0 || windowWidth > 1366){
         
@@ -254,10 +264,87 @@ public class GUIView implements IGameUI{
         
         return action;
     }
-    
+
+    /**
+     * Its main purpose is to provide functionality to special step case, promotion
+     * 
+     * This is a modifier method that directly invokes GAmeBoardView method
+     * that updates the gable partially while entering pawn replacement mode
+     * then restores the visual game board status after promotion has occurred
+     * @return
+     * @throws InterruptedException 
+     */
     @Override
     public String selectPawnReplacement() throws InterruptedException{
     
+        // function setup
+        
+        String[][] origBoardStatus = board.getBoardSquareStatus();
+        
+        String[][] promotionChoiceStatus = new String[8][8];
+        
+        Stack<String> removedPlayerPieces = gameInstance.machineComes() ? 
+                gameInstance.getMachinePromotionTypeNames() 
+                : gameInstance.getHumanPromotionTypeNames();
+        
+        int numOfAvailablePieces = removedPlayerPieces.size();
+        
+        int endRank = (int)Math.ceil(Math.sqrt(numOfAvailablePieces));
+        int startRank = (8 - endRank) / 2;
+        
+        int endFile = (int)Math.floor(Math.sqrt(numOfAvailablePieces));
+        int startFile = (8 - endFile) / 2;
+        
+        for(int rankInd = 0; rankInd < 8; ++rankInd){
+        
+            for(int fileInd = 0; fileInd < 8; ++fileInd){
+            
+                promotionChoiceStatus[rankInd][fileInd] = "empty";
+            }
+        }
+        
+        int removedInd = 0;
+        
+        for(int rankInd = startRank; rankInd < endRank; ++rankInd){
+        
+            for(int fileInd = startFile; fileInd < endFile; ++fileInd){
+            
+                promotionChoiceStatus[rankInd][fileInd] = 
+                        removedPlayerPieces.get(removedInd);
+                
+                ++removedInd;
+                
+                if(removedInd > numOfAvailablePieces){
+                
+                    break;
+                }
+            }
+        }
+
+        board.setBoardSquareStatus(promotionChoiceStatus);
+        
+        String action = "";
+        
+        while(true){
+        
+            board.signalForBoard();
+            board.waitForAction();
+            
+            if(board.pieceEquals(board.getPlayerActionResult(), "empty")){
+            
+                System.out.println("Illegal selection, choose another.");
+            }
+            else{
+            
+                break;
+            }
+        }
+        
+        action += board.getPlayerActionResult();
+        
+        board.setBoardSquareStatus(origBoardStatus);
+        
+        return action;
     }
     
     @Override

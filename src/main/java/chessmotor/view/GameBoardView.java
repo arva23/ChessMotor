@@ -31,6 +31,7 @@ public class GameBoardView implements IGameBoardView {
     private int boardWidth;
     private int boardHeight;
     
+    private String[][] boardSquareStatus;
     private UnitSquare[][] board;// strictly 8 x 8 board
     // boardStatus is assigned at game controller object temporarily
      
@@ -137,6 +138,8 @@ public class GameBoardView implements IGameBoardView {
         board = new UnitSquare[8][8];
         int squareTypeId;
         
+        this.boardSquareStatus = boardSquareStatus;
+        
         for(int rankInd = 0; rankInd < 2; ++rankInd){
         
             for(int fileInd = 0; fileInd < 8; ++fileInd){
@@ -144,10 +147,10 @@ public class GameBoardView implements IGameBoardView {
                 squareTypeId = fileInd % 2 + rankInd + 2;
                 board[rankInd][fileInd] = new UnitSquare(
                         machineBegins ? 1 : 0,
-                        boardSquareStatus[rankInd][fileInd],
+                        this.boardSquareStatus[rankInd][fileInd],
                         fileInd * squareWidth, rankInd * squareHeight,
                         squareWidth, squareHeight, squareBgs[squareTypeId],
-                        pieceTypes.get(boardSquareStatus[rankInd][fileInd]));
+                        pieceTypes.get(this.boardSquareStatus[rankInd][fileInd]));
             }
         }
         
@@ -157,10 +160,10 @@ public class GameBoardView implements IGameBoardView {
                 
                 squareTypeId = fileInd % 2 + rankInd % 2;
                 board[rankInd][fileInd] = new UnitSquare(0, 
-                        boardSquareStatus[rankInd][fileInd],
+                        this.boardSquareStatus[rankInd][fileInd],
                         fileInd * squareWidth, rankInd * squareHeight, 
                         squareWidth, squareHeight, squareBgs[squareTypeId],
-                        pieceTypes.get(boardSquareStatus[rankInd][fileInd]));
+                        pieceTypes.get(this.boardSquareStatus[rankInd][fileInd]));
             }
         }
         
@@ -170,10 +173,10 @@ public class GameBoardView implements IGameBoardView {
             
                 squareTypeId = fileInd % 2 + rankInd + 2;
                 board[rankInd][fileInd] = new UnitSquare(
-                        machineBegins ? 0 : 1, boardSquareStatus[rankInd][fileInd],
+                        machineBegins ? 0 : 1, this.boardSquareStatus[rankInd][fileInd],
                         fileInd * squareWidth, rankInd * squareHeight,
                         squareWidth, squareHeight, squareBgs[squareTypeId],
-                        pieceTypes.get(boardSquareStatus[rankInd][fileInd]));
+                        pieceTypes.get(this.boardSquareStatus[rankInd][fileInd]));
             }
         }
         
@@ -218,7 +221,7 @@ public class GameBoardView implements IGameBoardView {
         this.machineComes = gameStatus.getMachineComes();
         this.machineBegins = gameStatus.getMachineBegins();
         
-        String[][] boardSquareStatus = gameStatus.getBoardSquareStatus();
+        this.boardSquareStatus = gameStatus.getBoardSquareStatus();
         
         int squareTypeId;
         char machineCmp = machineBegins ? 'w' : 'b';
@@ -231,7 +234,7 @@ public class GameBoardView implements IGameBoardView {
             for(int fileInd = 0; fileInd < 8; ++fileInd){
             
                 squareTypeId = fileInd % 2 + rankInd + 2;
-                typeName = boardSquareStatus[rankInd][fileInd];
+                typeName = this.boardSquareStatus[rankInd][fileInd];
                 
                 if(typeName.charAt(0) == machineCmp){
                 
@@ -253,6 +256,46 @@ public class GameBoardView implements IGameBoardView {
                         pieceTypes.get(typeName));
             }
         }
+    }
+    
+    public void setBoardSquareStatus(String[][] newBoardSquareStatus){
+    
+        this.boardSquareStatus = newBoardSquareStatus;
+        
+        char machineCmp = machineBegins ? 'w' : 'b';
+        char humanCmp = !machineBegins ? 'b' : 'w';
+        int player;
+        String pieceType;
+        
+        for(int rankInd = 0; rankInd < 8; ++rankInd){
+        
+            for(int fileInd = 0; fileInd < 8; ++fileInd){
+            
+                pieceType = this.boardSquareStatus[rankInd][fileInd];
+                
+                if(pieceType.charAt(0) == machineCmp){
+                
+                    player = -1;
+                }
+                else if(pieceType.charAt(0) == humanCmp){
+                
+                    player = 1;
+                }
+                else{
+                
+                    // neutral piece (empty square)
+                    player = 0;
+                }
+                
+                board[rankInd][fileInd].setNewPiece(player, 
+                        pieceTypes.get(pieceType));
+            }
+        }
+    }
+    
+    public String[][] getBoardSquareStatus(){
+    
+        return boardSquareStatus;
     }
     
     @Override

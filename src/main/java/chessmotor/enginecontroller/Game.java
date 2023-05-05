@@ -1163,6 +1163,44 @@ public class Game implements IGame{
     }
     
     @Override
+    public boolean machineComes(){
+    
+        return machineComes;
+    }
+    
+    @Override
+    public Stack<String> getMachinePromotionTypeNames(){
+    
+        Stack<String> removedMachinePiecesTypeNames = new Stack<>();
+        
+        int sizeOfRemovedMachinePieces = removedMachinePieces.size();
+        
+        for(int i = 0; i < sizeOfRemovedMachinePieces; ++i){
+        
+            removedMachinePiecesTypeNames.add(
+                    pieces.get(removedMachinePieces.get(i)).getTypeName());
+        }
+        
+        return removedMachinePiecesTypeNames;
+    }
+    
+    @Override
+    public Stack<String> getHumanPromotionTypeNames(){
+    
+        Stack<String> removedHumanPiecesTypeNames = new Stack<>();
+        
+        int sizeOfRemovedHumanPieces = removedHumanPieces.size();
+        
+        for(int i = 0; i < sizeOfRemovedHumanPieces; ++i){
+        
+            removedHumanPiecesTypeNames.add(
+                    pieces.get(removedHumanPieces.get(i)).getTypeName());
+        }
+        
+        return removedHumanPiecesTypeNames;
+    }
+    
+    @Override
     public void waitForDataRead() throws InterruptedException{
     
         statusUpdateLock.await();
