@@ -22,12 +22,21 @@ public class PlayerClock implements Runnable{
     private JPanel blackPlayerTimePanel;
     private JLabel blackPlayerTimeValue;
     
-    
-    
     private boolean operateClock;
     private boolean switchPlayer;
     private boolean whitePlayerComes;
     
+    /**
+     * Parameterized constructor for PlayerClock
+     * @param clockX Top left x coordinate component
+     * @param clockY Top left y coordinate component
+     * @param clockWidth Width of dual clock
+     * @param clockHeight Height of dual clock
+     * @throws Exception 
+     *         x or y coordinate component is out of range
+     *         with is out of range
+     *         height if out of range
+     */
     public PlayerClock(int clockX, int clockY, int clockWidth, int clockHeight) throws Exception{
     
         if(clockX < 0 || clockY < 0){

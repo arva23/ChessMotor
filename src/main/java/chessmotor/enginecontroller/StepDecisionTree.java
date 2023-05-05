@@ -6,6 +6,12 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.util.TreeMap;
 
+/**
+ * A step sequence generator class that builds all step chain, sequence along 
+ * the available previous step options in aware of restrictions
+ * 
+ * @author arva
+ */
 public class StepDecisionTree implements Runnable{
     
     private IncArbTree<GenStepKey, Step> stepDecisionTree;
@@ -44,6 +50,22 @@ public class StepDecisionTree implements Runnable{
     private TreeMap<String, Stack<Integer>> removedMachinePiecesContinuation;
     
     
+    /**
+     * Constructor for initialization of step decision tree object
+     * @param machineBegins The machine player begins or not
+     * @param pieces The container object that stores the available pieces for 
+     *        step sequence generation
+     * @param stepHistory It contains the taken steps beginning from the starting 
+     *        point
+     * @param gameBoard The game board storage object
+     * @param depth The maximum size of step sequence starting from the actual step
+     * @param cumulativeNegativeChangeThreshold Number of consecutive negative 
+     *        general player score change
+     * @param minConvThreshold Threshold of negative tendency trigger
+     * @param fracs The number of parallel builder executor StepDecisionTree objects
+     * @param no The identifier of parallel builder executor among all
+     * @param memLimit Memory limit for generation in order to confine memory usage
+     */
     public StepDecisionTree(boolean machineBegins, PieceContainer pieces, 
             Stack<Step> stepHistory, GameBoardData gameBoard, int depth, 
             int cumulativeNegativeChangeThreshold, double minConvThreshold, 
@@ -132,7 +154,11 @@ public class StepDecisionTree implements Runnable{
     
     public void StepDecisionTree(StepDecisionTree orig){
     
-    public StepDecisionTree(StepDecisionTree orig) throws Exception{
+    /**
+     * Copy constructor for this class
+     * @param orig Origin of the current object to be copied from
+     */
+    public StepDecisionTree(StepDecisionTree orig){
     
         if(orig == null){
         
@@ -165,36 +191,65 @@ public class StepDecisionTree implements Runnable{
     }
     
     
+    /**
+     * Returns the number of steps
+     * @return number of steps
+     */
     public int size(){
     
         return stepDecisionTree.size();
     }
     
-    
+    /**
+     * Get step related keys on specified level
+     * @param levelId Level identifier
+     * @return Level specific keys
+     */
     public ArrayList<GenStepKey> getLevelKeys(int levelId){
 
         return stepDecisionTree.getLevelKeys(levelId);
     }
 
-    
+    /**
+     * Get step related keys on leaf level
+     * @return Leaf level keys
+     */
     public ArrayList<GenStepKey> getLeafLevelKeys(){
     
         return stepDecisionTree.getLeafLevelKeys();
     }
     
-    
+    /**
+     * Get certain step by its assigned key identifier
+     * @param key Key identifier of step
+     * @return Requested step
+     * @throws Exception 
+     *         No step has been found with the given key, 
+     *         No such key exists
+     */
     public Step getByKey(GenStepKey key) throws Exception{
     
         return stepDecisionTree.getByKey(key);
     }
     
-    
+    /**
+     * Set new origin step to the built tree, shift the tree root to the give 
+     * step by its specified key
+     * @param key New root step related key
+     * @throws Exception
+     *         No such key exists
+     */
     public void setNewRootByKey(GenStepKey key) throws Exception{
     
         stepDecisionTree.setNewRootByKey(key);
     }
     
-    
+    /**
+     * Assign this object to a certain parallel tree chunk builder executor
+     * @param newNo Identifier of the new thread object (this)
+     * @throws Exception 
+     *         Executor identifier is out of range
+     */
     public void setFracNo(int newNo) throws Exception{
     
         if(newNo < 0 || newNo >= fracs){
@@ -205,20 +260,38 @@ public class StepDecisionTree implements Runnable{
         this.no = newNo;
     }
     
-    
+    /**
+     * Obtains the preset depth.
+     * @return The current depth
+     */
     public int getDepth(){
     
         return depth;
     }
     
+    /**
+     * Obtains the actually altered tree depth involving step sequence 
+     * termination induced depth shortages
+     * @return Live depth by tree evaluation
+     */
+    public int getCurrDepth(){
     
+    /**
+     * Obtains the step container
+     * @return Returns an incomplete n-ary arbitrary tree
+     */
     public IncArbTree<GenStepKey, Step> getContainer(){
     
         return stepDecisionTree;
     }
     
     
-    // improvement: dynamic depth variation according to recent game status scores
+    /**
+     * Sets positive depth
+     * Improvement: dynamic depth variation according to recent game status scores
+     * @param depth The new depth
+     * @throws Exception 
+     */
     public void setDepth(int depth) throws Exception{
     
         if(depth < 1) throw new Exception("Step sequence depth is less than 1.");
@@ -226,7 +299,9 @@ public class StepDecisionTree implements Runnable{
         this.depth = depth;
     }
     
-    
+    /**
+     * Trims keys in order to prevent infinite key length growth
+     */
     public void trimKeys(){
     
         // infinite node indexing resolution due to root diplacement 
@@ -246,7 +321,16 @@ public class StepDecisionTree implements Runnable{
         }
     }
     
-    
+    /**
+     * Unites two StepDecisionTree object to complete parallel tree builder 
+     * executor results
+     * @param chunk The other chunk to be merged into the current one
+     * @throws Exception
+     *         Storage reservation underflow, 
+     *         Chunk is empty,
+     *         Multiple roots have been found, 
+     *         Specified root key has not been found
+     */
     public void unite(StepDecisionTree chunk) throws Exception{
     
         // expand container using upper estimation of number of nodes respect 
@@ -256,33 +340,61 @@ public class StepDecisionTree implements Runnable{
         stepDecisionTree.mergeToNode(chunk.stepDecisionTree);
     }
     
-    
+    /**
+     * Inserts a single key-step pair into the tree
+     * @param whereKey The parent key, Key to let the key-step pair be 
+     *        inserted from
+     * @param key New key related to new step
+     * @param step New step related to new key
+     * @throws Exception
+     *         Key-value parameter is null, 
+     *         No parent key has been found,
+     *         Provided key to the step has already been existed/inserted
+     */
     public void addOne(GenStepKey whereKey, GenStepKey key, Step step) throws Exception{
     
         stepDecisionTree.addOne(whereKey, key, step);
     }
     
-    
+    /**
+     * Inserts a key-step pair onto the history stacks for further processing
+     * @param key Step related key
+     * @param step Key related step
+     */
     public void addToHistoryStack(String key, Step step){
     
         stepHistoryStack.add(step);
         keyHistoryStack.add(key);
     }
     
-    
+    /**
+     * Reserves memory in advance in order to prevent suboptimal multiple storage 
+     * reallocation during altering operation
+     * @param resMemSize The new size of storage by element numbers
+     * @throws Exception 
+     *         Capacity size under flow comparing to recently used
+     */
     public void reserveMem(int resMemSize) throws Exception{
     
         stepDecisionTree.reserve(resMemSize);
     }
     
-    
-    public void generateFirstMachineStep() throws Exception{
+    /**
+     * Generate first machine step in both scenarios of machine begins or not
+     * @throws Exception
+     *         Rank or file is out of range, 
+     *         Addition error (index out of bound),
+     *         Index out of bounds at LinTreeMap,
+     *         Key-value is null, no parent key has been found, 
+     *         Key duplication/redundancy/preexisting key
+     */
+    public void generateFirstMachineStep() throws Exception {
 
         LinTreeMultiMap<GenTmpStepKey, Step> sortedGeneratedSteps = 
             new LinTreeMultiMap<>();
 
         Step step;
-
+        
         for(int i = 0; i < 16; ++i){
 
             if(!(piecesRef.get(i).generateSteps(gameBoardRef)).isEmpty()){
@@ -326,6 +438,19 @@ public class StepDecisionTree implements Runnable{
         gameBoardRef.set(step.getRank(), step.getFile(), step.getPieceId());
     }
     
+    /**
+     * Special step case evaluator: castling and promotion processing
+     * @param key parent key related to parent step
+     * @param step parent step related to parent key
+     * @param humanSide whether human or machine player comes in this processing 
+     *        loop
+     * @param currRemovedHumanPieces auxiliary removed pieces container for 
+     *        human player
+     * @param currRemovedMachinePieces auxiliary removed pieces container for
+     *        machine player
+     * @param sortedGeneratedSteps temporary container where the potentially passed 
+     *        next child steps are inserted into
+     */
     private void evaluateSpecialStepCases(String key, Step step, Boolean humanSide,
             Stack<Integer> currRemovedHumanPieces, 
             Stack<Integer> currRemovedMachinePieces, 
@@ -477,6 +602,20 @@ public class StepDecisionTree implements Runnable{
         }
     }
     
+    /**
+     * General step case evaluation method
+     * @param sizeOfGeneratedSteps number of generated steps
+     * @param generatedSteps generally generated steps from parent step (position)
+     * @param humanSide whether human or machine player comes in this processing 
+     *        loop
+     * @param step The current parent step
+     * @param currRemovedHumanPieces auxiliary removed pieces container for 
+     *        human player
+     * @param currRemovedMachinePieces auxiliary removed pieces container for
+     *        machine player
+     * @param sortedGeneratedSteps temporary container where the potentially passed 
+     *        next child steps are inserted into
+     */
     public void evaluateGeneralStepCases(Integer sizeOfGeneratedSteps, 
             ArrayList<Pair> generatedSteps, Boolean humanSide, Step step, 
             Stack<Integer> currRemovedHumanPieces, 
@@ -579,7 +718,10 @@ public class StepDecisionTree implements Runnable{
         }
     }
     
-    // TODO count check status too
+    /**
+     * The main executor chunk tree builder method that construct step tree sub 
+     * trees that will be available for unions
+     */
     @Override
     public void run(){
         
@@ -810,6 +952,12 @@ public class StepDecisionTree implements Runnable{
     
     
     // needs to be optimized
+    /**
+     * It builds the tree with certain steps until the depth limit. Tree depth 
+     * specific step tree extender
+     * @throws Exception
+     *         Initial tree generation has not been performed
+     */
     public void continueMachineStepSequences() throws Exception{
     
         if(stepDecisionTree.size() < 1){

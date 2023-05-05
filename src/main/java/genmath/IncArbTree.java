@@ -96,6 +96,9 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     private ArrayList<Pair<K, V>> container;// level ordered list, starting from root
     private int size;
     
+    /**
+     * Default constructor for this class
+     */
     public IncArbTree(){
 
         size = 0;
@@ -115,6 +118,10 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         numOfCumulatedStepBacks = 0;
     }
     
+    /**
+     * Copy constructor for class
+     * @param orig 
+     */
     public IncArbTree(IncArbTree<K, V> orig){
     
         this.size = orig.size;
@@ -132,14 +139,33 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         this.numOfCumulatedStepBacks = orig.numOfCumulatedStepBacks;
     }
     
-    
+    /**
+     * It provides an insertion method for adding key-value pairs in pair form  
+     * along with parent key place specifier
+     * @param key Parent key identifier
+     * @param values New key-value pair
+     * @return It returns the insertion place, its index in the container
+     * @throws Exception
+     *         see original version of this method with different signature
+     */
     public int addOne(K key, Pair<K, V> values) throws Exception{
     
         return addOne(key, values.key, values.value);
     }
     
-    /* !@brief adds single element to one node (arbitrary n-ary key-value pair on one node) */
-    public int addOne(K key, K nKey, V value) throws Exception{
+    /**
+     * It provides an insertion method for adding a single key-value pairs separately
+     * @param key Parent key identifier
+     * @param nKey New key related to new value
+     * @param value New value related to new key
+     * @return It returns the insertion place, its index in the container
+     * @throws Exception
+     *         Key-value parameter is null
+     *         Pair object creation related exceptions (see further)
+     *         Parent key not found (does not exist)
+     *         Key duplication (precondition key existence violation)
+     */
+    public int addOne(K key, K nKey, V value) throws Exception {
     
         if(nKey == null || value == null){
         
@@ -263,7 +289,18 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     }
     
     /* !@brief adds multiple elements to one node (arbitrary n-ary key-value pairs on one node) */
-    public int add(K key, ArrayList<Pair<K, V>> values) throws Exception{
+    /**
+     * It adds a list of key-value pairs into the container from a specified 
+     * parent key
+     * @param key Parent key identifier
+     * @param values New key-value pairs
+     * @return Returns the insertion index of last inserted item pair
+     * @throws Exception
+     *         Empty values parameter
+     *         Unordered value pair list
+     *         Parent key does not exist
+     */
+    public int add(K key, ArrayList<Pair<K, V>> values) throws Exception {
     
         if(values.isEmpty()){
             
@@ -396,6 +433,16 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     }
     
     // order preserving subtree insertion
+    /**
+     * Merges a tree into current one
+     * @param chunk The tree to be unified into the actual one
+     * @return Returns the new size of the container
+     * @throws Exception 
+     *         Empty chunk
+     *         Multiple roots
+     *         Index out of bounds
+     *         Build in container Index out of bounds
+     */
     public int mergeToNode(IncArbTree chunk) throws Exception{
     
         if(chunk.size == 0){
@@ -456,6 +503,14 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return size;
     }
     
+    /**
+     * Obtains an element value at specified index
+     * @param i Index where the desired element must be found, otherwise Exception 
+     *        will be thrown
+     * @return Returns the found element value
+     * @throws Exception 
+     *         Index out of bounds
+     */
     public V getByLevelOrdInd(int i) throws Exception{
         
         if (i >= size || i < 0) {
@@ -472,7 +527,13 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return null;
     }
     
-    // warning: it causes inconsistency, reordering is needed, todo
+    /**
+     * It sets a new key by its index occurrence. It does not reorder the 
+     * container in case of key order inconsistency.
+     * Warning: it causes inconsistency, reordering is needed, todo
+     * @param i The specified index where the key exists
+     * @param key The new key value to be used
+     */
     public void setKeyByInd(int i, K key){
     
         Pair<K, V> modPair = container.get(i);
@@ -480,6 +541,13 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         container.set(i, modPair);
     }
     
+    /**
+     * Its sets a new value by its index occurrence.
+     * @param i The index that shows the position of the key-value pair
+     * @param value The value that replaces the old one
+     * @throws Exception 
+     *         Index out of bounds
+     */
     public void setValByLevelOrdInd(int i, V value) throws Exception{
     
         if (i >= size || i < 0) {
@@ -497,6 +565,13 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         // todo, recursive procedure, computation heavy
     }
     
+    /**
+     * It obtains value defined by a given key from the container
+     * @param key Key identifier that points to the desired value
+     * @return Returns the desired key related value
+     * @throws Exception 
+     *         The given key does not exist
+     */
     public V getByKey(K key) throws Exception{
     
         int insertionInd = 0;
@@ -534,6 +609,13 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         throw new Exception("Given key has not been found.");
     }
     
+    /**
+     * Obtains the systematically ordered index by key
+     * @param key The key that points to the index
+     * @return Returns the index of the key
+     * @throws Exception 
+     *         Key does not exist
+     */
     public int getOrdIndByKey(K key) throws Exception{
     
         int insertionInd = 0;
@@ -577,6 +659,13 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return 0;
     }
     
+    /**
+     * Obtains the key by its ordered index
+     * @param ind The index that points to the desired key
+     * @return Returns the requested key
+     * @throws Exception 
+     *         Index out of bounds
+     */
     public K getKeyByOrdInd(int ind) throws Exception{
     
         if (ind >= size || ind < 0) {
@@ -592,6 +681,14 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return null;
     }
     
+    /**
+     * Obtains key by value. It returns the first occurrence value related key.
+     * @param val Value to be found and used associated to key
+     * @return Returns the desired key
+     * @throws Exception 
+     *         Container is empty
+     *         Key has not been found
+     */
     public K getKeyByVal(V val) throws Exception{
     
         if(size == 0){
@@ -635,6 +732,12 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return size;
     }
     
+    /**
+     * It changes the allocated memory capacity of container.
+     * @param resSize New memory size in terms of objects
+     * @throws Exception 
+     *         Capacity underflow due to underdefined memory size allocation
+     */
     public void reserve(int resSize) throws Exception{
     
         if(size >= resSize){
@@ -651,6 +754,12 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     }
     
     // suboptimal, optimization is needed
+    /**
+     * It sets new root by a key
+     * @param key Key of desired new root node
+     * @throws Exception 
+     *         Root key does not exist
+     */
     public void setNewRootByKey(K key) throws Exception{
     
         // removing prefix subtrees and suffix subtrees
@@ -811,6 +920,11 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return numOfCumulatedStepBacks;
     }
 
+    /**
+     * Obtains keys on a specified level
+     * @param levelId Identifier of the level starting from 0
+     * @return Returns the found level keys in list
+     */
     public ArrayList<K> getLevelKeys(int levelId){
 
         ArrayList<K> levelKeys = new ArrayList<>();
@@ -853,6 +967,11 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return levelKeys;
     }
 
+    /**
+     * Obtains the leaf level keys
+     * @return Returns the leaf level keys, warning: this request does not 
+     *         perform a single level leaf node list acquirement
+     */
     public ArrayList<K> getLeafLevelKeys(){
     
         ArrayList<K> leafLevelKeys = new ArrayList<>();

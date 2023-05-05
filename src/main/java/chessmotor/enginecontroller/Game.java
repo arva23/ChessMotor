@@ -76,16 +76,30 @@ public class Game implements IGame{
     private Stack<Integer> removedHumanPieces;
     private Stack<Integer> removedMachinePieces;
     
+    /**
+     * Empty constructor for parametrically uninitialized objects
+     */
     public Game(){
     
         initialized = false;
     }
     
-    
-    public Game(IGameUI gameUI, boolean machineBegins, int stepsToLookAhead, double minConvThreshold, 
-            int cumulativeNegativeChangeThreshold, Duration timeLimit, long memLimit) {
-    
-        try{
+    /**
+     * Constructor for parametric initialization and further operation
+     * @param gameUI Graphical user interface for arbitrary but constrained 
+     *        interface connection
+     * @param machineBegins Whether human or machine player comes in this operation 
+     *        loop
+     * @param stepsToLookAhead The non-zero, positive length of step chain to be used
+     * @param minConvThreshold Threshold for negative score change in tendency
+     * @param cumulativeNegativeChangeThreshold Number of negative machine score 
+     *        modifications to be allowed
+     * @param timeLimit Defined amount of time that is provided for both players
+     * @param memLimit Memory limit for confinement of system memory usage
+     */
+    public Game(IGameUI gameUI, boolean machineBegins, int stepsToLookAhead, 
+            double minConvThreshold, int cumulativeNegativeChangeThreshold, 
+            Duration timeLimit, long memLimit) {
 
             if(gameUI == null){
             
@@ -213,6 +227,10 @@ public class Game implements IGame{
         }
     }
     
+    /**
+     * Method for loading previously saved game status
+     * @param saveStatus Previously saved game status
+     */
     @Override
     public void setStatus(GenericSaveStatus saveStatus){
     
@@ -234,6 +252,11 @@ public class Game implements IGame{
         targetStepHistory = gameStatus.getTargetStepHistory();
     }
     
+    /**
+     * Saves game status
+     * @return It returns a generically cast save status object that contains 
+     *         all necessary status data 
+     */
     @Override
     public GenericSaveStatus getStatus() throws Exception{
     
@@ -276,6 +299,18 @@ public class Game implements IGame{
         return new GameStatus();
     }
     
+    /**
+     * Builds machine strategy respect to player beginning configuration
+     * @throws Exception
+     *         Number of threads can not be obtained, 
+     *         Underflow of newly assigned storage capacity comparing to previously 
+     *          used (data loss)
+     *         InterruptedException of time delay
+     *         Storage reservation underflow, 
+     *         Chunk is empty,
+     *         Multiple roots have been found, 
+     *         Specified root key has not been found
+     */
     private void buildMachineStrategy() throws Exception{
     
         int numberOfThreads = Runtime.getRuntime().availableProcessors();
@@ -306,6 +341,7 @@ public class Game implements IGame{
             generatorMgr.execute(stepSequencesChunks.get(threadId));
         }
 
+        // todo compute dynamic timeout for generation according to cpu performance
         generatorMgr.awaitTermination(120000, TimeUnit.MILLISECONDS);
 
         for(int threadId = 0; threadId < numberOfThreads; ++threadId){
@@ -316,9 +352,18 @@ public class Game implements IGame{
     
     
     // entry point of this game handler controller class
+    /**
+     * The main game operator method that manages the high level game events in 
+     * business logic and triggers requests toward external modules such as GUI
+     * @throws Exception 
+     *         Uninitialized game
+     *         selectMachineSteps method exceptions (see further)
+     *         validateHumanPlayerStatus method exceptions (see further)
+     *         graphical user interface request exceptions (see further)
+     */
     @Override
     public void runGame() throws Exception{
-    
+        
         if(!initialized) throw new Exception("Uninitialized game.");
         
         //gamePlayStatus = 0;
@@ -352,6 +397,7 @@ public class Game implements IGame{
                     sourceStep.getRank(), sourceStep.getFile(),
                     targetStep.getRank(), targetStep.getFile());
             signalForDataRead();
+            
             if(timeLimit.compareTo(machineTime) <= 0){
             
                 playGame = false;
@@ -413,6 +459,7 @@ public class Game implements IGame{
                     pieces.get(targetStep.getPieceId()).getTypeName(),
                     sourceStep.getRank(), sourceStep.getFile(),
                     targetStep.getRank(), targetStep.getFile());
+            
             signalForDataRead();
             
             if(timeLimit.compareTo(machineTime) <= 0){
@@ -538,9 +585,7 @@ public class Game implements IGame{
                     pieces.get(targetStep.getPieceId()).getTypeName(),
                     sourceStep.getRank(), sourceStep.getFile(),
                     targetStep.getRank(), targetStep.getFile());
-            
             signalForDataRead();
-            
             if(timeLimit.compareTo(machineTime) <= 0){
             
                 playGame = false;
@@ -577,7 +622,13 @@ public class Game implements IGame{
         }
     }
     
-    
+    /**
+     * It sets new length for step sequences
+     * @param depth New length of a step sequences in terms of tree depth 
+     *        (originating from multi-path traversal)
+     * @throws Exception 
+     *         Depth lower bound violation exception
+     */
     public void setDepth(int depth) throws Exception{
     
         if(depth < 4){
@@ -599,7 +650,26 @@ public class Game implements IGame{
         stepSequences.setDepth(depth);
     }
     
-    
+    /**
+     * An universal human player/user action handler. It manages first steps, 
+     * further steps, castling, promotion, hit, illegal dual step, illegal step.
+     * @throws Exception
+     *         GUI module exceptions
+     *         Inappropriate user input
+     *         Ill conditioned source-target pairs
+     *         Ill conditioned source pair
+     *         Source rank out of range
+     *         Source file out of range
+     *         Lack of player piece at source position
+     *         Wrong selected position in case of check
+     *         Target rank out of range
+     *         Target file out of range
+     *         Illegally selected target step
+     *         DualStep range violations at step creation
+     *         Disallowed castling
+     *         Step range violations at step creation
+     *         StepDecisionTree exceptions (see further)
+     */
     private void requestHumanPlayerAction() throws Exception{
         
         String action;
@@ -947,7 +1017,11 @@ public class Game implements IGame{
         }        
     }
     
-    
+    /**
+     * Validates machine player after human player took step
+     * @throws Exception 
+     *         StepDecisionTree exception (see further)
+     */
     private void validateMachinePlayerStatus() throws Exception{
     
         // looking of check mate on machine king piece
@@ -978,9 +1052,17 @@ public class Game implements IGame{
     }
     
     
-    // TODO it could be integrated in step decision tree builder
+    /**
+     * It selects next machine step similarly to human step request method
+     * @throws Exception 
+     *         StepDecisionTree exceptions (see further)
+     *         Step creation exceptions (see further)
+     *         DualStep creation exceptions (see further)
+     */
     private void selectNextMachineStep() throws Exception{
     
+        // TODO it could be integrated in step decision tree builder
+        
         // TASK) select the best option - max search, and apply to the game using 
         //       posteriori update(perform update after execution of further subroutines 
         //       of this method)

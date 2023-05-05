@@ -4,10 +4,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-// it is a passive square element with image of chess board
-// due to massive amount of action listeners for each squares (64 x number of events)
-//  position based "pooling" is implemented, this means that the squares do no own
-//  events, only setters and getters that are available for board handler
+/**
+ * It is a passive square element with image of chess board
+ * Due to massive amount of action listeners for each squares (64 x number of events)
+ * position based "pooling" is implemented, this means that the squares do no own
+ * events, only setters and getters that are available for board handler
+ * @author arva
+ */
 public class UnitSquare extends JPanel{
     
     private String pieceTypeName;
@@ -23,7 +26,18 @@ public class UnitSquare extends JPanel{
     // locally stored due to different statuses of squares
     private ImageIcon pieceTexture;
     private JLabel pieceLabel;
-    
+
+    /**
+     * Parameterized constructor for non-default initialization
+     * @param player Selected player's identifier to be used
+     * @param pieceTypeName Typename of piece for resolution
+     * @param x Visual position of top left corner x coordinate component
+     * @param y Visual position of top left corner y coordinate component
+     * @param width Visual width of square
+     * @param height Visual height of square
+     * @param base Base image of square (black or white)
+     * @param piece Piece image identifier
+     */
     public UnitSquare(int player, String pieceTypeName, int x, int y,
             int width, int height, ImageIcon base, ImageIcon piece){
     

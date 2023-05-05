@@ -46,6 +46,21 @@ public class GameBoardView implements IGameBoardView {
     private int recentFile;
     private UnitSquare recentSquare;
     
+    /**
+     * Parameterized constructor of visual game board object
+     * @param x Upper left corner x coordinate component
+     * @param y Upper left corner y coordinate component
+     * @param width Width of the game table
+     * @param height Height of the game table
+     * @param machineComes Whether machine is the next player or not
+     * @param boardSquareStatus A 2D array that stores all the field/square 
+     *        status containment
+     * @throws Exception 
+     *         x coordinate range violation
+     *         y coordinate range violation
+     *         width range violation
+     *         height range violation
+     */
     public GameBoardView(int x, int y, int width, int height, boolean machineComes, 
             String[][] boardSquareStatus) throws Exception{
     
@@ -213,6 +228,11 @@ public class GameBoardView implements IGameBoardView {
         });
     }
     
+    /**
+     * It sets new game status for visual game board
+     * @param gameStatus previously saved game status that stores visual game 
+     *        board information
+     */
     @Override
     public void setGameBoard(ComplexGameStatus gameStatus){
     
@@ -322,6 +342,18 @@ public class GameBoardView implements IGameBoardView {
         return recentSquare;
     }
     
+    /**
+     * It updates the square status by piece change
+     * @param isAlly Whether the current piece belongs to ally or not
+     * @param pieceType General piece type identifier to locate specific visual 
+     *        piece image
+     * @param rank Position rank
+     * @param file Position file
+     * @throws Exception 
+     *         Range violation of rank
+     *         Range violation of file
+     *         No such piece type with the provided identifier
+     */
     @Override
     public void setSquare(boolean isAlly, String pieceType, int rank, int file) throws Exception{
     
@@ -344,6 +376,14 @@ public class GameBoardView implements IGameBoardView {
                 pieceTypes.get(pieceType));
     }
     
+    /**
+     * It compares the type identifier of a given pieces with an other piece type 
+     * identifier
+     * @param pos Piece position in literal form
+     * @param pieceTypeName The second piece type name identifier to be compared 
+     *        with the actual one
+     * @return It returns the comparison result (equality, inequality) 
+     */
     public boolean pieceEquals(String pos, String pieceTypeName){
     
         return board[pos.charAt(0)][pos.charAt(1)].getPieceTypeName()

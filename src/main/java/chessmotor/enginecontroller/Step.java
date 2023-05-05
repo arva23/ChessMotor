@@ -11,6 +11,9 @@ public class Step{
     private int cumulativeChangeCount;
     private double cumulativeValue;
 
+    /**
+     * Default constructor for Step
+     */
     public Step(){
 
         pieceId = -1;
@@ -18,6 +21,22 @@ public class Step{
         file = -1;
     }
 
+    /**
+     * Parameterized constructor for initialization of operation
+     * @param stepType Type of step: standard, hit, castling, promotion
+     * @param pieceId The identifier of involved piece
+     * @param rank Position rank of step
+     * @param file Position file of step
+     * @param value Step strength in floating point precision for general purpose 
+     *        usage
+     * @param cumulativeChangeCount Number of decrease in value
+     *        (for negative tendency count)
+     * @param cumulativeValue Accumulated value of step chain starting from the 
+     *        first until the actual step
+     * @throws Exception
+     *         Rank range violation
+     *         File range violation
+     */
     public Step(String stepType, int pieceId, int rank, int file, double value, 
             int cumulativeChangeCount, double cumulativeValue) throws Exception{
 

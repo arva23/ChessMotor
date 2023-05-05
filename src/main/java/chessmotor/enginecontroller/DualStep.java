@@ -6,6 +6,9 @@ public class DualStep extends Step{
     private int fileB;
     private int pieceIdB;
     
+    /**
+     * Default constructor for DualStep
+     */
     public DualStep(){
     
         super();
@@ -14,6 +17,25 @@ public class DualStep extends Step{
         pieceIdB = -1;
     }
     
+    /**
+     * This provides an implementation of dual step which is at present in case 
+     * of castling and promotion
+     * @param stepType Type of step: standard, hit, castling, promotion
+     * @param pieceIdA First piece identifier
+     * @param pieceIdB Second piece identifier
+     * @param rankA Rank of first step position
+     * @param fileA File of first step position
+     * @param rankB Rank of second step position
+     * @param fileB File of second step position
+     * @param value Value of dual step which indicates the its strength
+     * @param cumulativeChangeCount Number of consequent negative change in value
+     * @param cumulativeValue Accumulated value of step staring from first step
+     *        until actual one
+     * @throws Exception 
+     *         Exception of super class
+     *         Range violation of second position rank
+     *         Range violation of second position file
+     */
     public DualStep(String stepType, int pieceIdA, int pieceIdB, int rankA, 
             int fileA, int rankB, int fileB, double value, int cumulativeChangeCount, 
             double cumulativeValue) throws Exception{

@@ -11,6 +11,11 @@ import java.util.concurrent.Executors;
 
 import javax.swing.JFrame;
 
+/**
+ * It is an version of implementation of a graphical user interface based on 
+ * interface defined restrictions
+ * @author arva
+ */
 public class GUIView implements IGameUI{
     
     private GameController gameCtl;
@@ -38,6 +43,28 @@ public class GUIView implements IGameUI{
     // GAME STATUS MANAGEMENT
     private GameStatusMgr gameStatusMgr;
    
+    /**
+     * Parameterized constructor for operation initialization
+     * @param gameCtl Upper high level game controller that manages the application,
+     *        singleton pattern
+     * @param gameInstance game object interface toward realized current game instance 
+     *        controller object
+     * @param windowX The top left x coordinate component of corner of application 
+     *        window
+     * @param windowY The top left y coordinate of component corner of application 
+     *        window
+     * @param windowWidth The width of window in the screen, the top left x 
+     *        coordinate component position is counted at handling
+     * @param windowHeight The height of window in the screen, the top left y 
+     *        coordinate component position is counted at handling
+     * @throws Exception 
+     *         Null game controller object
+     *         Null current game controller object
+     *         Window width is out of range
+     *         Window height is out of range
+     *         Top left corner x coordinate component is out of range
+     *         Top left corner y coordinate component is out of range
+     */
     public GUIView(GameController gameCtl, IGame gameInstance, int windowX,
             int windowY, int windowWidth, int windowHeight) throws Exception{
     
@@ -164,6 +191,11 @@ public class GUIView implements IGameUI{
         elementContainer.add(gameStatusMgr.getMainPanel());
     }
     
+    /**
+     * Game status loader that sets the actual game status to the recently 
+     * selected previously saved one
+     * @param gameStatus Previously saved game status
+     */
     @Override
     public void loadGame(ComplexGameStatus gameStatus){
     
@@ -190,19 +222,32 @@ public class GUIView implements IGameUI{
         // todo
     }
     
-    
+    /**
+     * It delegates method for game status loading
+     * @param gameStatus Name/identifier of game status
+     */
     @Override
     public void updateGameStatus(String gameStatus) {
         
         // todo
     }
 
+    /**
+     * Switches player clock at dual clock manager
+     */
     @Override
     public void switchPlayerClock() {
         
         playerClocks.switchPlayer();
     }
 
+    /**
+     * Reads two step after each other, first the source position that contains 
+     * an ally piece then secondly the arbitrary second position with the 
+     * restriction of non-ally piece presence
+     * @return
+     * @throws InterruptedException 
+     */
     @Override
     public String readPlayerAction() throws InterruptedException {
         
@@ -347,6 +392,19 @@ public class GUIView implements IGameUI{
         return action;
     }
     
+    /**
+     * Player action visual persistence provider, it uses game board component
+     * @param pieceType The selected piece
+     * @param sourceRank Source position rank coordinate
+     * @param sourceFile Source position file coordinate
+     * @param targetRank Target position rank coordinate
+     * @param targetFile Target position file coordinate
+     * @throws Exception 
+     *         Source rank range violation
+     *         Source file range violation
+     *         Target rank range violation
+     *         GameBoard related exceptions (see further relations)
+     */
     @Override
     public void applyGenPlayerAction(String pieceType, int sourceRank, int sourceFile,
             int targetRank, int targetFile) throws Exception{
