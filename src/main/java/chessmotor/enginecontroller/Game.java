@@ -1081,7 +1081,7 @@ public class Game implements IGame{
         
         ArrayList<GenStepKey> levelKeys = stepSequences.getLevelKeys(1);
         
-        if(levelKeys.size() == 1){
+        if(levelKeys.isEmpty() && stepSequences.getCurrDepth() == 1){
         
             playGame.set(false);
             gamePlayStatus = "WIN";
