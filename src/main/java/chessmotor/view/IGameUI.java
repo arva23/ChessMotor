@@ -20,4 +20,6 @@ public interface IGameUI {
     
     public void applyGenPlayerAction(String pieceType, int sourceRank, int sourceFile,
             int targetRank, int targetFile) throws Exception;
+    
+    public void giveUpHumanPlayer();
 }

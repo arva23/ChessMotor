@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 
 // evolution of engine
@@ -57,6 +58,7 @@ public class Game implements IGame{
     private boolean machineIsInCheck;
     private boolean humanIsInCheck;
     private boolean playGame;
+    private AtomicBoolean giveUpHumanPlayerGameController;
     private String gamePlayStatus;
     // active in game piece container
     private PieceContainer pieces;
@@ -141,6 +143,7 @@ public class Game implements IGame{
 
             // restrict step deicision tree generation with human leaf level
             if(machineBegins && stepsToLookAhead % 2 == 1){
+        giveUpHumanPlayerGameController.set(false);
 
                 --stepsToLookAhead;
             }
@@ -844,6 +847,12 @@ public class Game implements IGame{
             //  required to select a proper piece from container
             String selectedTypeName = gameUI.selectPawnReplacement();
         
+            if(giveUpHumanPlayerGameController.get()){
+            
+                // terminate human action request
+                return;
+            }
+            
             int sizeOfRemovedHumanPieces = removedHumanPieces.size();
             
             for(int i = 0; i < sizeOfRemovedHumanPieces; ++i){
@@ -1304,5 +1313,14 @@ public class Game implements IGame{
     public void signalForDataSave() throws Exception{
     
         statusSaveLock.signal();
+    }
+    
+    @Override
+    public void giveUpHumanPlayer(){
+    
+        giveUpHumanPlayerGameController.set(true);
+        playGame.set(false);
+        gamePlayStatus = "LOSE";
+        gameUI.updateGameStatus(gamePlayStatus);
     }
 }

@@ -8,6 +8,7 @@ import java.awt.Container;
 import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JFrame;
 
@@ -25,6 +26,8 @@ public class GUIView implements IGameUI{
     private int windowWidth;
     private int windowHeight;
     private double boardRatio;
+    
+    private AtomicBoolean giveUpHumanPlayerVisual;
     
     private String machineColor = "white";
     private String oppColor = "black";
@@ -109,6 +112,8 @@ public class GUIView implements IGameUI{
         }
         
         this.windowY = windowY;
+        
+        giveUpHumanPlayerVisual.set(false);
         
         mainWindow = new JFrame("ChessMotor - chess engine");
         mainWindow.setBounds(windowX, windowY, windowWidth, windowHeight);
@@ -260,8 +265,9 @@ public class GUIView implements IGameUI{
             board.signalForBoard();
             board.waitForAction();
             
-            if((machineBegins && board.getPlayerActionSquare().getPlayer() < 0)
-                || (!machineBegins && board.getPlayerActionSquare().getPlayer() > 0)){
+            if(!giveUpHumanPlayerVisual.get()
+                && ((machineBegins && board.getPlayerActionSquare().getPlayer() < 0)
+                || (!machineBegins && board.getPlayerActionSquare().getPlayer() > 0 ))){
                 
                 if(board.pieceEquals(board.getPlayerActionResult(), "king")){
                 
@@ -282,9 +288,10 @@ public class GUIView implements IGameUI{
             board.signalForBoard();
             board.waitForAction();
     
-            if((machineBegins && board.getPlayerActionSquare().getPlayer() > 0) 
+            if(!giveUpHumanPlayerVisual.get()
+                && ((!machineBegins && board.getPlayerActionSquare().getPlayer() > 0) 
                 || (!machineBegins && board.getPlayerActionSquare().getPlayer() < 0
-                || (board.pieceEquals(board.getPlayerActionResult(), "rook")))){
+                || (board.pieceEquals(board.getPlayerActionResult(), "rook"))))){
                 
                 break;
             }
@@ -370,7 +377,7 @@ public class GUIView implements IGameUI{
         
         String action = "";
         
-        while(true){
+        while(!giveUpHumanPlayerVisual.get()){
         
             board.signalForBoard();
             board.waitForAction();
@@ -433,4 +440,14 @@ public class GUIView implements IGameUI{
         board.setSquare(machineBegins, pieceType, targetRank, targetFile);
     }
     
+    /**
+     * It provides an option for human player give up and make the machine 
+     * win the game
+     */
+    @Override
+    public void giveUpHumanPlayer(){
+    
+        giveUpHumanPlayerVisual.set(true);
+        gameCtl.giveUpHumanPlayer();
+    }
 }
