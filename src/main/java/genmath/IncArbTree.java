@@ -1,5 +1,9 @@
 package genmath;
 
+import genmath.genmathexceptions.NoObjectFoundException;
+import genmath.genmathexceptions.UnorderedDataListException;
+import genmath.genmathexceptions.AmbiguousObjectException;
+import genmath.genmathexceptions.CapacityUnderloadException;
 import java.util.ArrayList;
 
 // linearized tree Vs nested object oriented tree
@@ -55,13 +59,13 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         public Pair(K key, V value) throws Exception {
 
             if (key == null) {
-                throw new Exception("Key is null.");
+                throw new NullPointerException("Key is null.");
             }
 
             this.key = key;
 
             if (value == null) {
-                throw new Exception("Value is null.");
+                throw new NullPointerException("Value is null.");
             }
             this.value = value;
         }
@@ -169,7 +173,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     
         if(nKey == null || value == null){
         
-            throw new Exception("Key-value parameter is null.");
+            throw new NullPointerException("Key-value parameter is null.");
         }
         
         if(size == 0){
@@ -228,8 +232,8 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
                 }
                 else if(res > 0 && key.len() == level + 1){
                 
-                    throw new Exception("No parent key has been found and key" 
-                            + "length differs from terminated level key length.");
+                    throw new NoObjectFoundException("No parent key has been found "
+                            + "and key length differs from terminated level key length.");
                 }
             }
             
@@ -258,7 +262,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             
             if(redundancy){
             
-                throw new Exception("Key duplication is not allowed.");
+                throw new AmbiguousObjectException("Key duplication is not allowed.");
             }
             
             // increasing capacity of stroage
@@ -304,7 +308,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     
         if(values.isEmpty()){
             
-            throw new Exception("Values parameter is empty.");
+            throw new NoObjectFoundException("Values parameter is empty.");
         }
         
         int sizeOfValues = values.size() - 1;
@@ -313,7 +317,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         
             if(values.get(i).key.compareTo(values.get(i + 1).key) > 0){
             
-                throw new Exception("Values are not in order.");
+                throw new UnorderedDataListException("Values are not in order.");
             }
         }
         
@@ -382,8 +386,8 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
                 }
                 else{
                 
-                    throw new Exception("No parent key has been found and key " 
-                            + "length differs from terminated level key length.");
+                    throw new NoObjectFoundException("No parent key has been found "
+                            + "and key length differs from terminated level key length.");
                 }
             }
             
@@ -447,7 +451,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     
         if(chunk.size == 0){
         
-            throw new Exception("Provided chunk is empty.");
+            throw new NoObjectFoundException("Provided chunk is empty.");
         }
         
         if(size == 0){
@@ -462,7 +466,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         
             if(!(chunk.nodeSizeChildRegistry.get(0).equals(1))){
             
-                throw new Exception("Multiple roots have found.");
+                throw new AmbiguousObjectException("Multiple roots have found.");
             }
             
             boolean found = false;
@@ -476,7 +480,8 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             
             if(!found){
             
-                throw new Exception("The provided root node can not be found in the current tree.");
+                throw new NoObjectFoundException("The provided root node can not be "
+                        + "found in the current tree.");
             }
             
             ArrayList<K> nodeKeyHistory = new ArrayList<>();
@@ -515,7 +520,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         
         if (i >= size || i < 0) {
 
-            throw new Exception("Index out of bounds.");
+            throw new IndexOutOfBoundsException("Index out of bounds.");
         }
 
         return container.get(i).value;
@@ -552,7 +557,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     
         if (i >= size || i < 0) {
 
-            throw new Exception("Index out of bounds.");
+            throw new IndexOutOfBoundsException("Index out of bounds.");
         }
 
         Pair<K, V> modPair = container.get(i);
@@ -606,7 +611,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             prevShift = insertionInd;
         }
         
-        throw new Exception("Given key has not been found.");
+        throw new NoObjectFoundException("Given key has not been found.");
     }
     
     /**
@@ -650,7 +655,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             prevShift = insertionInd;
         }
         
-        throw new Exception("Given key has not been found.");
+        throw new NoObjectFoundException("Given key has not been found.");
     }
     
     public int getIndByKey(K key){
@@ -669,7 +674,8 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     public K getKeyByOrdInd(int ind) throws Exception{
     
         if (ind >= size || ind < 0) {
-            throw new Exception("Index out of bounds.");
+            
+            throw new IndexOutOfBoundsException("Index out of bounds.");
         }
 
         return container.get(ind).key;
@@ -693,7 +699,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     
         if(size == 0){
         
-            throw new Exception("Container is empty.");
+            throw new NoObjectFoundException("Container is empty.");
         }
         
         // O(n) complexity
@@ -705,7 +711,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
             }
         }
         
-        throw new Exception("No key has been found with given value.");
+        throw new NoObjectFoundException("No key has been found with given value.");
     }
     
     public K lowerKey(K key){
@@ -742,7 +748,8 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     
         if(size >= resSize){
         
-            throw new Exception("New reserved size is less than current size of container.");
+            throw new CapacityUnderloadException("New reserved size is less than current "
+                    + "size of container.");
         }
         
         container.ensureCapacity(resSize);

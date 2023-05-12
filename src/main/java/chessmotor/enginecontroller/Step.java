@@ -1,5 +1,7 @@
 package chessmotor.enginecontroller;
 
+import genmath.genmathexceptions.ValueOutOfRangeException;
+
 public class Step{
 
     private String stepType;
@@ -45,10 +47,10 @@ public class Step{
         this.pieceId = pieceId;
 
         if(rank < 0 || 7 < rank)
-            throw new Exception("Rank is out of range.");
+            throw new ValueOutOfRangeException("Rank is out of range.");
 
         if(file < 0 && 7 < file)
-            throw new Exception("File is out of range.");
+            throw new ValueOutOfRangeException("File is out of range.");
 
         this.rank = rank;
         

@@ -4,6 +4,7 @@ package chessmotor.view;
 import chessmotor.enginecontroller.ComplexGameStatus;
 import chessmotor.enginecontroller.GameController;
 import chessmotor.enginecontroller.IGame;
+import genmath.genmathexceptions.ValueOutOfRangeException;
 import java.awt.Container;
 import java.util.Stack;
 import java.util.concurrent.ExecutorService;
@@ -73,42 +74,42 @@ public class GUIView implements IGameUI{
     
         if(gameCtl == null){
         
-            throw new Exception("Game controller object is null.");
+            throw new NullPointerException("Game controller object is null.");
         }
         
         this.gameCtl = gameCtl;
         
         if(gameInstance == null){
         
-            throw new Exception("Current game controller object is null.");
+            throw new NullPointerException("Current game controller object is null.");
         }
         
         this.gameInstance = gameInstance;
         
         if(windowWidth < 0 || windowWidth > 1366){
         
-            throw new Exception("Window width is out of range.");
+            throw new ValueOutOfRangeException("Window width is out of range.");
         }
         
         this.windowWidth = windowWidth;
         
         if(windowHeight < 0 || windowHeight > 768){
         
-            throw new Exception("Window height is out of range.");
+            throw new ValueOutOfRangeException("Window height is out of range.");
         }
         
         this.windowHeight = windowHeight;
         
         if(windowX < 0 || windowX > 1366 - windowWidth){
         
-            throw new Exception("Start x position is out of range.");
+            throw new ValueOutOfRangeException("Start x position is out of range.");
         }
         
         this.windowX = windowX;
         
         if(windowY < 0 || windowY > 768 - windowHeight){
         
-            throw  new Exception("Start y position is out of range.");
+            throw  new ValueOutOfRangeException("Start y position is out of range.");
         }
         
         this.windowY = windowY;
@@ -418,22 +419,22 @@ public class GUIView implements IGameUI{
     
         if(sourceRank < 0 || sourceRank > 7){
         
-            throw new Exception("Source rank is out of range.");
+            throw new ValueOutOfRangeException("Source rank is out of range.");
         }
         
         if(sourceFile < 0 || sourceFile > 7){
         
-            throw new Exception("Source file is out of range.");
+            throw new ValueOutOfRangeException("Source file is out of range.");
         }
         
         if(targetRank < 0 || targetRank > 7){
         
-            throw new Exception("Target rank is ou of range.");
+            throw new ValueOutOfRangeException("Target rank is out of range.");
         }
     
         if(targetFile < 0 || targetFile > 7){
         
-            throw new Exception("Target file is out of range.");
+            throw new ValueOutOfRangeException("Target file is out of range.");
         }
         
         board.setSquare(machineBegins, "empty", sourceRank, sourceFile);

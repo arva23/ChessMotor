@@ -224,7 +224,7 @@ public class LinTreeMultiMap<K extends ComparableKey<K>, V> extends LinTreeMap<K
 
         if (ind != -1) {
 
-            throw new Exception("No key has been found.");
+            throw new NoObjectFoundException("No key has been found.");
         } else {
 
             int level = getLevelByKey(key, occ);

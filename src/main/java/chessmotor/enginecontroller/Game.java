@@ -13,6 +13,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import chessmotor.view.IGameUI;
+import genmath.genmathexceptions.IllConditionedDataException;
+import genmath.genmathexceptions.NoObjectFoundException;
+import genmath.genmathexceptions.ValueOutOfRangeException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -103,131 +106,127 @@ public class Game implements IGame{
             double minConvThreshold, int cumulativeNegativeChangeThreshold, 
             Duration timeLimit, long memLimit) {
 
-            if(gameUI == null){
-            
-                throw new Exception("User interface object is null.");
-            }
-            
-            this.gameUI = gameUI;
+        if(gameUI == null){
 
-            this.gameUI.run();
+            throw new RuntimeException("User interface object is null.");
+        }
 
-            initialized = true;
+        this.gameUI = gameUI;
 
-            this.machineBegins = machineBegins;
-            this.machineComes = machineBegins;
-            
-            machineScore = 0.0;
-            humanScore = 0.0;
-            machineIsInCheck = false;
-            humanIsInCheck = false;
-            playGame = true;
-            gamePlayStatus = "OK";
 
-            pieces = new PieceContainer();
-            gameBoard = new GameBoardData();
-            sourceStepHistory = new Stack<>();
-            targetStepHistory = new Stack<>();
-            removedHumanPieces = new Stack<>();
-            removedMachinePieces = new Stack<>();
-            
-            if(memLimit <= 0){
-            
-                throw new Exception("Memory limit is not positive.");
-            }
-            
-            if(stepsToLookAhead < 4){
-        
-                throw new Exception("Provided stepsToLookAhead is under minimum stepsToLookAhead.");
-            }
+        this.machineBegins = machineBegins;
+        this.machineComes = machineBegins;
 
-            // restrict step deicision tree generation with human leaf level
-            if(machineBegins && stepsToLookAhead % 2 == 1){
+        machineScore = 0.0;
+        humanScore = 0.0;
+        machineIsInCheck = false;
+        humanIsInCheck = false;
         giveUpHumanPlayerGameController.set(false);
+        playGame.set(true);
+        gamePlayStatus = "OK";
 
-                --stepsToLookAhead;
-            }
+        pieces = new PieceContainer();
+        gameBoard = new GameBoardData();
+        sourceStepHistory = new Stack<>();
+        targetStepHistory = new Stack<>();
+        removedHumanPieces = new Stack<>();
+        removedMachinePieces = new Stack<>();
 
-            if(!machineBegins && stepsToLookAhead % 2 == 0){
+        if(memLimit <= 0){
 
-                --stepsToLookAhead;
-            }
-            
-            stepSequences = new StepDecisionTree(machineBegins, pieces,
-                targetStepHistory, gameBoard, stepsToLookAhead, 
-                cumulativeNegativeChangeThreshold, minConvThreshold, 0, 0, memLimit);
-
-            stepId = 0;
-
-            // initializing machine pieces
-
-            for(int i = 0; i < 8; ++i){
-
-                pieces.set(i, new Pawn(i, machineBegins, -3.0, 1, i));
-                gameBoard.set(1, i, i);
-                
-                pieces.set(16 + i, new Pawn(16 + i, !machineBegins, 3.0, 6, i));
-                gameBoard.set(6, i, 16 + i);
-            }
-
-            pieces.set(8, new Rook(8, machineBegins, -14.0, 0, 0));
-            pieces.set(9, new Knight(9, machineBegins, -8.0, 0, 1));
-            pieces.set(10, new Bishop(10, machineBegins, -14.0, 0, 2));
-            pieces.set(11, new King(11, machineBegins, -8.0, 0, 3));
-            pieces.set(12, new Queen(12, machineBegins, -28.0, 0, 4));
-            pieces.set(13, new Bishop(13, machineBegins, -14.0, 0, 5));
-            pieces.set(14, new Knight(14, machineBegins, -8.0, 0, 6));
-            pieces.set(15, new Rook(15, machineBegins, -14.0, 0, 7));
-            
-            gameBoard.set(0, 0, 8);
-            gameBoard.set(0, 1, 9);
-            gameBoard.set(0, 2, 10);
-            gameBoard.set(0, 3, 11);
-            gameBoard.set(0, 4, 12);
-            gameBoard.set(0, 5, 13);
-            gameBoard.set(0, 6, 14);
-            gameBoard.set(0, 7, 15);
-
-            // initializing human pieces
-
-            pieces.set(16 + 8, new Rook(16 + 8, !machineBegins, 14.0, 7, 0));
-            pieces.set(16 + 9, new Knight(16 + 9, !machineBegins, 8.0, 7, 1));
-            pieces.set(16 + 10, new Bishop(16 + 10, !machineBegins, 14.0, 7, 2));
-            pieces.set(16 + 11, new King(16 + 11, !machineBegins, 8.0, 7, 3));
-            pieces.set(16 + 12, new Queen(16 + 12, !machineBegins, 28.0, 7, 4));
-            pieces.set(16 + 13, new Bishop(16 + 13, !machineBegins, 14.0, 7, 5));
-            pieces.set(16 + 14, new Knight(16 + 14, !machineBegins, 8.0, 7, 6));
-            pieces.set(16 + 15, new Rook(16 + 15, !machineBegins, 14.0, 7, 7));
-
-            gameBoard.set(7, 0, 16 + 8);
-            gameBoard.set(7, 1, 16 + 9);
-            gameBoard.set(7, 2, 16 + 10);
-            gameBoard.set(7, 3, 16 + 11);
-            gameBoard.set(7, 4, 16 + 12);
-            gameBoard.set(7, 5, 16 + 13);
-            gameBoard.set(7, 6, 16 + 14);
-            gameBoard.set(7, 7, 16 + 15);
-
-            // filling empty squares
-            for(int rankInd = 2; rankInd < 6; ++rankInd){
-
-                for(int fileInd = 0; fileInd < 8; ++fileInd){
-
-                    gameBoard.set(rankInd, fileInd, -1);
-                }
-            }
-            
-            if(timeLimit.isZero()){
-            
-                throw new Exception("Time limit is zero for player durations.");
-            }
-            
-            this.timeLimit = timeLimit;
+            throw new RuntimeException("Memory limit is not positive.");
         }
-        catch(Exception e){
-        
-            System.out.println("Could not initialize game: " + e.getMessage());
+
+        if(stepsToLookAhead < 4){
+
+            throw new RuntimeException("Provided stepsToLookAhead is "
+                    + "under minimum stepsToLookAhead.");
         }
+
+        // restrict step deicision tree generation with human leaf level
+        if(machineBegins && stepsToLookAhead % 2 == 1){
+
+            --stepsToLookAhead;
+        }
+
+        if(!machineBegins && stepsToLookAhead % 2 == 0){
+
+            --stepsToLookAhead;
+        }
+
+        stepSequences = new StepDecisionTree(machineBegins, pieces,
+            targetStepHistory, gameBoard, stepsToLookAhead, 
+            cumulativeNegativeChangeThreshold, minConvThreshold, 0, 0, memLimit);
+
+        stepId = 0;
+
+        // initializing machine pieces
+
+        for(int i = 0; i < 8; ++i){
+
+            pieces.set(i, new Pawn(i, machineBegins, -3.0, 1, i));
+            gameBoard.set(1, i, i);
+
+            pieces.set(16 + i, new Pawn(16 + i, !machineBegins, 3.0, 6, i));
+            gameBoard.set(6, i, 16 + i);
+        }
+
+        pieces.set(8, new Rook(8, machineBegins, -14.0, 0, 0));
+        pieces.set(9, new Knight(9, machineBegins, -8.0, 0, 1));
+        pieces.set(10, new Bishop(10, machineBegins, -14.0, 0, 2));
+        pieces.set(11, new King(11, machineBegins, -8.0, 0, 3));
+        pieces.set(12, new Queen(12, machineBegins, -28.0, 0, 4));
+        pieces.set(13, new Bishop(13, machineBegins, -14.0, 0, 5));
+        pieces.set(14, new Knight(14, machineBegins, -8.0, 0, 6));
+        pieces.set(15, new Rook(15, machineBegins, -14.0, 0, 7));
+
+        gameBoard.set(0, 0, 8);
+        gameBoard.set(0, 1, 9);
+        gameBoard.set(0, 2, 10);
+        gameBoard.set(0, 3, 11);
+        gameBoard.set(0, 4, 12);
+        gameBoard.set(0, 5, 13);
+        gameBoard.set(0, 6, 14);
+        gameBoard.set(0, 7, 15);
+
+        // initializing human pieces
+
+        pieces.set(16 + 8, new Rook(16 + 8, !machineBegins, 14.0, 7, 0));
+        pieces.set(16 + 9, new Knight(16 + 9, !machineBegins, 8.0, 7, 1));
+        pieces.set(16 + 10, new Bishop(16 + 10, !machineBegins, 14.0, 7, 2));
+        pieces.set(16 + 11, new King(16 + 11, !machineBegins, 8.0, 7, 3));
+        pieces.set(16 + 12, new Queen(16 + 12, !machineBegins, 28.0, 7, 4));
+        pieces.set(16 + 13, new Bishop(16 + 13, !machineBegins, 14.0, 7, 5));
+        pieces.set(16 + 14, new Knight(16 + 14, !machineBegins, 8.0, 7, 6));
+        pieces.set(16 + 15, new Rook(16 + 15, !machineBegins, 14.0, 7, 7));
+
+        gameBoard.set(7, 0, 16 + 8);
+        gameBoard.set(7, 1, 16 + 9);
+        gameBoard.set(7, 2, 16 + 10);
+        gameBoard.set(7, 3, 16 + 11);
+        gameBoard.set(7, 4, 16 + 12);
+        gameBoard.set(7, 5, 16 + 13);
+        gameBoard.set(7, 6, 16 + 14);
+        gameBoard.set(7, 7, 16 + 15);
+
+        // filling empty squares
+        for(int rankInd = 2; rankInd < 6; ++rankInd){
+
+            for(int fileInd = 0; fileInd < 8; ++fileInd){
+
+                gameBoard.set(rankInd, fileInd, -1);
+            }
+        }
+
+        if(timeLimit.isZero()){
+
+            throw new RuntimeException("Time limit is zero for player "
+                    + "durations.");
+        }
+
+        this.timeLimit = timeLimit;
+
+        initialized = true;
     }
     
     /**
@@ -261,7 +260,7 @@ public class Game implements IGame{
      *         all necessary status data 
      */
     @Override
-    public GenericSaveStatus getStatus() throws Exception{
+    public GenericSaveStatus getStatus() {
     
         ComplexGameStatus gameStatus = new ComplexGameStatus();
         gameStatus.setGameName("testSave");
@@ -320,7 +319,7 @@ public class Game implements IGame{
         
         if(numberOfThreads == 0){
         
-            throw new Exception("Unable to detect number of available " 
+            throw new ValueOutOfRangeException("Unable to detect number of available " 
                     + "concurrent threads for execution.");
         }
         
@@ -367,7 +366,7 @@ public class Game implements IGame{
     @Override
     public void runGame() throws Exception{
         
-        if(!initialized) throw new Exception("Uninitialized game.");
+        if(!initialized) throw new RuntimeException("Uninitialized game.");
         
         //gamePlayStatus = 0;
         //playGame = true;
@@ -636,7 +635,8 @@ public class Game implements IGame{
     
         if(depth < 4){
         
-            throw new Exception("Provided depth is under minimum depth.");
+            throw new ValueOutOfRangeException("Provided depth is under "
+                    + "minimum depth.");
         }
         
         // restrict step deicision tree generation with human leaf level
@@ -680,7 +680,7 @@ public class Game implements IGame{
         
         if(action.isEmpty()){
         
-            throw new Exception("Provided input is not acceptable.");
+            throw new NoObjectFoundException("Provided input is not acceptable.");
         }
         
         if(humanIsInCheck && action.compareTo("giveup") == 0){
@@ -696,19 +696,20 @@ public class Game implements IGame{
         
         if(param.length != 2){
         
-            throw new Exception("No source and target position has been given properly.");
+            throw new IllConditionedDataException("No source and target "
+                    + "position has been given properly.");
         }
         
         if(param[0].length() != 2){
         
-            throw new Exception("Ill given source position.");
+            throw new IllConditionedDataException("Ill given source position.");
         }
         
         int sourceSelectedRank;
         
         if(param[0].charAt(0) < 0 || param[0].charAt(0) > 7){
         
-            throw new Exception("Source rank is out of range.");
+            throw new ValueOutOfRangeException("Source rank is out of range.");
         }
         
         sourceSelectedRank = (int)param[0].charAt(0);
@@ -716,14 +717,15 @@ public class Game implements IGame{
         
         if(param[0].charAt(1) < 1 || param[0].charAt(1) > 7){
         
-            throw new Exception("Source file is out of range.");
+            throw new ValueOutOfRangeException("Source file is out of range.");
         }
         
         sourceSelectedFile = (int)param[0].charAt(1);
         
         if(gameBoard.get(sourceSelectedRank, sourceSelectedFile) == -1){
         
-            throw new Exception("No available piece in the provided position.");
+            throw new NoObjectFoundException("No available piece in the "
+                    + "provided position.");
         }
         
         if(humanIsInCheck && gameBoard.get(sourceSelectedRank, sourceSelectedFile) != 11){
@@ -736,14 +738,14 @@ public class Game implements IGame{
         
         if(param[1].length() != 2){
         
-            throw new Exception("Ill given target position.");
+            throw new IllConditionedDataException("Ill given target position.");
         }
         
         int targetSelectedRank;
         
         if(param[1].charAt(0) < '0' || param[1].charAt(0) > '7'){
         
-            throw new Exception("Targer rank is out of range.");
+            throw new ValueOutOfRangeException("Targer rank is out of range.");
         }
         
         targetSelectedRank = (int)param[1].charAt(0);
@@ -751,7 +753,7 @@ public class Game implements IGame{
         
         if(param[1].charAt(1) < 1 || param[1].charAt(1) > 8){
         
-            throw new Exception("Target file is out of range.");
+            throw new ValueOutOfRangeException("Target file is out of range.");
         }
         
         targetSelectedFile = (int)param[0].charAt(1);
@@ -834,7 +836,8 @@ public class Game implements IGame{
             
             if(!emptyInterFiles){
             
-                throw new Exception("Castling cannot be executed due to occupied squares.");
+                throw new Exception("Castling cannot be executed due to "
+                        + "occupied squares.");
             }
         }
         else if(selectedPiece.getTypeName().contains("pawn") 

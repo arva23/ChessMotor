@@ -78,34 +78,37 @@ public class StepDecisionTree implements Runnable{
         
         if(pieces == null){
         
-            throw new Exception("Piece storage is null.");
+            throw new RuntimeException("Piece storage is null.");
         }
         
         this.piecesRef = pieces;
         
         if(stepHistory == null){
         
-            throw new Exception("Step history is null.");
+            throw new RuntimeException("Step history is null.");
         }
         
         this.stepHistoryRef = stepHistory;
         
         if(gameBoard == null){
         
-            throw new Exception("Game board is null.");
+            throw new RuntimeException("Game board is null.");
         }
         
         this.gameBoardRef = gameBoard;
         
-        if(minConvThreshold < 0.0)
-            throw new Exception("Human score increase slope must be positive.");
+        if(minConvThreshold < 0.0){
+        
+            throw new RuntimeException("Human score increase slope must "
+                    + "be positive.");
+        }
         
         this.minConvThreshold = minConvThreshold;
         
         
         if(depth < 1){
         
-            throw new Exception("Provided depth is not enough.");
+            throw new RuntimeException("Provided depth is not enough.");
         }
         
         // +1 for 0th start step, initiate board positions
@@ -116,21 +119,22 @@ public class StepDecisionTree implements Runnable{
         
         if(cumulativeNegativeChangeThreshold < 1){
         
-            throw new Exception("Consequent cumulative negative change limit is under 1.");
+            throw new RuntimeException("Consequent cumulative negative "
+                    + "change limit is under 1.");
         }
         
         this.cumulativeNegativeChangeThreshold = cumulativeNegativeChangeThreshold;
     
         if(fracs < 0){
         
-            throw new Exception("Negative fractional value.");
+            throw new RuntimeException("Negative fractional value.");
         }
         
         this.fracs = fracs;
         
         if(no >= fracs){
         
-            throw new Exception("Number of fractions are less than the"
+            throw new RuntimeException("Number of fractions are less than the"
                     + " provided fractional identifier.");
         }
     
@@ -149,7 +153,10 @@ public class StepDecisionTree implements Runnable{
         removedHumanPiecesContinuation = new TreeMap<>();
         removedMachinePiecesContinuation = new TreeMap<>();
         
+        if(memLimit <= 0){
         
+            throw new RuntimeException("Ill defined memory availability.");
+        }
     }
     
     public void StepDecisionTree(StepDecisionTree orig){
@@ -162,7 +169,7 @@ public class StepDecisionTree implements Runnable{
     
         if(orig == null){
         
-            throw new Exception("Original object is null.");
+            throw new RuntimeException("Original object is null.");
         }
         
         this.stepDecisionTree = orig.stepDecisionTree;
@@ -294,7 +301,12 @@ public class StepDecisionTree implements Runnable{
      */
     public void setDepth(int depth) throws Exception{
     
-        if(depth < 1) throw new Exception("Step sequence depth is less than 1.");
+        // todo Define upper bound according to available memory which can be 
+        //  used for operations
+        if(depth < 1){
+        
+            throw new RuntimeException("Step sequence depth is less than 1.");
+        }
         
         this.depth = depth;
     }

@@ -1,5 +1,7 @@
 package genmath;
 
+import genmath.genmathexceptions.AmbiguousObjectException;
+import genmath.genmathexceptions.NoObjectFoundException;
 import java.util.ArrayList;
 
 /* !@brief TreeMap with linear container to provide backward and forward iteration along with
@@ -19,13 +21,13 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
         public Pair(K key, V value) throws Exception {
 
             if (key == null) {
-                throw new Exception("Key is null.");
+                throw new NullPointerException("Key is null.");
             }
 
             this.key = key;
 
             if (value == null) {
-                throw new Exception("Value is null.");
+                throw new NullPointerException("Value is null.");
             }
             this.value = value;
         }
@@ -74,7 +76,8 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
 
             if (cmpRes == 0) {
 
-                throw new Exception("The item has already been inserted earlier (redundancy is not allowed).");
+                throw new AmbiguousObjectException("The item has already "
+                        + "been inserted earlier (redundancy is not allowed).");
             } else if (cmpRes < 0) {
 
                 container.add(0, new Pair<>(key, value));
@@ -99,7 +102,8 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
                 cmpRes = key.compareTo(container.get(i).key);
 
                 if (cmpRes == 0) {
-                    throw new Exception("The item has already been inserted earlier (redundancy is not allowed).");
+                    throw new AmbiguousObjectException("The item has already been inserted "
+                            + "earlier (redundancy is not allowed).");
                 }
 
                 tmpDiff = key.subtract(container.get(i).key);
@@ -222,7 +226,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
     public V getByInd(int i) throws Exception {
 
         if (i >= size) {
-            throw new Exception("Index out of bounds.");
+            throw new IndexOutOfBoundsException("Index out of bounds.");
         }
 
         return container.get(i).value;
@@ -237,7 +241,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
     public void setKeyByInd(int i, K key) throws Exception {
 
         if (i >= size) {
-            throw new Exception("Index out of bounds.");
+            throw new IndexOutOfBoundsException("Index out of bounds.");
         }
 
         Pair<K, V> modPair = container.get(i);
@@ -254,7 +258,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
     public void setValByInd(int i, V value) throws Exception {
 
         if (i >= size) {
-            throw new Exception("Index out of bounds.");
+            throw new IndexOutOfBoundsException("Index out of bounds.");
         }
 
         Pair<K, V> modPair = container.get(i);
@@ -272,7 +276,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
     public void setByInd(int i, K key, V value) throws Exception {
 
         if (i >= size) {
-            throw new Exception("Index out of bounds.");
+            throw new IndexOutOfBoundsException("Index out of bounds.");
         }
 
         Pair<K, V> modPair = container.get(i);
@@ -342,7 +346,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
     public K getKeyByInd(int ind) throws Exception {
 
         if (ind >= size) {
-            throw new Exception("Index out of bounds.");
+            throw new IndexOutOfBoundsException("Index out of bounds.");
         }
 
         return container.get(ind).key;
@@ -389,7 +393,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
             return container.get(lowerKeyI).key;
         } else {
 
-            throw new Exception("Container is empty.");
+            throw new NoObjectFoundException("Container is empty.");
         }
     }
 
@@ -434,7 +438,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
             return container.get(higherKeyI).key;
         } else {
 
-            throw new Exception("Container is empty.");
+            throw new NoObjectFoundException("Container is empty.");
         }
     }
 
@@ -492,7 +496,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
         LinTreeMap<K, V> resMap = new LinTreeMap<>();
 
         if (size == 0) {
-            throw new Exception("Empty container.");
+            throw new NoObjectFoundException("Empty container.");
         }
 
         lowerKeyBound = higherKey(lowerKeyBound);
@@ -553,7 +557,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
         }
 
         // no item found, return the last element
-        throw new Exception("No key has been found.");
+        throw new NoObjectFoundException("No key has been found.");
     }
 
     public ArrayList<Pair<K, V>> getContainer() {

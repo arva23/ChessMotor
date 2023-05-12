@@ -3,6 +3,8 @@ package chessmotor.view;
 // this class represents the game board that is consisted of squared
 
 import chessmotor.enginecontroller.ComplexGameStatus;
+import genmath.genmathexceptions.NoObjectFoundException;
+import genmath.genmathexceptions.ValueOutOfRangeException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -110,28 +112,28 @@ public class GameBoardView implements IGameBoardView {
         
         if(width < 0 || width > 1366){
         
-            throw new Exception("Width parameter is out range.");
+            throw new ValueOutOfRangeException("Width parameter is out range.");
         }
         
         this.boardWidth = width;
         
         if(height < 0 || height > 768){
         
-            throw new Exception("Height parameter is out of range.");
+            throw new ValueOutOfRangeException("Height parameter is out of range.");
         }
         
         this.boardHeight = height;
         
         if(x < 0 || x > 1366 - width){
         
-            throw new Exception("X coordinate is out of range.");
+            throw new ValueOutOfRangeException("X coordinate is out of range.");
         }
         
         this.boardX = x;
         
         if(y < 0 || y > 768 - height){
         
-            throw new Exception("Y coordinate is out of range.");
+            throw new ValueOutOfRangeException("Y coordinate is out of range.");
         }
         
         this.boardY = y;
@@ -359,17 +361,17 @@ public class GameBoardView implements IGameBoardView {
     
         if(rank < 0 || rank > 7){
         
-            throw new Exception("Rank is out of range.");
+            throw new ValueOutOfRangeException("Rank is out of range.");
         }
         
         if(file < 0 || file > 7){
         
-            throw new Exception("File is out of range.");
+            throw new ValueOutOfRangeException("File is out of range.");
         }
                     
         if(!pieceTypes.containsKey(pieceType)){
         
-            throw new Exception("No such piece type exists.");
+            throw new NoObjectFoundException("No such piece type exists.");
         }
         
         board[rank][file].setNewPiece((isAlly ? -1 : 1), 

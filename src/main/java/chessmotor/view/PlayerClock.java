@@ -2,6 +2,7 @@ package chessmotor.view;
 
 // passive player playtime counter without timout and other conditional examination
 
+import genmath.genmathexceptions.ValueOutOfRangeException;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -41,7 +42,7 @@ public class PlayerClock implements Runnable{
     
         if(clockX < 0 || clockY < 0){
         
-            throw new Exception("Clock position coordinates are out of range.");
+            throw new ValueOutOfRangeException("Clock position coordinates are out of range.");
         }
         
         this.clockX = clockX;
@@ -49,14 +50,14 @@ public class PlayerClock implements Runnable{
         
         if(clockWidth < 0 || clockWidth > 600){
             
-            throw new Exception("Clock width is out of range.");
+            throw new ValueOutOfRangeException("Clock width is out of range.");
         }
         
         this.clockWidth = clockWidth;
         
         if(clockHeight < 0 || clockHeight > 300){
             
-            throw new Exception("Clock height is out of range.");
+            throw new ValueOutOfRangeException("Clock height is out of range.");
         }
         
         this.clockHeight = clockHeight;

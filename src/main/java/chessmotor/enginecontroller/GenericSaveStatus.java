@@ -1,5 +1,7 @@
 package chessmotor.enginecontroller;
 
+import genmath.genmathexceptions.AmbiguousObjectException;
+import genmath.genmathexceptions.NoObjectFoundException;
 import java.util.TreeMap;
 
 public abstract class GenericSaveStatus {
@@ -15,7 +17,8 @@ public abstract class GenericSaveStatus {
     
         if(!entries.containsKey(entryId)){
             
-            throw new Exception("There is no entry with this identifier.");
+            throw new NoObjectFoundException("There is no entry with this "
+                    + "identifier.");
         }
     
         return entries.get(entryId);
@@ -25,7 +28,8 @@ public abstract class GenericSaveStatus {
     
         if(entries.containsKey(entryId)){
         
-            throw new Exception("An entry has already been existed with this identifier.");
+            throw new AmbiguousObjectException("An entry has already been "
+                    + "existed with this identifier.");
         }
         
         entries.put(entryId, object);
