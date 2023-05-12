@@ -60,8 +60,8 @@ public class Game implements IGame{
     
     private boolean machineIsInCheck;
     private boolean humanIsInCheck;
-    private boolean playGame;
     private AtomicBoolean giveUpHumanPlayerGameController;
+    private AtomicBoolean playGame;
     private String gamePlayStatus;
     // active in game piece container
     private PieceContainer pieces;
@@ -402,7 +402,7 @@ public class Game implements IGame{
             
             if(timeLimit.compareTo(machineTime) <= 0){
             
-                playGame = false;
+                playGame.set(false);
                 gamePlayStatus = "WIN";
                 
                 gameUI.updateGameStatus(gamePlayStatus);
@@ -434,7 +434,7 @@ public class Game implements IGame{
             
             if(timeLimit.compareTo(humanTime) <= 0){
             
-                playGame = false;
+                playGame.set(false);
                 gamePlayStatus = "LOSE";
                 
                 gameUI.updateGameStatus(gamePlayStatus);
@@ -466,7 +466,7 @@ public class Game implements IGame{
             
             if(timeLimit.compareTo(machineTime) <= 0){
             
-                playGame = false;
+                playGame.set(false);
                 gamePlayStatus = "WIN";
                 gameUI.updateGameStatus(gamePlayStatus);
             }
@@ -499,7 +499,7 @@ public class Game implements IGame{
             
             if(timeLimit.compareTo(humanTime) <= 0){
             
-                playGame = false;
+                playGame.set(false);
                 gamePlayStatus = "LOSE";
                 
                 gameUI.updateGameStatus(gamePlayStatus);
@@ -532,7 +532,7 @@ public class Game implements IGame{
             
             if(timeLimit.compareTo(machineTime) <= 0){
             
-                playGame = false;
+                playGame.set(false);
                 gamePlayStatus = "WIN";
                 
                 gameUI.updateGameStatus(gamePlayStatus);
@@ -541,7 +541,7 @@ public class Game implements IGame{
             gameUI.switchPlayerClock();
         }
         
-        while(playGame){
+        while(playGame.get()){
         
             intervalStartHuman = LocalDateTime.now();
             waitForDataSave();
@@ -562,7 +562,7 @@ public class Game implements IGame{
             signalForDataRead();
             if(timeLimit.compareTo(humanTime) <= 0){
             
-                playGame = false;
+                playGame.set(false);
                 gamePlayStatus = "LOSE";
                 gameUI.updateGameStatus(gamePlayStatus);
                 break;
@@ -590,7 +590,7 @@ public class Game implements IGame{
             signalForDataRead();
             if(timeLimit.compareTo(machineTime) <= 0){
             
-                playGame = false;
+                playGame.set(false);
                 gamePlayStatus = "WIN";
                 gameUI.updateGameStatus(gamePlayStatus);
                 break;
@@ -685,7 +685,7 @@ public class Game implements IGame{
         
         if(humanIsInCheck && action.compareTo("giveup") == 0){
         
-            playGame = false;
+            playGame.set(false);
             gamePlayStatus = "LOSE";
             
             gameUI.updateGameStatus(gamePlayStatus);
@@ -1022,7 +1022,7 @@ public class Game implements IGame{
         
         if(humanIsInCheck && pieces.get(11 + 16).generateSteps(gameBoard).isEmpty()){
         
-            playGame = false;
+            playGame.set(false);
             gamePlayStatus = "LOSE";
             
             gameUI.updateGameStatus(gamePlayStatus);
@@ -1056,7 +1056,7 @@ public class Game implements IGame{
         
         if(machineIsInCheck && pieces.get(11).generateSteps(gameBoard).isEmpty()){
         
-            playGame = false;
+            playGame.set(false);
             gamePlayStatus = "WIN";
             
             gameUI.updateGameStatus(gamePlayStatus);
@@ -1083,7 +1083,7 @@ public class Game implements IGame{
         
         if(levelKeys.size() == 1){
         
-            playGame = false;
+            playGame.set(false);
             gamePlayStatus = "WIN";
             
             gameUI.updateGameStatus(gamePlayStatus);
@@ -1120,7 +1120,7 @@ public class Game implements IGame{
             
             if(!foundNextStep){
             
-                playGame = false;
+                playGame.set(false);
                 gamePlayStatus = "WIN";
                 
                 gameUI.updateGameStatus(gamePlayStatus);
