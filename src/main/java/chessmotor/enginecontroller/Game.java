@@ -238,7 +238,6 @@ public class Game implements IGame{
     
         GameStatus gameStatus = (GameStatus)saveStatus;
         
-        gameName = gameStatus.getGameName();
         machineBegins = gameStatus.getMachineBegins();
         machineComes = gameStatus.getMachineComes();
         machineTime = gameStatus.getMachineTime();
@@ -263,7 +262,7 @@ public class Game implements IGame{
     public GenericSaveStatus getStatus() {
     
         ComplexGameStatus gameStatus = new ComplexGameStatus();
-        gameStatus.setGameName("testSave");
+    
         gameStatus.setMachineBegins(machineBegins);
         gameStatus.setMachineComes(machineComes);
         gameStatus.setMachineTime(machineTime);

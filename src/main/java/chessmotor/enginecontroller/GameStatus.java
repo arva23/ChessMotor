@@ -7,7 +7,6 @@ public class GameStatus extends GenericSaveStatus {
 
     // the following Game memebers are stored in this status class
     
-    //String gameName
     //boolean machineBegins
     //boolean machineComes
     //Duration getMachineTime
@@ -28,10 +27,6 @@ public class GameStatus extends GenericSaveStatus {
     }
     
     // OBJECT TYPE GETTERS
-    public String getGameName(){
-    
-        return (String)entries.get("gameName");
-    }
     
     public boolean getMachineBegins() {
         
@@ -100,11 +95,6 @@ public class GameStatus extends GenericSaveStatus {
     
     
     // OBJECT TYPE SETTERS
-    public void setGameName(String gameName){
-    
-        entries.put("gameName", gameName);
-    }
-
     public void setMachineBegins(boolean machineBegins) {
      
         entries.put("machineBegins", machineBegins);

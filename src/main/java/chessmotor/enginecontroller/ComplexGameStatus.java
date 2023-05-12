@@ -11,7 +11,7 @@ public class ComplexGameStatus extends GameStatus implements IVisualGameStatus{
     
     public ComplexGameStatus(){
     
-        
+        super();
     }
     
     @Override
