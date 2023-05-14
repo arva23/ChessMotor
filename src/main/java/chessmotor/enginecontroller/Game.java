@@ -7,7 +7,7 @@ import chessmotor.enginecontroller.piecetypes.Knight;
 import chessmotor.enginecontroller.piecetypes.Pawn;
 import chessmotor.enginecontroller.piecetypes.Queen;
 import chessmotor.enginecontroller.piecetypes.Rook;
-import genmath.GenStepKey;
+import chessmotor.view.IConsoleUI;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,6 +36,8 @@ import java.util.concurrent.locks.Condition;
 //    for maximizing the most n valuable pieces.
 
 public class Game implements IGame{
+
+    private IConsoleUI consoleUI;
     
     private Condition statusUpdateLock;
     private Condition statusSaveLock;
@@ -102,10 +104,17 @@ public class Game implements IGame{
      * @param timeLimit Defined amount of time that is provided for both players
      * @param memLimit Memory limit for confinement of system memory usage
      */
-    public Game(IGameUI gameUI, boolean machineBegins, int stepsToLookAhead, 
-            double minConvThreshold, int cumulativeNegativeChangeThreshold, 
-            Duration timeLimit, long memLimit) {
+    public Game(IConsoleUI consoleUI, IGameUI gameUI, boolean machineBegins, 
+            int stepsToLookAhead, double minConvThreshold, 
+            int cumulativeNegativeChangeThreshold, Duration timeLimit, long memLimit) {
 
+        if(consoleUI == null){
+        
+            throw new RuntimeException("Console line interface object is null.");
+        }
+        
+        this.consoleUI = consoleUI;
+        
         if(gameUI == null){
 
             throw new RuntimeException("User interface object is null.");
@@ -154,9 +163,10 @@ public class Game implements IGame{
             --stepsToLookAhead;
         }
 
-        stepSequences = new StepDecisionTree(machineBegins, pieces,
+        stepSequences = new StepDecisionTree(consoleUI, machineBegins, pieces,
             targetStepHistory, gameBoard, stepsToLookAhead, 
-            cumulativeNegativeChangeThreshold, minConvThreshold, 0, 0, memLimit);
+            cumulativeNegativeChangeThreshold, minConvThreshold, 0, 0, 
+                memLimit);
 
         stepId = 0;
 
@@ -600,20 +610,20 @@ public class Game implements IGame{
 
         if(gamePlayStatus.compareTo("WIN") == 0){
         
-            System.out.println("Human won the game.");
+            consoleUI.println("Human won the game.");
             
             // print more information (especially score progressions)
         }
         else if(gamePlayStatus.compareTo("LOSE") == 0){
         
-            System.out.println("Machine won the game.");
+            consoleUI.println("Machine won the game.");
             
             // print more information (especially score progressions)
         }
         else{
             // no further condition is needed, only draw scenario is at present
         
-            System.out.println("Game has ended with draw ("
+            consoleUI.println("Game has ended with draw ("
                     + humanScore + " - " + machineScore + ", player - machine) with "
                     + stepId + " steps.");
             

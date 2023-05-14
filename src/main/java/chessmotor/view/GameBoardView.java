@@ -20,6 +20,8 @@ import javax.swing.JPanel;
 //  types to avoid overwhelmingly loaded listener cases
 public class GameBoardView implements IGameBoardView {
 
+    private IConsoleUI consoleUI;
+    
     // square type
     private ImageIcon[] squareBgs;// 0 white, 1 black
 
@@ -63,9 +65,11 @@ public class GameBoardView implements IGameBoardView {
      *         width range violation
      *         height range violation
      */
-    public GameBoardView(int x, int y, int width, int height, boolean machineComes, 
-            String[][] boardSquareStatus) throws Exception{
+    public GameBoardView(IConsoleUI consoleUI, int x, int y, int width, int height, 
+            boolean machineComes, String[][] boardSquareStatus) throws Exception{
     
+        this.consoleUI = consoleUI;
+        
         try {
             
             // loading square backgrounds textures
@@ -107,7 +111,7 @@ public class GameBoardView implements IGameBoardView {
         } 
         catch (IOException ex) {
             
-            System.out.println("Error at loading gameboard textures.");
+            consoleUI.println("Error at loading gameboard textures.");
         }    
         
         if(width < 0 || width > 1366){
@@ -214,7 +218,7 @@ public class GameBoardView implements IGameBoardView {
                     }
                     catch (InterruptedException ex) {
                         
-                        System.out.println("Player action requirest has been failed.");
+                        consoleUI.println("Player action requirest has been failed.");
                     }
                 }
             }

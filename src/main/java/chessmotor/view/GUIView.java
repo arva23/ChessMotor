@@ -20,6 +20,8 @@ import javax.swing.JFrame;
  */
 public class GUIView implements IGameUI{
     
+    private IConsoleUI consoleUI;
+    
     private GameController gameCtl;
     private IGame gameInstance;
     private int windowX;
@@ -69,9 +71,16 @@ public class GUIView implements IGameUI{
      *         Top left corner x coordinate component is out of range
      *         Top left corner y coordinate component is out of range
      */
-    public GUIView(GameController gameCtl, IGame gameInstance, int windowX,
+    public GUIView(IConsoleUI consoleUI, GameController gameCtl, IGame gameInstance, int windowX,
             int windowY, int windowWidth, int windowHeight) throws Exception{
     
+        if(consoleUI == null) {
+        
+            throw new NullPointerException("Console user interface object is null.");
+        }
+    
+        this.consoleUI = consoleUI;
+        
         if(gameCtl == null){
         
             throw new NullPointerException("Game controller object is null.");
@@ -173,16 +182,17 @@ public class GUIView implements IGameUI{
             }
         }
         
-        board = new GameBoardView(boardX, boardY, boardWidth, boardHeight,
-                machineBegins, boardSquareStatus);
+        board = new GameBoardView(consoleUI, boardX, boardY, boardWidth, 
+                boardHeight, machineBegins, boardSquareStatus);
         elementContainer.add(board.getMainPanel());
         
         int playerClocksX = boardWidth + 1;
         int playerClocksY = 0;
         int playerClocksWidth = 300;
         int playerClocksHeight = 150;
-        playerClocks = new PlayerClock(playerClocksX, playerClocksY,
-                playerClocksWidth, playerClocksHeight);
+        playerClocks = new PlayerClock(consoleUI, playerClocksX,
+                playerClocksY, playerClocksWidth, 
+                playerClocksHeight);
         elementContainer.add(playerClocks.getMainPanel());
         playerClocksExecutor = Executors.newFixedThreadPool(1);
         playerClocksExecutor.execute(playerClocks);

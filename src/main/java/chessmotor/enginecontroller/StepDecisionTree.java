@@ -1,5 +1,6 @@
 package chessmotor.enginecontroller;
 
+import chessmotor.view.IConsoleUI;
 import genmath.IncArbTree;
 import genmath.LinTreeMultiMap;
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ import java.util.TreeMap;
  * @author arva
  */
 public class StepDecisionTree implements Runnable{
+    
+    private IConsoleUI consoleUI;
     
     private IncArbTree<GenStepKey, Step> stepDecisionTree;
     
@@ -66,12 +69,14 @@ public class StepDecisionTree implements Runnable{
      * @param no The identifier of parallel builder executor among all
      * @param memLimit Memory limit for generation in order to confine memory usage
      */
-    public StepDecisionTree(boolean machineBegins, PieceContainer pieces, 
-            Stack<Step> stepHistory, GameBoardData gameBoard, int depth, 
-            int cumulativeNegativeChangeThreshold, double minConvThreshold, 
-            int fracs, int no, long memLimit) throws Exception{
+    public StepDecisionTree(IConsoleUI consoleUI, boolean machineBegins, 
+            PieceContainer pieces, Stack<Step> stepHistory, GameBoardData gameBoard, 
+            int depth, int cumulativeNegativeChangeThreshold, double minConvThreshold, 
+            int fracs, int no, long memLimit){
     
         super();
+        
+        this.consoleUI = consoleUI;
         
         stepDecisionTree = new IncArbTree<>();
         this.machineBegins = machineBegins;
@@ -510,7 +515,7 @@ public class StepDecisionTree implements Runnable{
                     }
                     catch(Exception e){
 
-                        System.out.println("Cold not add dual step (" + e.getMessage() + ")");
+                        consoleUI.println("Cold not add dual step (" + e.getMessage() + ")");
                     }
                 }
             }
@@ -542,7 +547,7 @@ public class StepDecisionTree implements Runnable{
                     }
                     catch(Exception e){
 
-                        System.out.println("Could not add dual step (" + e.getMessage() + ")");
+                        consoleUI.println("Could not add dual step (" + e.getMessage() + ")");
                     }
                 }
             }
@@ -576,7 +581,7 @@ public class StepDecisionTree implements Runnable{
                     }
                     catch(Exception e){
 
-                        System.out.println("Could not add dual step (" + e.getMessage() + ")");
+                        consoleUI.println("Could not add dual step (" + e.getMessage() + ")");
                     }
                 }
             }
@@ -607,7 +612,7 @@ public class StepDecisionTree implements Runnable{
                     }
                     catch(Exception e){
 
-                        System.out.println("Could not add dual step (" + e.getMessage() + ")");
+                        consoleUI.println("Could not add dual step (" + e.getMessage() + ")");
                     }
                 }
             }
@@ -693,7 +698,7 @@ public class StepDecisionTree implements Runnable{
                     }
                     catch(Exception e){
 
-                        System.out.println("Could not insert step (" + e.getMessage() + ")");
+                        consoleUI.println("Could not insert step (" + e.getMessage() + ")");
                     }
                 }
                 else{
@@ -724,7 +729,7 @@ public class StepDecisionTree implements Runnable{
                 }
                 catch(Exception e){
 
-                    System.out.println("Could not insert step (" + e.getMessage() + ")");
+                    consoleUI.println("Could not insert step (" + e.getMessage() + ")");
                 }
             }
         }
@@ -853,7 +858,7 @@ public class StepDecisionTree implements Runnable{
                         }
                         catch(Exception e){
 
-                            System.out.println("Could not obtain node (" + e.getMessage() + ")");
+                            consoleUI.println("Could not obtain node (" + e.getMessage() + ")");
                         }
                     }
 
@@ -943,7 +948,7 @@ public class StepDecisionTree implements Runnable{
                 }
                 catch(Exception e){
                 
-                    System.out.println("Could not add generated step to step sequences (" 
+                    consoleUI.println("Could not add generated step to step sequences (" 
                         + e.getMessage() + ")");
                 }
                 
@@ -1070,7 +1075,7 @@ public class StepDecisionTree implements Runnable{
                     }
                     catch(Exception e){
 
-                        System.out.println("Could not obtain node (" + e.getMessage() + ")");
+                        consoleUI.println("Could not obtain node (" + e.getMessage() + ")");
                     }
                 }
 
@@ -1114,7 +1119,7 @@ public class StepDecisionTree implements Runnable{
                 }
                 catch(Exception e){
 
-                    System.out.println("Could not add generated step to step sequences (" 
+                    consoleUI.println("Could not add generated step to step sequences (" 
                         + e.getMessage() + ")");
                 }
 

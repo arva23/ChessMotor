@@ -8,6 +8,8 @@ import javax.swing.JPanel;
 
 public class PlayerClock implements Runnable{
 
+    private IConsoleUI consoleUI;
+    
     private int clockX;
     private int clockY;
     private int clockWidth;
@@ -38,7 +40,8 @@ public class PlayerClock implements Runnable{
      *         with is out of range
      *         height if out of range
      */
-    public PlayerClock(int clockX, int clockY, int clockWidth, int clockHeight) throws Exception{
+    public PlayerClock(IConsoleUI consoleUI, int clockX, int clockY, int clockWidth, 
+            int clockHeight) throws Exception{
     
         if(clockX < 0 || clockY < 0){
         
@@ -121,7 +124,7 @@ public class PlayerClock implements Runnable{
             } 
             catch (InterruptedException ex) {
             
-                System.out.println("Error at player clock operation.");
+                consoleUI.println("Error at player clock operation.");
             }
         }
         
@@ -146,7 +149,7 @@ public class PlayerClock implements Runnable{
                 }
                 catch (InterruptedException ex) {
 
-                    System.out.println("Error at player clock operation.");
+                    consoleUI.println("Error at player clock operation.");
                 }
             }
             
