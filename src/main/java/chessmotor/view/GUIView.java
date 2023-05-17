@@ -20,6 +20,8 @@ import javax.swing.JFrame;
  */
 public class GUIView implements IGameUI{
     
+    private AtomicBoolean operateGUI;
+    
     private IConsoleUI consoleUI;
     
     private GameController gameCtl;
@@ -75,6 +77,8 @@ public class GUIView implements IGameUI{
     public GUIView(IConsoleUI consoleUI, GameController gameCtl, IGame gameInstance, int windowX,
             int windowY, int windowWidth, int windowHeight) throws Exception{
     
+        operateGUI.set(false);
+        
         if(consoleUI == null) {
         
             throw new NullPointerException("Console user interface object is null.");
@@ -227,10 +231,24 @@ public class GUIView implements IGameUI{
         playerClocks.start();
     }
 
+    /**
+     * Starts the operation of visual system including user action observer methods.
+     * It sets operation flag true
+     */
     @Override
     public void run() {
-        
-        // todo
+       
+        operateGUI.set(true);
+    }
+    
+    /**
+     * Stops the operation of visual system including user action observers. 
+     * It sets operation flag false.
+     */
+    @Override
+    public void stop(){
+    
+        operateGUI.set(false);
     }
 
     @Override
@@ -272,7 +290,7 @@ public class GUIView implements IGameUI{
         board.alternateActivePlayer();
         boolean castlingAllowed = false;
         
-        while(true){
+        while(operateGUI.get()){
         
             board.signalForBoard();
             board.waitForAction();
@@ -295,7 +313,7 @@ public class GUIView implements IGameUI{
         
         action += board.getPlayerActionResult();
 
-        while(true){
+        while(operateGUI.get()){
         
             board.signalForBoard();
             board.waitForAction();
@@ -389,7 +407,7 @@ public class GUIView implements IGameUI{
         
         String action = "";
         
-        while(!giveUpHumanPlayerVisual.get()){
+        while(operateGUI.get() && !giveUpHumanPlayerVisual.get()){
         
             board.signalForBoard();
             board.waitForAction();

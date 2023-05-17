@@ -396,6 +396,8 @@ public class Game implements IGame{
         //  first step from human, second steps from machine
         //  first step from machine, second from human
         
+        this.gameUI.run();
+        
         if(machineBegins){
             
             intervalStartMachine = LocalDateTime.now();
@@ -424,6 +426,7 @@ public class Game implements IGame{
                 playGame.set(false);
                 gamePlayStatus = "WIN";
                 
+                gameUI.stop();
                 gameUI.updateGameStatus(gamePlayStatus);
             }
             
@@ -455,7 +458,8 @@ public class Game implements IGame{
             
                 playGame.set(false);
                 gamePlayStatus = "LOSE";
-                
+            
+                gameUI.stop();
                 gameUI.updateGameStatus(gamePlayStatus);
             }
             
@@ -487,6 +491,8 @@ public class Game implements IGame{
             
                 playGame.set(false);
                 gamePlayStatus = "WIN";
+                
+                gameUI.stop();
                 gameUI.updateGameStatus(gamePlayStatus);
             }
             
@@ -521,6 +527,7 @@ public class Game implements IGame{
                 playGame.set(false);
                 gamePlayStatus = "LOSE";
                 
+                gameUI.stop();
                 gameUI.updateGameStatus(gamePlayStatus);
             }
             
@@ -553,7 +560,8 @@ public class Game implements IGame{
             
                 playGame.set(false);
                 gamePlayStatus = "WIN";
-                
+            
+                gameUI.stop();
                 gameUI.updateGameStatus(gamePlayStatus);
             }
             
@@ -583,6 +591,8 @@ public class Game implements IGame{
             
                 playGame.set(false);
                 gamePlayStatus = "LOSE";
+                
+                gameUI.stop();
                 gameUI.updateGameStatus(gamePlayStatus);
                 break;
             }
@@ -611,6 +621,8 @@ public class Game implements IGame{
             
                 playGame.set(false);
                 gamePlayStatus = "WIN";
+                
+                gameUI.stop();
                 gameUI.updateGameStatus(gamePlayStatus);
                 break;
             }
@@ -706,7 +718,8 @@ public class Game implements IGame{
         
             playGame.set(false);
             gamePlayStatus = "LOSE";
-            
+         
+            gameUI.stop();
             gameUI.updateGameStatus(gamePlayStatus);
             return;
         }
@@ -1046,7 +1059,8 @@ public class Game implements IGame{
         
             playGame.set(false);
             gamePlayStatus = "LOSE";
-            
+     
+            gameUI.stop();
             gameUI.updateGameStatus(gamePlayStatus);
         }        
     }
@@ -1081,6 +1095,7 @@ public class Game implements IGame{
             playGame.set(false);
             gamePlayStatus = "WIN";
             
+            gameUI.stop();
             gameUI.updateGameStatus(gamePlayStatus);
         }
     }
@@ -1108,6 +1123,7 @@ public class Game implements IGame{
             playGame.set(false);
             gamePlayStatus = "WIN";
             
+            gameUI.stop();
             gameUI.updateGameStatus(gamePlayStatus);
             return;
         }
@@ -1145,6 +1161,7 @@ public class Game implements IGame{
                 playGame.set(false);
                 gamePlayStatus = "WIN";
                 
+                gameUI.stop();
                 gameUI.updateGameStatus(gamePlayStatus);
                 return;
             }
@@ -1385,6 +1402,8 @@ public class Game implements IGame{
         giveUpHumanPlayerGameController.set(true);
         playGame.set(false);
         gamePlayStatus = "LOSE";
+     
+        gameUI.stop();
         gameUI.updateGameStatus(gamePlayStatus);
     }
 }
