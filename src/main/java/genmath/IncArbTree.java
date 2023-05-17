@@ -324,8 +324,6 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         // Only partially ordered keys are placed into nodes. The keys are ordered according to one 
         //  level upper. Multilevel upleveled checks are not available.
         
-        int cmpRes = 0;
-        
         if(size == 0){
         
             cumulativeChildNodeOffsetRegistry.set(0, sizeOfValues);
@@ -582,7 +580,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         int insertionInd = 0;
         int prevShift = 1;
         int i = 0;
-        int j = 0;
+        int j;
         int level = 0;
         
         while(nodeSizeChildRegistry.get(i) > 0){

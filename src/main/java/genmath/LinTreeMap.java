@@ -507,9 +507,7 @@ public class LinTreeMap<K extends ComparableKey<K>, V> {
                 break;
             }
         }
-
-        int lowerI = i;
-
+        
         for (; i < size; ++i) {
 
             resMap.add(container.get(i));
