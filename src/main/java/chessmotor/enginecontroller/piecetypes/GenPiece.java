@@ -4,11 +4,27 @@ package chessmotor.enginecontroller.piecetypes;
 
 import chessmotor.enginecontroller.GameBoardData;
 import chessmotor.enginecontroller.Pair;
+import genmath.genmathexceptions.IllConditionedDataException;
+import genmath.genmathexceptions.ValueOutOfRangeException;
 import java.util.ArrayList;
 
 
 // neutral empty piece
 public class GenPiece {
+    
+    static ArrayList<String> typeNameList;
+    
+    static{
+    
+        typeNameList = new ArrayList<>();
+        
+        typeNameList.add("Pawn");
+        typeNameList.add("Rook");
+        typeNameList.add("Knight");
+        typeNameList.add("Bishop");
+        typeNameList.add("King");
+        typeNameList.add("Queen");
+    }
     
     private int pieceId;
     private String typeName;
@@ -33,10 +49,36 @@ public class GenPiece {
      */
     public GenPiece(int pieceId, String typeName, double value, int rank, int file) 
             throws Exception{
+    
+        if(pieceId < 0 || pieceId >= 32){
+        
+            throw new ValueOutOfRangeException("Piece identifier is out of range.");
+        }
+        
         this.pieceId = pieceId;
+        
+        if(typeName.isEmpty() || typeNameList.contains(typeName)){
+        
+            throw new IllConditionedDataException("Type name identifier of "
+                    + "piece is empty or can not be found in sample type list.");
+        }
         this.typeName = typeName;
+        
+        
         this.value = value;
+        
+        if(rank < 0 || rank > 7){
+        
+            throw new ValueOutOfRangeException("Rank value is out of range.");
+        }
+        
         this.rank = rank;
+        
+        if(file < 0 || file > 7){
+        
+            throw new ValueOutOfRangeException("File value is out of range.");
+        }
+        
         this.file = file;
     }
     
@@ -93,6 +135,11 @@ public class GenPiece {
      */
     public void setRank(int rank) throws ValueOutOfRangeException{
     
+        if(rank < 0 || rank > 7){
+        
+            throw new ValueOutOfRangeException("Rank is out of range.");
+        }
+        
         this.rank = rank;
     }
     
@@ -103,6 +150,11 @@ public class GenPiece {
      */
     public void setFile(int file) throws ValueOutOfRangeException{
     
+        if(file < 0 || file > 7){
+        
+            throw new ValueOutOfRangeException("File is out of range.");
+        }
+        
         this.file = file;
     }
 }

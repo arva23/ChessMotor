@@ -26,6 +26,12 @@ public class PieceContainer {
      */
     public void set(int i, GenPiece piece) throws IndexOutOfBoundsException{
     
+        if(i < 0 || i >= 32){
+        
+            throw new IndexOutOfBoundsException("Given index is out of range "
+                    + "of array index interval.");
+        }
+        
         pieces[i] = piece;
     }
     

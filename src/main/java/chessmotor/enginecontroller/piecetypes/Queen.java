@@ -2,6 +2,7 @@ package chessmotor.enginecontroller.piecetypes;
 
 import chessmotor.enginecontroller.GameBoardData;
 import chessmotor.enginecontroller.Pair;
+import genmath.genmathexceptions.ValueOutOfRangeException;
 import java.util.ArrayList;
 
 public class Queen extends GenPiece{
@@ -11,13 +12,14 @@ public class Queen extends GenPiece{
         super();
     }
     
-    public Queen(int pieceId, boolean isWhite, double value, int rank, int file){
+    public Queen(int pieceId, boolean isWhite, double value, int rank, int file)
+            throws Exception{
     
         super(pieceId, isWhite ? "whitequeen" : "blackquen", value, rank, file);
     }
 
     @Override
-    public ArrayList<Pair> generateSteps(GameBoardData gameBoard){
+    public ArrayList<Pair> generateSteps(GameBoardData gameBoard) throws ValueOutOfRangeException{
     
         ArrayList<Pair> steps = new ArrayList<>();
 

@@ -266,7 +266,7 @@ public class GUIView implements IGameUI{
      * @throws InterruptedException 
      */
     @Override
-    public String readPlayerAction() throws InterruptedException {
+    public String readPlayerAction() throws InterruptedException, Exception {
         
         String action = "";
         board.alternateActivePlayer();
@@ -339,7 +339,7 @@ public class GUIView implements IGameUI{
      * @throws InterruptedException 
      */
     @Override
-    public String selectPawnReplacement() throws InterruptedException{
+    public String selectPawnReplacement() throws InterruptedException, Exception{
     
         // function setup
         

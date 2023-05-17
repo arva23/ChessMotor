@@ -1,5 +1,6 @@
 package genmath;
 
+import genmath.genmathexceptions.NoObjectFoundException;
 import java.util.ArrayList;
 
 public class LinTreeMultiMap<K extends ComparableKey<K>, V> extends LinTreeMap<K, V> {
