@@ -288,6 +288,24 @@ public class StepDecisionTree implements Runnable, ModularObject{
      */
     public int getCurrDepth(){
     
+        // suboptimal
+        int sizeOfStepSequences = stepDecisionTree.size();
+        int newDepth = 0;
+        int len;
+        
+        for(int i = sizeOfStepSequences - 1; i >= 0; --i){
+            
+            len = stepDecisionTree.getKeyByInd(0).val.length();
+
+            if(newDepth < len){
+                
+                newDepth = len;
+            }
+        }
+        
+        return depth = newDepth;
+    }
+    
     /**
      * Obtains the step container
      * @return Returns an incomplete n-ary arbitrary tree
