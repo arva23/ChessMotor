@@ -1,6 +1,9 @@
 package chessmotor.enginecontroller;
 
 // position pair type for squares
+
+import genmath.genmathexceptions.ValueOutOfRangeException;
+
 public class Pair {
 
     private int rank;
@@ -23,7 +26,19 @@ public class Pair {
      */
     public Pair(int rank, int file) throws ValueOutOfRangeException{
     
+        
+        if(rank < 0){
+        
+            throw new ValueOutOfRangeException("Value underflow of rank.");
+        }
+        
         this.rank = rank;
+
+        if(file < 0){
+        
+            throw new ValueOutOfRangeException("Value underflow of file.");
+        }
+        
         this.file = file;
         
     }
