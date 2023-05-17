@@ -289,7 +289,7 @@ public class GUIView implements IGameUI{
                 break;
             }
             else{
-                System.out.println("Illegal selection, choose another.");
+                throw new Exception("Illegal selection, choose another.");
             }
         }
         
@@ -319,7 +319,7 @@ public class GUIView implements IGameUI{
                     }
                 }
                 
-                System.out.println("Illegal selection, choose another.");
+                throw new Exception("Illegal selection, choose another.");
             }
         }
         
@@ -395,8 +395,8 @@ public class GUIView implements IGameUI{
             board.waitForAction();
             
             if(board.pieceEquals(board.getPlayerActionResult(), "empty")){
-            
-                System.out.println("Illegal selection, choose another.");
+
+                throw new Exception("Illegal selection, choose another.");
             }
             else{
             
