@@ -7,7 +7,7 @@ import chessmotor.enginecontroller.piecetypes.GenPiece;
  */
 public class PieceContainer {
 
-    private GenPiece pieces[];
+    private final GenPiece pieces[];
 
     /**
      * Default constructor with fixed length initialization of piece array
