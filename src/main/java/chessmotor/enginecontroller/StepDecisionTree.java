@@ -13,7 +13,7 @@ import java.util.TreeMap;
  * 
  * @author arva
  */
-public class StepDecisionTree implements Runnable{
+public class StepDecisionTree implements Runnable, ModularObject{
     
     private IConsoleUI consoleUI;
     
@@ -347,13 +347,49 @@ public class StepDecisionTree implements Runnable{
      *         Multiple roots have been found, 
      *         Specified root key has not been found
      */
-    public void unite(StepDecisionTree chunk) throws Exception{
+    @Override
+    public void unite(ModularObject chunk) throws Exception{
     
+        StepDecisionTree convertedChunk = (StepDecisionTree)chunk;
+        
         // expand container using upper estimation of number of nodes respect 
         //  to potentially reserved (in future) memory
-        stepDecisionTree.reserve(stepDecisionTree.size() + chunk.stepDecisionTree.size());
+        stepDecisionTree.reserve(stepDecisionTree.size() + convertedChunk.stepDecisionTree.size());
         
-        stepDecisionTree.mergeToNode(chunk.stepDecisionTree);
+        stepDecisionTree.mergeToNode(convertedChunk.stepDecisionTree);
+    }
+    
+    /**
+     * It divides current object into equal chunks by given number of chunks 
+     * wanted to be created.
+     * @param numOfChunks Number of equally distributed chunks to be created.
+     * @return It returns the created chunks.
+     * @throws Exception 
+     */
+    @Override
+    public ArrayList<ModularObject> split(int numOfChunks) throws Exception{
+    
+        ArrayList<ModularObject> result = new ArrayList<>();
+        
+        // todo
+   
+        return result;
+    }
+    
+    /**
+     * It divides current object into predefined chunks by given ratio values. 
+     * Sum of the ratio values must be 1.
+     * @param chunkRatios Chunk ratios, the occupied data from the whole by the chunks.
+     * @return It returns the created chunks.
+     * @throws Exception 
+     */
+    @Override
+    public ArrayList<ModularObject> split(ArrayList<Double> chunkRatios) throws Exception{
+    
+        
+        // todo
+    
+        return result;
     }
     
     /**
