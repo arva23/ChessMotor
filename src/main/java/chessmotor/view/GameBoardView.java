@@ -16,8 +16,11 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-// the squares are managed by pooling the events, only one event is by event 
-//  types to avoid overwhelmingly loaded listener cases
+/**
+ * The squares are managed by event pooling, only on event is by event types to 
+ * avoid overwhelmingly loaded listener cases
+ * @author arva
+ */
 public class GameBoardView implements IGameBoardView {
 
     private IConsoleUI consoleUI;
@@ -52,6 +55,7 @@ public class GameBoardView implements IGameBoardView {
     
     /**
      * Parameterized constructor of visual game board object
+     * @param consoleUI Manages error messages toward console
      * @param x Upper left corner x coordinate component
      * @param y Upper left corner y coordinate component
      * @param width Width of the game table
@@ -284,6 +288,10 @@ public class GameBoardView implements IGameBoardView {
         }
     }
     
+    /**
+     * It sets the new status of board square by literal type of piece identifiers
+     * @param newBoardSquareStatus New board status
+     */
     public void setBoardSquareStatus(String[][] newBoardSquareStatus){
     
         this.boardSquareStatus = newBoardSquareStatus;
@@ -396,24 +404,40 @@ public class GameBoardView implements IGameBoardView {
                 .equals(pieceTypeName);
     }
     
+    /**
+     * Triggers a waiting for board action request
+     * @throws InterruptedException Inherited condition variable exceptions
+     */
     @Override
     public void waitForBoard() throws InterruptedException{
     
         playerBoardWaitCond.await();
     }
     
+    /**
+     * Terminates waiting for board action request
+     * @throws InterruptedException Inherited condition variable exceptions
+     */
     @Override
     public void signalForBoard() throws InterruptedException{
     
         playerBoardWaitCond.signal();
     }
     
+    /**
+     * Triggers a waiting for performed board actions
+     * @throws InterruptedException Inherited condition variable exceptions
+     */
     @Override
     public void waitForAction() throws InterruptedException{
     
         playerBoardActionCond.await();
     }
     
+    /**
+     * Terminates waiting for performed board actions
+     * @throws InterruptedException Inherited condition variable exceptions
+     */
     @Override
     public void signalForAction() throws InterruptedException{
     

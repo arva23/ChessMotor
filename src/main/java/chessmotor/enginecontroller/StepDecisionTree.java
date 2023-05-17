@@ -34,7 +34,6 @@ public class StepDecisionTree implements Runnable{
     // score values are greater than a threshold, drop step sequence.
     private double minConvThreshold;
     
-    
     // in order to restore consistency for peer (by level) steps
     private ArrayList<Step> stepHistoryStack;
     private ArrayList<String> keyHistoryStack;
@@ -55,6 +54,7 @@ public class StepDecisionTree implements Runnable{
     
     /**
      * Constructor for initialization of step decision tree object
+     * @param consoleUI Console line message manager, especially for error messages
      * @param machineBegins The machine player begins or not
      * @param pieces The container object that stores the available pieces for 
      *        step sequence generation
@@ -296,7 +296,6 @@ public class StepDecisionTree implements Runnable{
     
         return stepDecisionTree;
     }
-    
     
     /**
      * Sets positive depth

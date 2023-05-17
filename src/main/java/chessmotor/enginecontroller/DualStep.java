@@ -58,21 +58,38 @@ public class DualStep extends Step{
         this.fileB = fileB;
     }
     
+    /**
+     * It returns the second piece identifier of dual step
+     * @return Returns the requested value
+     */
     public int getSecondPieceId(){
     
         return pieceIdB;
     }
     
+    /**
+     * It returns the rank position of second piece of dual step
+     * @return Returns the requested value
+     */
     public int getSecondRank(){
     
         return rankB;
     }
     
+    /**
+     * It returns the file position of second piece of dual step
+     * @return Returns the requested value
+     */
     public int getSecondFile(){
     
         return fileB;
     }
     
+    /**
+     * Compares a step with current step object by certain values (see method body)
+     * @param step External step to be compared
+     * @return Returns the result of comparison (whether they are equal or not)
+     */
     @Override
     public boolean equals(Step step){
         

@@ -3,7 +3,7 @@ package chessmotor.enginecontroller;
 import java.util.Stack;
 
 public interface IGame extends StatusSavable {
-
+    
     public void runGame() throws Exception;
 
     public boolean machineComes();

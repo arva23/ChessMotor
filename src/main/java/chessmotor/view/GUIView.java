@@ -51,6 +51,7 @@ public class GUIView implements IGameUI{
    
     /**
      * Parameterized constructor for operation initialization
+     * @param consoleUI Console line message manager
      * @param gameCtl Upper high level game controller that manages the application,
      *        singleton pattern
      * @param gameInstance game object interface toward realized current game instance 
@@ -256,7 +257,7 @@ public class GUIView implements IGameUI{
         
         playerClocks.switchPlayer();
     }
-
+    
     /**
      * Reads two step after each other, first the source position that contains 
      * an ally piece then secondly the arbitrary second position with the 

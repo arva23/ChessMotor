@@ -93,6 +93,8 @@ public class Game implements IGame{
     
     /**
      * Constructor for parametric initialization and further operation
+     * @param consoleUI Console line interface for literal based messaging 
+     *        and for error messages
      * @param gameUI Graphical user interface for arbitrary but constrained 
      *        interface connection
      * @param machineBegins Whether human or machine player comes in this operation 
@@ -242,9 +244,10 @@ public class Game implements IGame{
     /**
      * Method for loading previously saved game status
      * @param saveStatus Previously saved game status
+     * @throws Exception Inherited exceptions
      */
     @Override
-    public void setStatus(GenericSaveStatus saveStatus){
+    public void setStatus(GenericSaveStatus saveStatus) throws Exception{
     
         GameStatus gameStatus = (GameStatus)saveStatus;
         
@@ -267,9 +270,10 @@ public class Game implements IGame{
      * Saves game status
      * @return It returns a generically cast save status object that contains 
      *         all necessary status data 
+     * @throws Exception Inherited exceptions
      */
     @Override
-    public GenericSaveStatus getStatus() {
+    public GenericSaveStatus getStatus() throws Exception{
     
         ComplexGameStatus gameStatus = new ComplexGameStatus();
     
@@ -361,9 +365,8 @@ public class Game implements IGame{
         }
     }
     
-    
-    // entry point of this game handler controller class
     /**
+     * Entry point of this game handler controller class.
      * The main game operator method that manages the high level game events in 
      * business logic and triggers requests toward external modules such as GUI
      * @throws Exception 
@@ -790,7 +793,6 @@ public class Game implements IGame{
             
             if(selectedPiece.getFile() < selectedSecondPiece.getFile()){
             
-                
                 for(int fileInd = 5; fileInd < 7 && emptyInterFiles; ++fileInd){
                 
                     emptyInterFiles = gameBoard.get(7, fileInd) == -1;
@@ -1008,7 +1010,11 @@ public class Game implements IGame{
         ++stepId;
     }
     
-    
+    /**
+     * Validates human player after machine player took step
+     * @throws Exception
+     *         StepDecisionTree exception (see further)
+     */
     private void validateHumanPlayerStatus() throws Exception{
     
         // looking for check mate on human king piece
@@ -1253,24 +1259,39 @@ public class Game implements IGame{
         // TASK) yield control to human player (asynchronous tasks)
     }
 
-    
+    /**
+     * Provides the source step sequence history for further processing
+     * @return Returns the recent status of source step sequence history container
+     */
     public Stack<Step> getSourceStepHistory(){
     
         return sourceStepHistory;
     }
     
-    
+    /**
+     * Provides the target step sequence history for further processing
+     * @return Returns the recent status of target step sequence history container
+     */
     public Stack<Step> getTargetStepHistory(){
     
         return targetStepHistory;
     }
     
+    /**
+     * Provides a flag about which player comes during the game player
+     * @return Returns the currently active player respect to machine player
+     */
     @Override
     public boolean machineComes(){
     
         return machineComes;
     }
     
+    /**
+     * This method is a getter to provide machine player specific available removed
+     * player pieces to be used again. It is used at visual piece selection.
+     * @return Returns the player dependent removed pieces from the game table
+     */
     @Override
     public Stack<String> getMachinePromotionTypeNames(){
     
@@ -1287,6 +1308,11 @@ public class Game implements IGame{
         return removedMachinePiecesTypeNames;
     }
     
+    /**
+     * This method is a getter to provide human player specific available removed 
+     * player pieces to be used again. It is used at visual piece selection.
+     * @return Returns the player dependent removed pieces from the game table
+     */
     @Override
     public Stack<String> getHumanPromotionTypeNames(){
     
@@ -1303,30 +1329,49 @@ public class Game implements IGame{
         return removedHumanPiecesTypeNames;
     }
     
+    /**
+     * Triggers a wait for data reading process
+     * @throws InterruptedException Inherited condition variable exceptions
+     */
     @Override
     public void waitForDataRead() throws InterruptedException{
     
         statusUpdateLock.await();
     }
     
+    /**
+     * Terminates waiting for data read
+     * @throws InterruptedException Inherited condition variable exceptions
+     */
     @Override
     public void signalForDataRead(){
     
         statusUpdateLock.signal();
     }
     
+    /**
+     * Triggers a wait for data saving process
+     * @throws InterruptedException Inherited condition variable exceptions
+     */
     @Override
     public void waitForDataSave() throws Exception{
     
         statusSaveLock.await();
     }
     
+    /**
+     * Terminates waiting for data save
+     * @throws InterruptedException Inherited condition variable exceptions
+     */
     @Override
     public void signalForDataSave() throws Exception{
     
         statusSaveLock.signal();
     }
     
+    /**
+     * Make machine player win the game play.
+     */
     @Override
     public void giveUpHumanPlayer(){
     

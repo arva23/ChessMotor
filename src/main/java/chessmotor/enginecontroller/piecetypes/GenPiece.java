@@ -20,8 +20,19 @@ public class GenPiece {
     
     }
     
-    public GenPiece(int pieceId, String typeName, double value, int rank, int file) {
     
+    /**
+     * Parameterized constructor for generic piece object
+     * @param pieceId Piece identifier in range of [0, 32)
+     * @param typeName Piece literal identifier
+     * @param value Value of strength of piece
+     * @param rank Rank of piece position
+     * @param file File of piece position
+     * @throws ValueOutOfRangeException 
+     *         IllConditionedDataException 
+     */
+    public GenPiece(int pieceId, String typeName, double value, int rank, int file) 
+            throws Exception{
         this.pieceId = pieceId;
         this.typeName = typeName;
         this.value = value;
@@ -29,7 +40,15 @@ public class GenPiece {
         this.file = file;
     }
     
-    public ArrayList<Pair> generateSteps(GameBoardData gameBoard){
+    /**
+     * Generates specialized available steps for extended piece types
+     * @param gameBoard The game board of the used game play that is used as a 
+     * starting position for generation (occupied piece identifications)
+     * @return It returns the generic Pair values that stores the available further 
+     * steps for the extended piece type at certain position
+     * @throws Exception Generation exceptions (see extended, child classes, types)
+     */
+    public ArrayList<Pair> generateSteps(GameBoardData gameBoard) throws Exception{
     
         // It generates steps according to the limitations of other piece barriers 
         //  and gamefield boundaries.
@@ -67,12 +86,22 @@ public class GenPiece {
         return file;
     }
     
-    public void setRank(int rank){
+    /**
+     * Sets a new value for rank
+     * @param rank The new value
+     * @throws ValueOutOfRangeException 
+     */
+    public void setRank(int rank) throws ValueOutOfRangeException{
     
         this.rank = rank;
     }
     
-    public void setFile(int file){
+    /**
+     * Sets a new value for file
+     * @param file The new value
+     * @throws ValueOutOfRangeException 
+     */
+    public void setFile(int file) throws ValueOutOfRangeException{
     
         this.file = file;
     }
