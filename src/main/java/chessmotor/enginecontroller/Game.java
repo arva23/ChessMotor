@@ -172,26 +172,43 @@ public class Game implements IGame{
 
         stepId = 0;
 
-        // initializing machine pieces
+        try{
+                    
+            for(int i = 0; i < 8; ++i){
 
-        for(int i = 0; i < 8; ++i){
+                pieces.set(i, new Pawn(i, machineBegins, -3.0, 1, i));
+                gameBoard.set(1, i, i);
 
-            pieces.set(i, new Pawn(i, machineBegins, -3.0, 1, i));
-            gameBoard.set(1, i, i);
+                pieces.set(16 + i, new Pawn(16 + i, !machineBegins, 3.0, 6, i));
+                gameBoard.set(6, i, 16 + i);
+            }
 
-            pieces.set(16 + i, new Pawn(16 + i, !machineBegins, 3.0, 6, i));
-            gameBoard.set(6, i, 16 + i);
+            // initializing machine pieces
+            pieces.set(8, new Rook(8, machineBegins, -14.0, 0, 0));
+            pieces.set(9, new Knight(9, machineBegins, -8.0, 0, 1));
+            pieces.set(10, new Bishop(10, machineBegins, -14.0, 0, 2));
+            pieces.set(11, new King(11, machineBegins, -8.0, 0, 3));
+            pieces.set(12, new Queen(12, machineBegins, -28.0, 0, 4));
+            pieces.set(13, new Bishop(13, machineBegins, -14.0, 0, 5));
+            pieces.set(14, new Knight(14, machineBegins, -8.0, 0, 6));
+            pieces.set(15, new Rook(15, machineBegins, -14.0, 0, 7));
+        
+            // initializing human pieces
+            pieces.set(16 + 8, new Rook(16 + 8, !machineBegins, 14.0, 7, 0));
+            pieces.set(16 + 9, new Knight(16 + 9, !machineBegins, 8.0, 7, 1));
+            pieces.set(16 + 10, new Bishop(16 + 10, !machineBegins, 14.0, 7, 2));
+            pieces.set(16 + 11, new King(16 + 11, !machineBegins, 8.0, 7, 3));
+            pieces.set(16 + 12, new Queen(16 + 12, !machineBegins, 28.0, 7, 4));
+            pieces.set(16 + 13, new Bishop(16 + 13, !machineBegins, 14.0, 7, 5));
+            pieces.set(16 + 14, new Knight(16 + 14, !machineBegins, 8.0, 7, 6));
+            pieces.set(16 + 15, new Rook(16 + 15, !machineBegins, 14.0, 7, 7));
         }
-
-        pieces.set(8, new Rook(8, machineBegins, -14.0, 0, 0));
-        pieces.set(9, new Knight(9, machineBegins, -8.0, 0, 1));
-        pieces.set(10, new Bishop(10, machineBegins, -14.0, 0, 2));
-        pieces.set(11, new King(11, machineBegins, -8.0, 0, 3));
-        pieces.set(12, new Queen(12, machineBegins, -28.0, 0, 4));
-        pieces.set(13, new Bishop(13, machineBegins, -14.0, 0, 5));
-        pieces.set(14, new Knight(14, machineBegins, -8.0, 0, 6));
-        pieces.set(15, new Rook(15, machineBegins, -14.0, 0, 7));
-
+        catch(Exception e){
+        
+            consoleUI.println("An error has occurred at initialization of pieces (" + e.getMessage() + ")");
+        }
+        
+        // initializing machine pieces
         gameBoard.set(0, 0, 8);
         gameBoard.set(0, 1, 9);
         gameBoard.set(0, 2, 10);
@@ -200,18 +217,8 @@ public class Game implements IGame{
         gameBoard.set(0, 5, 13);
         gameBoard.set(0, 6, 14);
         gameBoard.set(0, 7, 15);
-
+        
         // initializing human pieces
-
-        pieces.set(16 + 8, new Rook(16 + 8, !machineBegins, 14.0, 7, 0));
-        pieces.set(16 + 9, new Knight(16 + 9, !machineBegins, 8.0, 7, 1));
-        pieces.set(16 + 10, new Bishop(16 + 10, !machineBegins, 14.0, 7, 2));
-        pieces.set(16 + 11, new King(16 + 11, !machineBegins, 8.0, 7, 3));
-        pieces.set(16 + 12, new Queen(16 + 12, !machineBegins, 28.0, 7, 4));
-        pieces.set(16 + 13, new Bishop(16 + 13, !machineBegins, 14.0, 7, 5));
-        pieces.set(16 + 14, new Knight(16 + 14, !machineBegins, 8.0, 7, 6));
-        pieces.set(16 + 15, new Rook(16 + 15, !machineBegins, 14.0, 7, 7));
-
         gameBoard.set(7, 0, 16 + 8);
         gameBoard.set(7, 1, 16 + 9);
         gameBoard.set(7, 2, 16 + 10);

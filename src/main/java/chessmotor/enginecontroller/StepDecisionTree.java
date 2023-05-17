@@ -519,21 +519,21 @@ public class StepDecisionTree implements Runnable, ModularObject{
             int playerIndOffset = humanSide ? 16 : 0;
             int playerPosRank = humanSide ? 7 : 0;
             boolean emptyInterFiles = true;
+            
+            try{
+            
+                if(piecesRef.get(playerIndOffset + 8).getRank() == playerPosRank 
+                        && piecesRef.get(playerIndOffset + 8).getFile() == 0
+                        && piecesRef.get(playerIndOffset + 11).getRank() == playerPosRank 
+                        && piecesRef.get(playerIndOffset + 11).getFile() == 4){
 
-            if(piecesRef.get(playerIndOffset + 8).getRank() == playerPosRank 
-                    && piecesRef.get(playerIndOffset + 8).getFile() == 0
-                    && piecesRef.get(playerIndOffset + 11).getRank() == playerPosRank 
-                    && piecesRef.get(playerIndOffset + 11).getFile() == 4){
 
+                    for(int fileInd = 5; fileInd < 7 && emptyInterFiles; ++fileInd){
 
-                for(int fileInd = 5; fileInd < 7 && emptyInterFiles; ++fileInd){
+                        emptyInterFiles = gameBoardRef.get(playerPosRank, fileInd) == -1;
+                    }
 
-                    emptyInterFiles = gameBoardRef.get(playerPosRank, fileInd) == -1;
-                }
-
-                if(emptyInterFiles){
-
-                    try{
+                    if(emptyInterFiles){
 
                         allocatedGeneratedStep = new DualStep(
                                 "castling", 11, 
@@ -548,25 +548,18 @@ public class StepDecisionTree implements Runnable, ModularObject{
                         sortedGeneratedSteps.add(new GenTmpStepKey(value), 
                             allocatedGeneratedStep);
                     }
-                    catch(Exception e){
+                }
+                else if(piecesRef.get(playerIndOffset + 15).getRank() == playerPosRank 
+                        && piecesRef.get(playerIndOffset + 16).getFile() == 7
+                        && piecesRef.get(playerIndOffset + 11).getRank() == playerPosRank
+                        && piecesRef.get(playerIndOffset + 11).getFile() == 4){
 
-                        consoleUI.println("Cold not add dual step (" + e.getMessage() + ")");
+                    for(int fileInd = 0; fileInd < 5; ++fileInd){
+
+                        emptyInterFiles = gameBoardRef.get(playerPosRank, fileInd) == -1;
                     }
-                }
-            }
-            else if(piecesRef.get(playerIndOffset + 15).getRank() == playerPosRank 
-                    && piecesRef.get(playerIndOffset + 16).getFile() == 7
-                    && piecesRef.get(playerIndOffset + 11).getRank() == playerPosRank
-                    && piecesRef.get(playerIndOffset + 11).getFile() == 4){
 
-                for(int fileInd = 0; fileInd < 5; ++fileInd){
-
-                    emptyInterFiles = gameBoardRef.get(playerPosRank, fileInd) == -1;
-                }
-
-                if(emptyInterFiles){
-
-                    try{
+                    if(emptyInterFiles){
 
                         allocatedGeneratedStep = new DualStep(
                                 "castling", 11, 
@@ -580,25 +573,25 @@ public class StepDecisionTree implements Runnable, ModularObject{
                         sortedGeneratedSteps.add(new GenTmpStepKey(value), 
                             allocatedGeneratedStep);
                     }
-                    catch(Exception e){
-
-                        consoleUI.println("Could not add dual step (" + e.getMessage() + ")");
-                    }
                 }
+            }
+            catch(Exception e){
+
+                consoleUI.println("Could not add dual step (" + e.getMessage() + ")");
             }
         }
         else if(piecesRef.get(step.getPieceId()).getTypeName().contains("pawn")){
 
-            if(humanSide && step.getRank() == 0){
+            try{
+                
+                if(humanSide && step.getRank() == 0){
 
-                currRemovedHumanPieces = removedHumanPiecesContinuation.get(key);
+                    currRemovedHumanPieces = removedHumanPiecesContinuation.get(key);
 
-                int sizeOfCurrRemovedHumanPiecesContinuation = 
-                        currRemovedHumanPieces.size();
+                    int sizeOfCurrRemovedHumanPiecesContinuation = 
+                            currRemovedHumanPieces.size();
 
-                for(int i = 0; i < sizeOfCurrRemovedHumanPiecesContinuation; ++i){
-
-                    try{
+                    for(int i = 0; i < sizeOfCurrRemovedHumanPiecesContinuation; ++i){
 
                         allocatedGeneratedStep = new DualStep(
                                 "promition", step.getPieceId(), 
@@ -614,22 +607,15 @@ public class StepDecisionTree implements Runnable, ModularObject{
                         sortedGeneratedSteps.add(new GenTmpStepKey(value), 
                             allocatedGeneratedStep);
                     }
-                    catch(Exception e){
-
-                        consoleUI.println("Could not add dual step (" + e.getMessage() + ")");
-                    }
                 }
-            }
-            else if(!humanSide && step.getRank() == 7){
+                else if(!humanSide && step.getRank() == 7){
 
-                currRemovedMachinePieces = removedMachinePiecesContinuation.get(key);
+                    currRemovedMachinePieces = removedMachinePiecesContinuation.get(key);
 
-                int sizeOfCurrRemovedMachinePieces = 
-                        currRemovedMachinePieces.size();
+                    int sizeOfCurrRemovedMachinePieces = 
+                            currRemovedMachinePieces.size();
 
-                for(int i = 0; i < sizeOfCurrRemovedMachinePieces; ++i){
-
-                    try{
+                    for(int i = 0; i < sizeOfCurrRemovedMachinePieces; ++i){
 
                         allocatedGeneratedStep = new DualStep(
                                 "promition", step.getPieceId(),
@@ -645,11 +631,11 @@ public class StepDecisionTree implements Runnable, ModularObject{
                         sortedGeneratedSteps.add(new GenTmpStepKey(value), 
                             allocatedGeneratedStep);
                     }
-                    catch(Exception e){
-
-                        consoleUI.println("Could not add dual step (" + e.getMessage() + ")");
-                    }
                 }
+            }
+            catch(Exception e){
+
+                consoleUI.println("Could not add dual step (" + e.getMessage() + ")");
             }
         }
     }
@@ -851,8 +837,19 @@ public class StepDecisionTree implements Runnable, ModularObject{
 
                     generatedLevelNodeSteps.add(new ArrayList<>());
                     
-                    ArrayList<Pair> generatedSteps = piecesRef.get(
+                    ArrayList<Pair> generatedSteps = new ArrayList<>();
+                    
+                    try{
+                    
+                        generatedSteps = piecesRef.get(
                             step.getPieceId()).generateSteps(gameBoardRef);
+                    }
+                    catch(Exception e){
+                    
+                        consoleUI.println("An error has occurred during "
+                                + "generating next steps of currently selected "
+                                + "piece. Skipping piece further step generation.");
+                    }
                     
                     sortedGeneratedSteps.removeAll();
 
@@ -884,17 +881,17 @@ public class StepDecisionTree implements Runnable, ModularObject{
                     int sizeOfSortedGeneratedSteps = sortedGeneratedSteps.size();
 
                     // step identifier/key conversion
-                    for(int sortedI = 0; sortedI < sizeOfSortedGeneratedSteps; ++sortedI){
+                    try{
 
-                        try{
+                        for(int sortedI = 0; sortedI < sizeOfSortedGeneratedSteps; ++sortedI){
 
-                            generatedLevelNodeSteps.get(lvl).add(
-                                    sortedGeneratedSteps.getByInd(sortedI));
+                                generatedLevelNodeSteps.get(lvl).add(
+                                        sortedGeneratedSteps.getByInd(sortedI));
                         }
-                        catch(Exception e){
+                    }
+                    catch(Exception e){
 
-                            consoleUI.println("Could not obtain node (" + e.getMessage() + ")");
-                        }
+                        consoleUI.println("Could not obtain node (" + e.getMessage() + ")");
                     }
 
                     incKey = 'a';
@@ -1002,7 +999,6 @@ public class StepDecisionTree implements Runnable, ModularObject{
         }
     }
     
-    
     // needs to be optimized
     /**
      * It builds the tree with certain steps until the depth limit. Tree depth 
@@ -1102,16 +1098,16 @@ public class StepDecisionTree implements Runnable, ModularObject{
 
                 int sizeOfSortedGeneratedSteps = sortedGeneratedSteps.size();
 
-                for(int sortedI = 0; sortedI < sizeOfSortedGeneratedSteps; ++sortedI){
+                try{
+                    
+                    for(int sortedI = 0; sortedI < sizeOfSortedGeneratedSteps; ++sortedI){
 
-                    try{
-
-                        generatedLevelNodeSteps.add(sortedGeneratedSteps.getByInd(sortedI));
+                            generatedLevelNodeSteps.add(sortedGeneratedSteps.getByInd(sortedI));
                     }
-                    catch(Exception e){
+                }
+                catch(Exception e){
 
-                        consoleUI.println("Could not obtain node (" + e.getMessage() + ")");
-                    }
+                    consoleUI.println("Could not obtain node (" + e.getMessage() + ")");
                 }
 
                 int sizeOfGeneratedLevelNodeSteps = generatedLevelNodeSteps.size();
