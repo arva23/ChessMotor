@@ -311,7 +311,7 @@ public class Game implements IGame{
         
         gameStatus.setBoardSquareStatus(boardSquareStatus);
         // todo, implement status saver
-        return new GameStatus();
+        return gameStatus;
     }
     
     /**
@@ -1344,7 +1344,7 @@ public class Game implements IGame{
      * @throws InterruptedException Inherited condition variable exceptions
      */
     @Override
-    public void signalForDataRead(){
+    public void signalForDataRead() throws InterruptedException{
     
         statusUpdateLock.signal();
     }
@@ -1354,7 +1354,7 @@ public class Game implements IGame{
      * @throws InterruptedException Inherited condition variable exceptions
      */
     @Override
-    public void waitForDataSave() throws Exception{
+    public void waitForDataSave() throws InterruptedException{
     
         statusSaveLock.await();
     }
@@ -1364,7 +1364,7 @@ public class Game implements IGame{
      * @throws InterruptedException Inherited condition variable exceptions
      */
     @Override
-    public void signalForDataSave() throws Exception{
+    public void signalForDataSave() throws InterruptedException{
     
         statusSaveLock.signal();
     }
