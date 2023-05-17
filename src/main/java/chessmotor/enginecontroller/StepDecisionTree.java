@@ -164,8 +164,6 @@ public class StepDecisionTree implements Runnable, ModularObject{
         }
     }
     
-    public void StepDecisionTree(StepDecisionTree orig){
-    
     /**
      * Copy constructor for this class
      * @param orig Origin of the current object to be copied from
@@ -1044,9 +1042,6 @@ public class StepDecisionTree implements Runnable, ModularObject{
         
         Step step;
         
-        ArrayList<Integer> gameBoardHistory = new ArrayList<Integer>();
-        
-        boolean wasStepBack = false;
         ArrayList<Step> generatedLevelNodeSteps = new ArrayList<>();
         
         int lvl = depth - 2;// -1 for machine and human
