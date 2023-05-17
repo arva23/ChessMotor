@@ -75,7 +75,7 @@ public class Game implements IGame{
     // explicit step n-ary decision tree is requied in order to trace further steps
     //  to be able to locate the origin step of leaves that are required for next 
     //  step generations
-    StepDecisionTree stepSequences;
+    private StepDecisionTree stepSequences;
     private int stepId;// starting from 1 (the first step)
     private Stack<Step> sourceStepHistory;
     private Stack<Step> targetStepHistory;
