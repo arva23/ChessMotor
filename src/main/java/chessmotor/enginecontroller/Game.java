@@ -397,7 +397,7 @@ public class Game implements IGame{
             machineComes = true;
             
             stepSequences.generateFirstMachineStep();
-            selectNextMachineStep();
+            requestNextMachineStep();
             
             machineTime.plus(LocalDateTime.now().until(
             intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
@@ -428,7 +428,7 @@ public class Game implements IGame{
             waitForDataSave();  
             machineComes = false;
             
-            requestHumanPlayerAction();
+            requestNextHumanStep();
             
             humanTime.plus(LocalDateTime.now().until(
             intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
@@ -460,7 +460,7 @@ public class Game implements IGame{
             machineComes = true;
             
             buildMachineStrategy();
-            selectNextMachineStep();
+            requestNextMachineStep();
             
             machineTime.plus(LocalDateTime.now().until(
             intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
@@ -493,7 +493,7 @@ public class Game implements IGame{
             waitForDataSave();
             machineComes = false;
             
-            requestHumanPlayerAction();
+            requestNextHumanStep();
             
             humanTime.plus(LocalDateTime.now().until(
             intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
@@ -525,7 +525,7 @@ public class Game implements IGame{
             machineComes = true;
             
             stepSequences.generateFirstMachineStep();
-            selectNextMachineStep();
+            requestNextMachineStep();
             buildMachineStrategy();
             
             machineTime.plus(LocalDateTime.now().until(
@@ -558,7 +558,7 @@ public class Game implements IGame{
             intervalStartHuman = LocalDateTime.now();
             waitForDataSave();
             machineComes = false;
-            requestHumanPlayerAction();
+            requestNextHumanStep();
 
             humanTime.plus(LocalDateTime.now().until(
             intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
@@ -586,7 +586,7 @@ public class Game implements IGame{
             waitForDataSave();
             machineComes = true;
             stepSequences.continueMachineStepSequences();
-            selectNextMachineStep();
+            requestNextMachineStep();
             
             machineTime.plus(LocalDateTime.now().until(
             intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
@@ -685,7 +685,7 @@ public class Game implements IGame{
      *         Step range violations at step creation
      *         StepDecisionTree exceptions (see further)
      */
-    private void requestHumanPlayerAction() throws Exception{
+    private void requestNextHumanStep() throws Exception{
         
         String action;
         action = gameUI.readPlayerAction();
@@ -1086,7 +1086,7 @@ public class Game implements IGame{
      *         Step creation exceptions (see further)
      *         DualStep creation exceptions (see further)
      */
-    private void selectNextMachineStep() throws Exception{
+    private void requestNextMachineStep() throws Exception{
     
         // TODO it could be integrated in step decision tree builder
         
