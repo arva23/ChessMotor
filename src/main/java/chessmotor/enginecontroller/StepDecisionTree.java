@@ -673,7 +673,8 @@ public class StepDecisionTree implements Runnable, ModularObject{
         for(int stepI = 0; stepI < sizeOfGeneratedSteps; ++stepI){
 
             generatedStep = generatedSteps.get(stepI);
-            pieceInd = gameBoardRef.get(generatedStep.rank, generatedStep.file);
+            pieceInd = gameBoardRef.get(
+                    generatedStep.getRank(), generatedStep.getFile());
 
             // ordered insertion is quasi nlogn
 
@@ -698,8 +699,8 @@ public class StepDecisionTree implements Runnable, ModularObject{
 
                         allocatedGeneratedStep = new Step(
                         step.getStepType(),
-                        step.getPieceId(), generatedStep.rank, 
-                        generatedStep.file, piecesRef.get(pieceInd).getValue(),
+                        step.getPieceId(), generatedStep.getRank(), 
+                        generatedStep.getFile(), piecesRef.get(pieceInd).getValue(),
                         cumulativeNegativeChange,  
                         cumulativeValue + piecesRef.get(pieceInd).getValue());
 
@@ -741,7 +742,7 @@ public class StepDecisionTree implements Runnable, ModularObject{
 
                     allocatedGeneratedStep = new Step(
                     "standard", step.getPieceId(), 
-                    generatedStep.rank, generatedStep.file, 
+                    generatedStep.getRank(), generatedStep.getFile(), 
                     0, cumulativeNegativeChange, 
                     cumulativeValue + 0.0);
 
