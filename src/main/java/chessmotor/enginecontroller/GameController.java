@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * use interface)
  * @author arva
  */
-public class GameController {
+public class GameController implements IGameController, IInterOperationCalls{
 
     // console line user interface especially for debugging
     private IConsoleUI consoleUI;
@@ -62,15 +62,22 @@ public class GameController {
             consoleUI.println("Error at initialization of game interface: " 
                     + e.getMessage());
         }
-        
+    }
+    
+    /**
+     * It starts the whole program via the high level game controller object
+     */
+    @Override
+    public void runGame(){
+    
         try {
             
             currGame.runGame();
         } 
         catch (Exception e) {
         
-            consoleUI.println("Error at initialization of game controller: " 
-                    + e.getMessage());
+            consoleUI.println("Error at initialization of game controller (" 
+                    + e.getMessage() + ")");
         }
     }
     
@@ -78,54 +85,89 @@ public class GameController {
      * A transit method that propagates status load requests between controller 
      * and visual subsystem
      * @param gameName Identifier of the desired game status that was saved
-     * @throws Exception
-     *         Game name is empty, hence the game status can not be obtained
-     *         Inherited exceptions from Game (see further)
      */
-    public void loadGame(String gameName) throws Exception{
+    @Override
+    public void loadGame(String gameName){
     
-        if(gameName.isEmpty()){
-        
-            throw new NullPointerException("Game name is empty.");
+        try{
+    
+            if(gameName.isEmpty()){
+
+                throw new NullPointerException("Game name is empty.");
+            }
+            
+            ComplexGameStatus gameStatus = gameLogMgr.loadGame(gameName);
+            currGame.setStatus(gameStatus);
+            // loading game status data from selected game file
+
+            //  todo
         }
+        catch(Exception ex){
         
-        ComplexGameStatus gameStatus = gameLogMgr.loadGame(gameName);
-        currGame.setStatus(gameStatus);
-        // loading game status data from selected game file
+            consoleUI.println("Could not load specific game status (" 
+                    + ex.getMessage() + ")");
+        }
+    }
+    
+    /**
+     * It loads the previously saved game
+     */
+    @Override
+    public void loadLastSavedGame(){
+    
+        try{
+            
+            currGame.setStatus(gameLogMgr.loadLastGame());
+        }
+        catch(Exception ex){
         
-        //  todo
+            consoleUI.println("Could not load previously saved game (" 
+                    + ex.getMessage() + ")");
+        }
     }
     
     /**
      * A transit method that propagates status save requests between controller
      * and visual subsystem
-     * @param gameName Identifier of the desired new game status that will be 
-     * saved and persisted
+     * It saved the current instantiated game state
      */
-    public void saveGame(String gameName){
+    @Override
+    public void saveGamePlay(){
     
-        // todo
+        try{
+        
+            String gameName = LocalDateTime.now().toString();
+            gameLogMgr.saveGame(gameName, (ComplexGameStatus)currGame.getStatus());
+        }
+        catch(Exception ex){
+        
+            consoleUI.println("Could not save recent game status (" 
+                    + ex.getMessage() + ")");
+        }
     }
     
     /**
      * Triggers program start in most high level
      */
-    public void startGame(){
-    
+    @Override
+    public void playGame(){
+        
         try {
             
             currGame.runGame();
         } 
         catch (Exception e) {
             
-            consoleUI.println("Error at attempting to run a game: " + e.getMessage());
-        }
+            consoleUI.println("Error at attempting to run a game: " 
+                    + e.getMessage());
+        }    
     }
     
     /**
      * A transit method that propagates human player give up requests between 
      * controller and visual subsystem
      */
+    @Override
     public void giveUpHumanPlayer(){
     
         currGame.giveUpHumanPlayer();
@@ -136,18 +178,15 @@ public class GameController {
      * and listing
      * @return It returns the log handler object
      */
+    @Override
     public GameLoader getGameLogMgr(){
     
         return gameLogMgr;
     }
+
+    @Override
+    public String getRecentlyLoadedGameName(){
     
-    /**
-     * It saved the current instantiated game state
-     * @throws Exception Inherited exceptions (see further)
-     */
-    public void saveGamePlay() throws Exception{
-    
-        String gameName = LocalDateTime.now().toString();
-        gameLogMgr.saveGame(gameName, (ComplexGameStatus)currGame.getStatus());
+        return gameLogMgr.getRecentlyLoadedGameName();
     }
 }
