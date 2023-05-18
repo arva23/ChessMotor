@@ -1,6 +1,5 @@
 package chessmotor.view;
 
-import chessmotor.enginecontroller.GameLoader;
 import genmath.genmathexceptions.ValueOutOfRangeException;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -9,6 +8,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import chessmotor.enginecontroller.IInterOperationCalls;
 
 /**
  * A game status manager class that handles game start, load previously saved game 
@@ -16,8 +16,8 @@ import javax.swing.JPanel;
  */
 public class GameStatusMgr {
 
-    private IGameUI gameGUI;
-    private GameLoader gameStatusManager;
+    private IConsoleUI consoleUI;
+    private IInterOperationCalls gameGUI;
     
     private JPanel gameStatusPanel;
     private JLabel gameStatusValue;
@@ -39,9 +39,9 @@ public class GameStatusMgr {
     
     
     
-    public GameStatusMgr(IGameUI gameGUI, GameLoader gameStatusManager, int statusMgrX,
-            int statusMgrY, int statusMgrWidth, int statusMgrHeight) throws Exception{
-        
+    public GameStatusMgr(IConsoleUI consoleUI, IInterOperationCalls gameGUI, 
+            int statusMgrX, int statusMgrY,
+            int statusMgrWidth, int statusMgrHeight) throws Exception{
         
         if(gameGUI == null){
         
@@ -88,7 +88,7 @@ public class GameStatusMgr {
         
         
         // monolithic interoperation call: restructuration maybe needed
-        prevGameValue = new JLabel(gameStatusManager.getRecentlyLoadedGameName());
+        prevGameValue = new JLabel(gameGUI.getRecentlyLoadedGameName());
         gameStatusPanel.add(prevGameValue);
         
         
