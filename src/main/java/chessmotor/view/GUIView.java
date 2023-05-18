@@ -480,4 +480,14 @@ public class GUIView implements IGameUI{
         giveUpHumanPlayerVisual.set(true);
         gameCtl.giveUpHumanPlayer();
     }
+    
+    /**
+     * A mediator method that transfers requests toward hight level controller
+     * @throws Exception 
+     */
+    @Override
+    public void saveGamePlay() throws Exception{
+    
+        gameCtl.saveGamePlay();
+    }
 }

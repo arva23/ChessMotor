@@ -5,6 +5,7 @@ import chessmotor.view.GUIView;
 import chessmotor.view.IConsoleUI;
 import chessmotor.view.IGameUI;
 import java.time.Duration;
+import java.time.LocalDateTime;
 
 /**
  * Console based game controller class, it handles initialization problems with
@@ -138,5 +139,15 @@ public class GameController {
     public GameLoader getGameLogMgr(){
     
         return gameLogMgr;
+    }
+    
+    /**
+     * It saved the current instantiated game state
+     * @throws Exception Inherited exceptions (see further)
+     */
+    public void saveGamePlay() throws Exception{
+    
+        String gameName = LocalDateTime.now().toString();
+        gameLogMgr.saveGame(gameName, (ComplexGameStatus)currGame.getStatus());
     }
 }

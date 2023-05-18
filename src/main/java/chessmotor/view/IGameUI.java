@@ -24,4 +24,6 @@ public interface IGameUI {
             int targetRank, int targetFile) throws Exception;
     
     public void giveUpHumanPlayer();
+    
+    public void saveGamePlay() throws Exception;
 }
