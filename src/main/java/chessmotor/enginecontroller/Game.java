@@ -23,17 +23,62 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 
-// evolution of engine
+/*
+Evolution of engine
 
-//  > 2D game table and combinatorical generation of possible steps without step
-//    strength indiator (probabilistic) only using available steps with filtering
-//    active pieces. Polar coordinate based proximity function for hits, checks,
-//    check mates. Use min-max bipartite graph. Usage of alpha-beta prunning 
-//    (subgraph edge cuts where the step sequence would cause less probability 
-//    of win including multiple loop evaluation in order to use the most efficient steps.
-//    
-//  > Improved version of the above along width piece type strength weight seeking
-//    for maximizing the most n valuable pieces.
+1) 2D game table and combinatorical generation of possible steps without step
+   probabilistic strength indiator only using available steps with filtering
+   active pieces. Descartes coordinate based proximity function for hits, checks,
+   check mates. Use min-max tree graph. Usage of alpha-beta prunning (subgraph 
+   edge cuts where the step sequence would cause less probability of win by 
+   consequent score change including multiple loop evaluation in order to use the 
+   most efficient steps.
+   
+2) Improved version of the above along width piece type strength weight seeking
+   for maximizing the most n valuable pieces.
+
+3) Use a game table for each paralell step sequence generator function
+
+4) The generation of indexing at tree building is via step sequence builder. 
+
+5) Opponent step with reversed evaluation logics
+
+6) Simply set the new root - the recently executed step with the use of new 
+    "setNewRootByKey()" method.
+
+7) Using threadpool for path builder threads
+
+8) Before the first taken step, the n depth tree will be generated. The tree will
+   be expanded until the predefined depth after each step along with root displa-
+   cement with one level down
+
+9) Use control theory for setting LookAhead level (tree depth) as a long term 
+   (multiple games).
+   LONG TERM EVALUATIONS CAN BE OCCURRED AFTER EACH GAME
+   Two possible options of long term strategy can be provided:
+   Opponent specific depth level computation (general depth)
+   Opponent specific misuse/lack of use/bad use/suboptimal use of specific 
+    piece type (increase or decrease value of this type in case of hit/collision 
+    and elimination: increase - above average use, decrease - under average use)
+   Average, cumulated depth correction according to win/lose/draw rate
+    Also weighted by correction of piece values (wrong initial values)
+   SHORT TERM CONTROL OF GAME USING CONTROL THEORY
+
+10)Since the step sequence generation by tree depth is limited, only a strength 
+   indicator can be used to show the status of the game. Different strategies/target 
+   values can be assigned as a goal value toward the end of the game. The controller
+   (based on control theory using e.g. PID) manages the increase of probability 
+   value as going toward the end status. If this steep (increase) is too high, it
+   slows the next step strength down, or if it is too low choose a stronger next 
+   step. This leads us to the /bottleneck/ statistics, the medium term (intragame) 
+   local minima smoothening operation in order to enhance the operation of N depth 
+   step sequence generation.
+    
+11)Additional hints, ideas for the previous point: 
+   Count in the number of available pieces along with their strength. Reduce step 
+   strengh based step generation accoding to the remained piece strengths (preserving 
+   positions [tendency]).
+*/
 
 public class Game implements IGame{
 
@@ -123,7 +168,6 @@ public class Game implements IGame{
         }
 
         this.gameUI = gameUI;
-
 
         this.machineBegins = machineBegins;
         this.machineComes = machineBegins;
@@ -458,7 +502,7 @@ public class Game implements IGame{
             
                 playGame.set(false);
                 gamePlayStatus = "LOSE";
-            
+                
                 gameUI.stop();
                 gameUI.updateGameStatus(gamePlayStatus);
             }
@@ -526,7 +570,7 @@ public class Game implements IGame{
             
                 playGame.set(false);
                 gamePlayStatus = "LOSE";
-                
+            
                 gameUI.stop();
                 gameUI.updateGameStatus(gamePlayStatus);
             }
