@@ -2,7 +2,7 @@ package chessmotor.view;
 
 import chessmotor.enginecontroller.ComplexGameStatus;
 
-public interface IGameUI {
+public interface IGameUI{
 
     public void loadGame(ComplexGameStatus gameStatus);
     
@@ -22,8 +22,4 @@ public interface IGameUI {
     
     public void applyGenPlayerAction(String pieceType, int sourceRank, int sourceFile,
             int targetRank, int targetFile) throws Exception;
-    
-    public void giveUpHumanPlayer();
-    
-    public void saveGamePlay() throws Exception;
 }

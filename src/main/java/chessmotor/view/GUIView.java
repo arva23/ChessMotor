@@ -2,7 +2,6 @@ package chessmotor.view;
 
 
 import chessmotor.enginecontroller.ComplexGameStatus;
-import chessmotor.enginecontroller.GameController;
 import chessmotor.enginecontroller.IGame;
 import genmath.genmathexceptions.ValueOutOfRangeException;
 import java.awt.Container;
@@ -12,19 +11,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JFrame;
+import chessmotor.enginecontroller.IInterOperationCalls;
 
 /**
  * It is an version of implementation of a graphical user interface based on 
  * interface defined restrictions
  * @author arva
  */
-public class GUIView implements IGameUI{
+public class GUIView implements IGameUI, IInterOperationCalls{
     
     private AtomicBoolean operateGUI;
     
     private IConsoleUI consoleUI;
     
-    private GameController gameCtl;
+    private IInterOperationCalls gameCtl;
     private IGame gameInstance;
     private int windowX;
     private int windowY;
@@ -74,7 +74,7 @@ public class GUIView implements IGameUI{
      *         Top left corner x coordinate component is out of range
      *         Top left corner y coordinate component is out of range
      */
-    public GUIView(IConsoleUI consoleUI, GameController gameCtl, IGame gameInstance, int windowX,
+    public GUIView(IConsoleUI consoleUI, IInterOperationCalls gameCtl, IGame gameInstance, int windowX,
             int windowY, int windowWidth, int windowHeight) throws Exception{
     
         operateGUI.set(false);
@@ -207,8 +207,8 @@ public class GUIView implements IGameUI{
         int statusMgrY = playerClocksHeight + 1;
         int statusMgrWidth = playerClocksWidth;
         int statusMgrHeight = boardHeight - playerClocksHeight;
-        gameStatusMgr = new GameStatusMgr(statusMgrX, statusMgrY,
-                statusMgrWidth, statusMgrHeight);
+        gameStatusMgr = new GameStatusMgr(consoleUI, this, statusMgrX, 
+                statusMgrY, statusMgrWidth, statusMgrHeight);
         elementContainer.add(gameStatusMgr.getMainPanel());
     }
     
@@ -482,12 +482,39 @@ public class GUIView implements IGameUI{
     }
     
     /**
-     * A mediator method that transfers requests toward hight level controller
-     * @throws Exception 
+     * A mediator method that transfers requests toward high level controller
      */
     @Override
-    public void saveGamePlay() throws Exception{
+    public void saveGamePlay(){
     
         gameCtl.saveGamePlay();
+    }
+    
+    /**
+     * A mediator method that transfers requests toward high level controller
+     */
+    @Override
+    public void loadLastSavedGame(){
+    
+        gameCtl.loadLastSavedGame();
+    }
+    
+    /**
+     * A mediator method that transfers requests toward high level controller
+     */
+    @Override
+    public void playGame(){
+    
+        gameCtl.playGame();
+    }
+    
+    /**
+     * A mediator method that transfers requests toward high level controller
+     * @return 
+     */
+    @Override
+    public String getRecentlyLoadedGameName(){
+    
+        return gameCtl.getRecentlyLoadedGameName();
     }
 }
