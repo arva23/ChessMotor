@@ -23,19 +23,10 @@ public class GameStatusMgr {
     private JLabel gameStatusValue;
     
     private JLabel prevGameValue;
-    
     private JButton giveUpHumanPlayerButton;
-
     private JButton saveGamePlayButton;
-    
-    
-    
-    private JLabel loadGameButton;
-    
-    private JPanel loadSavedGamePanel;
-    
     private JButton loadLastSavedGameButton;
-    private JButton startGame;
+    private JButton playGameButton;
     
     
     
@@ -43,19 +34,19 @@ public class GameStatusMgr {
             int statusMgrX, int statusMgrY,
             int statusMgrWidth, int statusMgrHeight) throws Exception{
         
+        if(consoleUI == null){
+        
+            throw new NullPointerException("Console line manager is null.");
+        }
+        
+        this.consoleUI = consoleUI;
+        
         if(gameGUI == null){
         
             throw new NullPointerException("Visual component reference is null.");
         }
         
         this.gameGUI = gameGUI;
-        
-        if(gameStatusManager == null){
-        
-            throw new NullPointerException("Game status manager object is null.");
-        }
-        
-        this.gameStatusManager = gameStatusManager;
         
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         
@@ -103,6 +94,8 @@ public class GameStatusMgr {
             }
         });
         
+        gameStatusPanel.add(giveUpHumanPlayerButton);
+        
         // setting up save function
         saveGamePlayButton = new JButton("Save");
         saveGamePlayButton.addMouseListener(new MouseAdapter(){
@@ -110,14 +103,59 @@ public class GameStatusMgr {
             @Override
             public void mouseClicked(MouseEvent e){
             
-                gameGUI.saveGamePlay();
+                try {
+                    
+                    gameGUI.saveGamePlay();
+                }
+                catch (Exception ex) {
+                    
+                    consoleUI.println("Current game status can not be saved.");
+                }
             }
         });
         
-        // todo
+        gameStatusPanel.add(saveGamePlayButton);
         
         // setting up previously saved game list with load option
-        // todo
+        loadLastSavedGameButton = new JButton("Load saved game");
+        loadLastSavedGameButton.addMouseListener(new MouseAdapter(){
+        
+            @Override
+            public void mouseClicked(MouseEvent e){
+            
+                try{
+                
+                    gameGUI.loadLastSavedGame();
+                }
+                catch(Exception ex){
+                
+                    consoleUI.println("Unable to load previously saved game.");
+                }
+            }
+        });
+        
+        gameStatusPanel.add(loadLastSavedGameButton);
+        
+        
+        // setting up start game button
+        playGameButton = new JButton("Play game");
+        playGameButton.addMouseListener(new MouseAdapter(){
+        
+            @Override
+            public void mouseClicked(MouseEvent e){
+            
+                try{
+             
+                    gameGUI.playGame();
+                }
+                catch(Exception ex){
+                
+                    consoleUI.println("Unable to start or continue game.");
+                }
+            }
+        });
+        
+        
     }
     
     public JPanel getMainPanel(){
