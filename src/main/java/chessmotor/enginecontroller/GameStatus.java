@@ -38,24 +38,15 @@ public class GameStatus extends GenericSaveStatus {
         return (boolean)entries.get("machineComes");
     }
 
-    public Duration getMachineTime() {
-        
-        return (Duration)entries.get("machineTime");
+    
+    public HumanPlayer getHumanPlayer(){
+    
+        return (HumanPlayer)entries.get("humanPlayer");
     }
-
-    public Duration getHumanTime() {
-        
-        return (Duration)entries.get("humanTime");
-    }
-
-    public boolean getMachineIsInCheck() {
-        
-        return (boolean)entries.get("machineIsInCheck");
-    }
-
-    public boolean getHumanIsInCheck() {
-        
-        return (boolean)entries.get("humanIsInCheck");
+    
+    public MachinePlayer getMachinePlayer(){
+    
+        return (MachinePlayer)entries.get("machinePlayer");
     }
 
     public String getGamePlayStatus() {
@@ -105,24 +96,14 @@ public class GameStatus extends GenericSaveStatus {
         entries.put("machineComes", machineComes);
     }
 
-    public void setMachineTime(Duration machineTime) {
-        
-        entries.put("machineTime", machineTime);
+    public void setHumanPlayer(HumanPlayer humanPlayer){
+    
+        entries.put("humanPlayer", humanPlayer);
     }
-
-    public void setHumanTime(Duration humanTime) {
-        
-        entries.put("humanTime", humanTime);
-    }
-
-    public void setMachineIsInCheck(boolean machineIsInCheck) {
-        
-        entries.put("machineIsInCheck", machineIsInCheck);
-    }
-
-    public void setHumanIsInCheck(boolean humanIsInCheck) {
-        
-        entries.put("humanIsInCheck", humanIsInCheck);
+    
+    public void setMachinePlayer(MachinePlayer machinePlayer){
+    
+        entries.put("machinePlayer", machinePlayer);
     }
 
     public void setGamePlayStatus(String gamePlayStatus) {

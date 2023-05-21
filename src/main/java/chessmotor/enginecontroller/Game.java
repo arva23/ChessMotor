@@ -1,24 +1,16 @@
 package chessmotor.enginecontroller;
 
 import chessmotor.enginecontroller.piecetypes.Bishop;
-import chessmotor.enginecontroller.piecetypes.GenPiece;
 import chessmotor.enginecontroller.piecetypes.King;
 import chessmotor.enginecontroller.piecetypes.Knight;
 import chessmotor.enginecontroller.piecetypes.Pawn;
 import chessmotor.enginecontroller.piecetypes.Queen;
 import chessmotor.enginecontroller.piecetypes.Rook;
 import chessmotor.view.IConsoleUI;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import chessmotor.view.IGameUI;
-import genmath.genmathexceptions.IllConditionedDataException;
-import genmath.genmathexceptions.NoObjectFoundException;
 import genmath.genmathexceptions.ValueOutOfRangeException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
@@ -44,19 +36,11 @@ public class Game implements IGame{
     private boolean machineBegins;
     private boolean machineComes;
     
-    private double machineScore;
-    private double humanScore;
+    private HumanPlayer humanPlayer;
+    private MachinePlayer machinePlayer;
     
     private Duration timeLimit;
-    private Duration machineTime;
-    private Duration humanTime;
-
-    private LocalDateTime intervalStartMachine;
-    private LocalDateTime intervalStartHuman;
     
-    private boolean machineIsInCheck;
-    private boolean humanIsInCheck;
-    private AtomicBoolean giveUpHumanPlayerGameController;
     private AtomicBoolean playGame;
     private String gamePlayStatus;
     // active in game piece container
@@ -70,7 +54,7 @@ public class Game implements IGame{
     //  to be able to locate the origin step of leaves that are required for next 
     //  step generations
     private StepDecisionTree stepSequences;
-    private int stepId;// starting from 1 (the first step)
+    private Integer stepId;// starting from 1 (the first step)
     private Stack<Step> sourceStepHistory;
     private Stack<Step> targetStepHistory;
     
@@ -121,11 +105,33 @@ public class Game implements IGame{
         this.machineBegins = machineBegins;
         this.machineComes = machineBegins;
 
-        machineScore = 0.0;
-        humanScore = 0.0;
-        machineIsInCheck = false;
-        humanIsInCheck = false;
-        giveUpHumanPlayerGameController.set(false);
+        humanPlayer = new HumanPlayer(
+                this,
+                pieces,
+                gameBoard,
+                stepSequences,
+                false,
+                removedHumanPieces,
+                removedMachinePieces,
+                0.0,
+                stepId,
+                Duration.ZERO,
+                LocalDateTime.now(),
+                false);
+        
+        machinePlayer = new MachinePlayer(
+                this,
+                pieces,
+                gameBoard,
+                stepSequences,
+                false,
+                removedMachinePieces,
+                removedHumanPieces,
+                0.0,
+                stepId,
+                Duration.ZERO,
+                LocalDateTime.now());
+        
         playGame.set(true);
         gamePlayStatus = "OK";
 
@@ -253,10 +259,8 @@ public class Game implements IGame{
         
         machineBegins = gameStatus.getMachineBegins();
         machineComes = gameStatus.getMachineComes();
-        machineTime = gameStatus.getMachineTime();
-        humanTime = gameStatus.getHumanTime();
-        machineIsInCheck = gameStatus.getMachineIsInCheck();
-        humanIsInCheck = gameStatus.getHumanIsInCheck();
+        humanPlayer = gameStatus.getHumanPlayer();
+        machinePlayer = gameStatus.getMachinePlayer();
         gamePlayStatus = gameStatus.getGamePlayStatus();
         pieces = gameStatus.getPieces();
         gameBoard = gameStatus.getGameBoard();
@@ -279,10 +283,8 @@ public class Game implements IGame{
     
         gameStatus.setMachineBegins(machineBegins);
         gameStatus.setMachineComes(machineComes);
-        gameStatus.setMachineTime(machineTime);
-        gameStatus.setHumanTime(humanTime);
-        gameStatus.setMachineIsInCheck(machineIsInCheck);
-        gameStatus.setHumanIsInCheck(humanIsInCheck);
+        gameStatus.setHumanPlayer(humanPlayer);
+        gameStatus.setMachinePlayer(machinePlayer);
         gameStatus.setGamePlayStatus(gamePlayStatus);
         gameStatus.setPieces(pieces);
         gameStatus.setGameBoard(gameBoard);
@@ -315,57 +317,6 @@ public class Game implements IGame{
     }
     
     /**
-     * Builds machine strategy respect to player beginning configuration
-     * @throws Exception
-     *         Number of threads can not be obtained, 
-     *         Underflow of newly assigned storage capacity comparing to previously 
-     *          used (data loss)
-     *         InterruptedException of time delay
-     *         Storage reservation underflow, 
-     *         Chunk is empty,
-     *         Multiple roots have been found, 
-     *         Specified root key has not been found
-     */
-    private void buildMachineStrategy() throws Exception{
-    
-        int numberOfThreads = Runtime.getRuntime().availableProcessors();
-        
-        if(numberOfThreads == 0){
-        
-            throw new ValueOutOfRangeException("Unable to detect number of available " 
-                    + "concurrent threads for execution.");
-        }
-        
-        // executor service is only used at parallel generation
-        ExecutorService generatorMgr = Executors.newFixedThreadPool(numberOfThreads);
-        StepDecisionTree initStepSequences = new StepDecisionTree(stepSequences);
-        ArrayList<StepDecisionTree> stepSequencesChunks = new ArrayList<>();
-       
-        // build step decision tree in parallel mode for the first time
-        
-        // the number of possible steps is much higher than the number of 
-        //  concurrent threads
-        
-        int memReq = 10000;// for the first time to avoid frequent allocations
-
-        for(int threadId = 0; threadId < numberOfThreads; ++threadId){
-
-            initStepSequences.reserveMem(memReq / numberOfThreads);
-            initStepSequences.setFracNo(threadId);
-            stepSequencesChunks.add(new StepDecisionTree(initStepSequences));
-            generatorMgr.execute(stepSequencesChunks.get(threadId));
-        }
-
-        // todo compute dynamic timeout for generation according to cpu performance
-        generatorMgr.awaitTermination(120000, TimeUnit.MILLISECONDS);
-
-        for(int threadId = 0; threadId < numberOfThreads; ++threadId){
-
-            stepSequences.unite(stepSequencesChunks.get(threadId));
-        }
-    }
-    
-    /**
      * Entry point of this game handler controller class.
      * The main game operator method that manages the high level game events in 
      * business logic and triggers requests toward external modules such as GUI
@@ -393,18 +344,17 @@ public class Game implements IGame{
         
         if(machineBegins){
             
-            intervalStartMachine = LocalDateTime.now();
+            machinePlayer.startClock();
             
             waitForDataSave();
             machineComes = true;
             
-            stepSequences.generateFirstMachineStep();
-            requestNextMachineStep();
+            machinePlayer.generateFirstMachineStep();
+            machinePlayer.getNextStep();
             
-            machineTime.plus(LocalDateTime.now().until(
-            intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            machinePlayer.stopClock();
             
-            validateHumanPlayerStatus();
+            humanPlayer.validateStatus();
 
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
@@ -414,7 +364,7 @@ public class Game implements IGame{
                     targetStep.getRank(), targetStep.getFile());
             signalForDataRead();
             
-            if(timeLimit.compareTo(machineTime) <= 0){
+            if(timeLimit.compareTo(machinePlayer.getTime()) <= 0){
             
                 playGame.set(false);
                 gamePlayStatus = "WIN";
@@ -426,17 +376,16 @@ public class Game implements IGame{
             gameUI.switchPlayerClock();
             
             // waiting for player action
-            intervalStartHuman = LocalDateTime.now();
+            humanPlayer.startClock();
             
             waitForDataSave();  
             machineComes = false;
             
-            requestNextHumanStep();
+            humanPlayer.getNextStep();
             
-            humanTime.plus(LocalDateTime.now().until(
-            intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            humanPlayer.stopClock();
             
-            validateMachinePlayerStatus();
+            machinePlayer.validateStatus();
             
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
@@ -447,7 +396,7 @@ public class Game implements IGame{
             
             signalForDataRead();
             
-            if(timeLimit.compareTo(humanTime) <= 0){
+            if(timeLimit.compareTo(humanPlayer.getTime()) <= 0){
             
                 playGame.set(false);
                 gamePlayStatus = "LOSE";
@@ -458,18 +407,17 @@ public class Game implements IGame{
             
             gameUI.switchPlayerClock();
             
-            intervalStartMachine = LocalDateTime.now();
+            machinePlayer.startClock();
             
             waitForDataSave();
             machineComes = true;
             
-            buildMachineStrategy();
-            requestNextMachineStep();
+            machinePlayer.buildStrategy();
+            machinePlayer.getNextStep();
             
-            machineTime.plus(LocalDateTime.now().until(
-            intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            machinePlayer.stopClock();
             
-            validateHumanPlayerStatus();
+            humanPlayer.validateStatus();
 
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
@@ -480,7 +428,7 @@ public class Game implements IGame{
             
             signalForDataRead();
             
-            if(timeLimit.compareTo(machineTime) <= 0){
+            if(timeLimit.compareTo(machinePlayer.getTime()) <= 0){
             
                 playGame.set(false);
                 gamePlayStatus = "WIN";
@@ -494,17 +442,16 @@ public class Game implements IGame{
         else{
             
             // waiting for player action
-            intervalStartHuman = LocalDateTime.now();
+            humanPlayer.startClock();
             
             waitForDataSave();
             machineComes = false;
             
-            requestNextHumanStep();
+            humanPlayer.getNextStep();
             
-            humanTime.plus(LocalDateTime.now().until(
-            intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            humanPlayer.stopClock();
             
-            validateMachinePlayerStatus();
+            machinePlayer.validateStatus();
             
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
@@ -515,7 +462,7 @@ public class Game implements IGame{
             
             signalForDataRead();
             
-            if(timeLimit.compareTo(humanTime) <= 0){
+            if(timeLimit.compareTo(humanPlayer.getTime()) <= 0){
             
                 playGame.set(false);
                 gamePlayStatus = "LOSE";
@@ -526,19 +473,18 @@ public class Game implements IGame{
             
             gameUI.switchPlayerClock();
             
-            intervalStartMachine = LocalDateTime.now();
+            machinePlayer.startClock();
             
             waitForDataSave();
             machineComes = true;
             
-            stepSequences.generateFirstMachineStep();
-            requestNextMachineStep();
-            buildMachineStrategy();
+            machinePlayer.generateFirstMachineStep();
+            machinePlayer.getNextStep();
+            machinePlayer.buildStrategy();
             
-            machineTime.plus(LocalDateTime.now().until(
-            intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            machinePlayer.stopClock();
             
-            validateHumanPlayerStatus();
+            humanPlayer.validateStatus();
             
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
@@ -554,8 +500,7 @@ public class Game implements IGame{
                 playGame.set(false);
                 gamePlayStatus = "WIN";
             
-                gameUI.stop();
-                gameUI.updateGameStatus(gamePlayStatus);
+                setGamePlayStatus("WIN");
             }
             
             gameUI.switchPlayerClock();
@@ -563,15 +508,14 @@ public class Game implements IGame{
         
         while(playGame.get()){
         
-            intervalStartHuman = LocalDateTime.now();
+            humanPlayer.startClock();
             waitForDataSave();
             machineComes = false;
-            requestNextHumanStep();
+            humanPlayer.getNextStep();
 
-            humanTime.plus(LocalDateTime.now().until(
-            intervalStartHuman, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            humanPlayer.stopClock();
             
-            validateMachinePlayerStatus();
+            machinePlayer.validateStatus();
             
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
@@ -580,7 +524,7 @@ public class Game implements IGame{
                     sourceStep.getRank(), sourceStep.getFile(),
                     targetStep.getRank(), targetStep.getFile());
             signalForDataRead();
-            if(timeLimit.compareTo(humanTime) <= 0){
+            if(timeLimit.compareTo(humanPlayer.getTime()) <= 0){
             
                 playGame.set(false);
                 gamePlayStatus = "LOSE";
@@ -592,16 +536,15 @@ public class Game implements IGame{
             
             gameUI.switchPlayerClock();
             
-            intervalStartMachine = LocalDateTime.now();
+            machinePlayer.startClock();
             waitForDataSave();
             machineComes = true;
-            stepSequences.continueMachineStepSequences();
-            requestNextMachineStep();
+            stepSequences.continueStepSequences();
+            machinePlayer.getNextStep();
             
-            machineTime.plus(LocalDateTime.now().until(
-            intervalStartMachine, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
+            machinePlayer.stopClock();
             
-            validateHumanPlayerStatus();
+            humanPlayer.validateStatus();
         
             sourceStep = sourceStepHistory.lastElement();
             targetStep = targetStepHistory.lastElement();
@@ -610,7 +553,7 @@ public class Game implements IGame{
                     sourceStep.getRank(), sourceStep.getFile(),
                     targetStep.getRank(), targetStep.getFile());
             signalForDataRead();
-            if(timeLimit.compareTo(machineTime) <= 0){
+            if(timeLimit.compareTo(machinePlayer.getTime()) <= 0){
             
                 playGame.set(false);
                 gamePlayStatus = "WIN";
@@ -639,8 +582,8 @@ public class Game implements IGame{
             // no further condition is needed, only draw scenario is at present
         
             consoleUI.println("Game has ended with draw ("
-                    + humanScore + " - " + machineScore + ", player - machine) with "
-                    + stepId + " steps.");
+                    + humanPlayer.getScore() + " - " + machinePlayer.getScore() 
+                    + ", player - machine) with " + stepId + " steps.");
             
             // TODO print more information (especially score related informations)
             //  the draw does not mean that the scores are equal, identic
@@ -678,605 +621,6 @@ public class Game implements IGame{
     }
     
     /**
-     * An universal human player/user action handler. It manages first steps, 
-     * further steps, castling, promotion, hit, illegal dual step, illegal step.
-     * @throws Exception
-     *         GUI module exceptions
-     *         Inappropriate user input
-     *         Ill conditioned source-target pairs
-     *         Ill conditioned source pair
-     *         Source rank out of range
-     *         Source file out of range
-     *         Lack of player piece at source position
-     *         Wrong selected position in case of check
-     *         Target rank out of range
-     *         Target file out of range
-     *         Illegally selected target step
-     *         DualStep range violations at step creation
-     *         Disallowed castling
-     *         Step range violations at step creation
-     *         StepDecisionTree exceptions (see further)
-     */
-    private void requestNextHumanStep() throws Exception{
-        
-        String action;
-        action = gameUI.readPlayerAction();
-        
-        if(action.isEmpty()){
-        
-            throw new NoObjectFoundException("Provided input is not acceptable.");
-        }
-        
-        if(humanIsInCheck && action.compareTo("giveup") == 0){
-        
-            playGame.set(false);
-            gamePlayStatus = "LOSE";
-         
-            gameUI.stop();
-            gameUI.updateGameStatus(gamePlayStatus);
-            return;
-        }
-        
-        String[] param = action.split("|");
-        
-        if(param.length != 2){
-        
-            throw new IllConditionedDataException("No source and target "
-                    + "position has been given properly.");
-        }
-        
-        if(param[0].length() != 2){
-        
-            throw new IllConditionedDataException("Ill given source position.");
-        }
-        
-        int sourceSelectedRank;
-        
-        if(param[0].charAt(0) < 0 || param[0].charAt(0) > 7){
-        
-            throw new ValueOutOfRangeException("Source rank is out of range.");
-        }
-        
-        sourceSelectedRank = (int)param[0].charAt(0);
-        int sourceSelectedFile;
-        
-        if(param[0].charAt(1) < 1 || param[0].charAt(1) > 7){
-        
-            throw new ValueOutOfRangeException("Source file is out of range.");
-        }
-        
-        sourceSelectedFile = (int)param[0].charAt(1);
-        
-        if(gameBoard.get(sourceSelectedRank, sourceSelectedFile) == -1){
-        
-            throw new NoObjectFoundException("No available piece in the "
-                    + "provided position.");
-        }
-        
-        if(humanIsInCheck && gameBoard.get(sourceSelectedRank, sourceSelectedFile) != 11){
-        
-            throw new Exception("Player is in check. Resolve check.");
-        }
-        
-        GenPiece selectedPiece = 
-            pieces.get(gameBoard.get(sourceSelectedRank, sourceSelectedFile));
-        
-        if(param[1].length() != 2){
-        
-            throw new IllConditionedDataException("Ill given target position.");
-        }
-        
-        int targetSelectedRank;
-        
-        if(param[1].charAt(0) < '0' || param[1].charAt(0) > '7'){
-        
-            throw new ValueOutOfRangeException("Targer rank is out of range.");
-        }
-        
-        targetSelectedRank = (int)param[1].charAt(0);
-        int targetSelectedFile;
-        
-        if(param[1].charAt(1) < 1 || param[1].charAt(1) > 8){
-        
-            throw new ValueOutOfRangeException("Target file is out of range.");
-        }
-        
-        targetSelectedFile = (int)param[0].charAt(1);
-        
-        if(!(selectedPiece.generateSteps(gameBoard).contains(
-                new Pair(targetSelectedRank, targetSelectedFile)))){
-        
-            throw new Exception("Illegal selected step by chosen piece.");
-        }
-        
-        // case of castling
-        boolean castlingOccurred = false;
-        boolean pawnReplacementOccurred = false;
-        GenPiece selectedSecondPiece = new GenPiece();
-        
-        if(selectedPiece.getTypeName().contains("king") 
-                && (selectedSecondPiece = pieces.get(gameBoard.get(targetSelectedRank, targetSelectedFile)))
-                        .getTypeName().contains("rook") 
-                && selectedPiece.getRank() == 7 && selectedSecondPiece.getRank() == 7){
-        
-            // suboptimal condition tests
-            
-            // selectedRook = pieces[gameBoard[targetSelectedRank][targetSelectedFile]];
-            boolean emptyInterFiles = true;
-            
-            if(selectedPiece.getFile() < selectedSecondPiece.getFile()){
-            
-                for(int fileInd = 5; fileInd < 7 && emptyInterFiles; ++fileInd){
-                
-                    emptyInterFiles = gameBoard.get(7, fileInd) == -1;
-                }
-                
-                if(emptyInterFiles){
-                
-                    // perform castling
-                    sourceStepHistory.add(new DualStep("castling", 
-                            11 + 16, 15 + 16, 7, 4, 7, 
-                            7, 0.0, 0,
-                            0.0));
-
-                    gameBoard.set(7, 4, -1);
-                    selectedPiece.setFile(6);
-                    gameBoard.set(7, 6, 11 + 16);
-                    gameBoard.set(7, 7, -1);
-                    selectedSecondPiece.setFile(5);
-                    gameBoard.set(7, 5, 15 + 16);
-                    
-                    castlingOccurred = true;
-                }
-            }
-            else{
-                
-                for(int fileInd = 1; fileInd < 4 && emptyInterFiles; ++fileInd){
-                 
-                    emptyInterFiles = gameBoard.get(7, fileInd) == -1;
-                }
-                
-                if(emptyInterFiles){
-                
-                    // perform castling
-                    sourceStepHistory.add(new DualStep("castling", 
-                            16 + 11, 8 + 16, 7, 4, 7, 
-                            0, 0.0, 0,
-                            0.0));
-                    
-                    gameBoard.set(7, 4, -1);
-                    selectedPiece.setFile(1);
-                    gameBoard.set(7, 2, 11 + 16);
-                    gameBoard.set(7, 0, -1);
-                    selectedSecondPiece.setFile(2);
-                    gameBoard.set(7, 3, 8 + 16);
-                    
-                    castlingOccurred = true;
-                }
-                else{
-                
-                }
-            }
-            
-            if(!emptyInterFiles){
-            
-                throw new Exception("Castling cannot be executed due to "
-                        + "occupied squares.");
-            }
-        }
-        else if(selectedPiece.getTypeName().contains("pawn") 
-                && sourceSelectedRank == 0 
-                && sourceSelectedRank == targetSelectedRank 
-                && sourceSelectedFile == targetSelectedFile){
-       
-            // the visualized removed pieces are weakly coupled with index based
-            //  explicit removed pieces conatiner, in this case type search is 
-            //  required to select a proper piece from container
-            String selectedTypeName = gameUI.selectPawnReplacement();
-        
-            if(giveUpHumanPlayerGameController.get()){
-            
-                // terminate human action request
-                return;
-            }
-            
-            int sizeOfRemovedHumanPieces = removedHumanPieces.size();
-            
-            for(int i = 0; i < sizeOfRemovedHumanPieces; ++i){
-                
-                if(pieces.get(removedHumanPieces.get(i))
-                        .getTypeName().equals(selectedTypeName)){
-                
-                    pawnReplacementOccurred = true;
-                    
-                    selectedSecondPiece = pieces.get(removedHumanPieces.get(i));
-                    
-                    sourceStepHistory.add(new DualStep(
-                            "promotion", selectedPiece.getPieceId(), 
-                            selectedSecondPiece.getPieceId(),
-                            sourceSelectedRank, sourceSelectedFile, 
-                            targetSelectedRank, targetSelectedFile,
-                            0.0, 0, 0.0));
-                    
-                    selectedPiece.setRank(sourceSelectedRank);
-                    selectedPiece.setFile(sourceSelectedFile);
-                    selectedSecondPiece.setRank(targetSelectedRank);
-                    selectedSecondPiece.setFile(targetSelectedFile);
-                    gameBoard.set(targetSelectedRank, targetSelectedFile, 
-                            removedHumanPieces.get(i));
-                    
-                    removedHumanPieces.removeElementAt(i);
-                    removedHumanPieces.add(selectedPiece.getPieceId());
-                    
-                    break;
-                }
-            }
-        }
-        else{
-        
-            // in case of hit as well
-
-            selectedPiece.setRank(targetSelectedRank);
-            selectedPiece.setFile(targetSelectedFile);
-
-            gameBoard.set(targetSelectedRank, targetSelectedFile, 
-                gameBoard.get(sourceSelectedRank, sourceSelectedFile));
-
-            sourceStepHistory.add(new Step("hit", 
-                    gameBoard.get(sourceSelectedRank, 
-                    sourceSelectedFile), sourceSelectedRank, 
-                    sourceSelectedFile, 0.0,
-                    0, 0.0));
-            gameBoard.set(sourceSelectedRank, sourceSelectedFile, -1);
-        }
-        
-        Step currStep;
-        if(castlingOccurred){
-        
-            currStep = new DualStep("castling", selectedPiece.getPieceId(), 
-                    selectedSecondPiece.getPieceId(), selectedPiece.getRank(),
-                    selectedPiece.getFile(), selectedSecondPiece.getRank(), 
-                    selectedSecondPiece.getFile(), 0.0, 0,
-                    0.0);
-        }
-        else if(pawnReplacementOccurred){
-        
-            currStep = new DualStep("promotion", selectedPiece.getPieceId(),
-                    selectedSecondPiece.getPieceId(), sourceSelectedRank,
-                    sourceSelectedFile, targetSelectedRank, 
-                    targetSelectedFile, 0.0, 0,
-                    0.0);
-        }
-        else{
-            
-            currStep  = new Step("standard", selectedPiece.getPieceId(), 
-                    targetSelectedRank, targetSelectedFile, 0.0,
-                    0, 0.0);// comparing currently created step
-        }
-        
-        Step selectedStep;
-        
-        if(stepSequences.size() > 2){
-        
-            // finding step node with given position
-            ArrayList<GenStepKey> levelKeys = stepSequences.getLevelKeys(1);
-
-            int sizeOfLevelKeys = levelKeys.size();
-
-            int i = 0;
-
-            for(; i < sizeOfLevelKeys; ++i){
-
-                selectedStep = stepSequences.getByKey(levelKeys.get(i));
-
-                if(selectedStep.equals(currStep)){
-
-                    break;
-                }
-            }
-            
-            // TASK) shift tree with one level, throw root away (root displacement)
-            stepSequences.setNewRootByKey(levelKeys.get(i));
-            
-            targetStepHistory.add(stepSequences.getByKey(levelKeys.get(i)));
-            
-            // TASK) rename step node keys/identifiers (cyclic renaming)
-            //       in order to limit the key length (comparison optimization)
-            stepSequences.trimKeys();
-            
-            humanScore += targetStepHistory.get(targetStepHistory.size() - 1).getValue();
-        }
-        else{
-            
-            selectedStep = new Step("standard",
-                    gameBoard.get(targetSelectedRank, targetSelectedFile), 
-                    targetSelectedRank, targetSelectedFile, 
-                    selectedPiece.getValue(), 0,
-                    selectedPiece.getValue());
-            if(machineBegins){
-                
-                stepSequences.addOne(new GenStepKey("a"), 
-                        new GenStepKey("aa"), selectedStep);
-                // saving previous level status
-                stepSequences.addToHistoryStack("aa", selectedStep);
-            }
-            else{
-            
-                stepSequences.addOne(new GenStepKey("a"), 
-                        new GenStepKey("a"), selectedStep);
-                // saving previous level status
-                stepSequences.addToHistoryStack("a", selectedStep);
-            }
-            
-            targetStepHistory.add(selectedStep);
-        
-            //humanScore = 0.0;// initial step has taken
-        }
-        
-        // piece removal in case of hit
-        if(gameBoard.get(targetSelectedRank, targetSelectedFile) != -1){
-        
-            removedMachinePieces.add(
-                    gameBoard.get(targetSelectedRank, targetSelectedFile));
-        }
-        
-        ++stepId;
-    }
-    
-    /**
-     * Validates human player after machine player took step
-     * @throws Exception
-     *         StepDecisionTree exception (see further)
-     */
-    private void validateHumanPlayerStatus() throws Exception{
-    
-        // looking for check mate on human king piece
-        
-        ArrayList<GenStepKey> levelKeys = stepSequences.getLevelKeys(1);
-
-        int sizeOfLevelKeys = levelKeys.size();
-
-        Step step;
-        for(int i = 0; i < sizeOfLevelKeys; ++i){
-
-            step = stepSequences.getByKey(levelKeys.get(i));
-
-            if(gameBoard.get(step.getRank(), step.getFile()) == 11 + 16){
-
-                // human king is in check
-                humanIsInCheck = true;
-            }
-        }
-        
-        if(humanIsInCheck && pieces.get(11 + 16).generateSteps(gameBoard).isEmpty()){
-        
-            playGame.set(false);
-            gamePlayStatus = "LOSE";
-     
-            gameUI.stop();
-            gameUI.updateGameStatus(gamePlayStatus);
-        }        
-    }
-    
-    /**
-     * Validates machine player after human player took step
-     * @throws Exception 
-     *         StepDecisionTree exception (see further)
-     */
-    private void validateMachinePlayerStatus() throws Exception{
-    
-        // looking of check mate on machine king piece
-        
-        ArrayList<GenStepKey> levelKeys = stepSequences.getLevelKeys(1);
-        
-        int sizeOfLastNonLeafLevelKeys = levelKeys.size();
-        
-        Step step;
-        for(int i = 0; i < sizeOfLastNonLeafLevelKeys; ++i){
-        
-            step = stepSequences.getByKey(levelKeys.get(i));
-            
-            if(gameBoard.get(step.getRank(), step.getFile()) == 11){
-            
-                // machine king is in check
-                machineIsInCheck = true;
-            }
-        }
-        
-        if(machineIsInCheck && pieces.get(11).generateSteps(gameBoard).isEmpty()){
-        
-            playGame.set(false);
-            gamePlayStatus = "WIN";
-            
-            gameUI.stop();
-            gameUI.updateGameStatus(gamePlayStatus);
-        }
-    }
-    
-    
-    /**
-     * It selects next machine step similarly to human step request method
-     * @throws Exception 
-     *         StepDecisionTree exceptions (see further)
-     *         Step creation exceptions (see further)
-     *         DualStep creation exceptions (see further)
-     */
-    private void requestNextMachineStep() throws Exception{
-    
-        // TODO it could be integrated in step decision tree builder
-        
-        // TASK) select the best option - max search, and apply to the game using 
-        //       posteriori update(perform update after execution of further subroutines 
-        //       of this method)
-        
-        ArrayList<GenStepKey> levelKeys = stepSequences.getLevelKeys(1);
-        
-        if(levelKeys.isEmpty() && stepSequences.getCurrDepth() == 1){
-        
-            playGame.set(false);
-            gamePlayStatus = "WIN";
-            
-            gameUI.stop();
-            gameUI.updateGameStatus(gamePlayStatus);
-            return;
-        }
-        
-        int sizeOfLeafSteps = levelKeys.size();
-        int maxI = 0;
-        double currCumulativeValue;
-        double maxCumulativeValue = stepSequences.getByKey(
-                levelKeys.get(maxI)).getCumulativeValue();
-        
-        // machine check defense
-        if(machineIsInCheck){
-        
-            boolean foundNextStep = false;
-            
-            for(int i = 1; i < sizeOfLeafSteps; ++i){
-                
-                if(stepSequences.getByKey(levelKeys.get(i)).getPieceId() == 11){
-                
-                    foundNextStep = true;
-                    
-                    currCumulativeValue = stepSequences.getByKey(
-                    levelKeys.get(i)).getCumulativeValue();
-            
-                    if(maxCumulativeValue < currCumulativeValue){
-
-                        maxCumulativeValue = currCumulativeValue;
-                        maxI = i;
-                    }
-                }
-            }
-            
-            if(!foundNextStep){
-            
-                playGame.set(false);
-                gamePlayStatus = "WIN";
-                
-                gameUI.stop();
-                gameUI.updateGameStatus(gamePlayStatus);
-                return;
-            }
-            else{
-            
-                machineIsInCheck = false;
-            }
-        }
-        else{
-        
-            for(int i = 1; i < sizeOfLeafSteps; ++i){
-
-                currCumulativeValue = stepSequences.getByKey(
-                    levelKeys.get(i)).getCumulativeValue();
-            
-                if(maxCumulativeValue < currCumulativeValue){
-
-                    maxCumulativeValue = currCumulativeValue;
-                    maxI = i;
-                }
-            }
-        }
-        
-        Step step = stepSequences.getByKey(levelKeys.get(maxI));
-        
-        int pieceId = step.getPieceId();
-        GenPiece selectedPiece = pieces.get(pieceId);
-        GenPiece selectedSecondPiece;
-        
-        if(step instanceof DualStep){
-        
-            DualStep dualStep = (DualStep)step;
-            selectedSecondPiece = pieces.get(dualStep.getSecondPieceId());
-            
-            if((selectedPiece.getTypeName().contains("king") 
-                    || selectedPiece.getTypeName().contains("rook"))){
-            
-                // castling option
-                        
-                sourceStepHistory.add(new DualStep(
-                        "castling", selectedPiece.getPieceId(),
-                        selectedSecondPiece.getPieceId(), 
-                        selectedPiece.getRank(), selectedPiece.getFile(), 
-                        selectedSecondPiece.getRank(), selectedSecondPiece.getFile(), 
-                        0.0, 0, 0.0));
-                
-                gameBoard.set(selectedPiece.getRank(), 
-                        selectedPiece.getFile(), -1);
-                gameBoard.set(selectedSecondPiece.getRank(), 
-                        selectedSecondPiece.getFile(), -1);
-                
-                selectedPiece.setRank(dualStep.getRank());
-                selectedPiece.setFile(dualStep.getFile());
-                selectedSecondPiece.setRank(dualStep.getSecondRank());
-                selectedSecondPiece.setFile(dualStep.getSecondFile());
-                
-                gameBoard.set(selectedPiece.getRank(), 
-                        selectedPiece.getFile(),
-                        selectedPiece.getPieceId());
-                gameBoard.set(selectedSecondPiece.getRank(), 
-                        selectedSecondPiece.getFile(), 
-                        selectedSecondPiece.getPieceId());
-            }
-            else if(selectedPiece.getTypeName().contains("pawn")){
-                
-                sourceStepHistory.add(new DualStep(
-                        "promotion", selectedPiece.getPieceId(),
-                        selectedSecondPiece.getPieceId(), 
-                        selectedPiece.getRank(), selectedPiece.getFile(), 
-                        selectedSecondPiece.getRank(), selectedSecondPiece.getFile(), 
-                        0.0, 0, 0.0));
-                
-                selectedPiece.setRank(dualStep.getRank());
-                selectedPiece.setFile(dualStep.getFile());
-                selectedSecondPiece.setRank(dualStep.getSecondRank());
-                selectedSecondPiece.setFile(dualStep.getSecondFile());
-                gameBoard.set(dualStep.getSecondRank(), dualStep.getSecondFile(), 
-                        dualStep.getSecondPieceId());
-            
-                removedMachinePieces.remove(selectedSecondPiece.getPieceId());
-                removedMachinePieces.add(selectedPiece.getPieceId());
-            }   
-        }
-        else{
-            
-            // piece removal in case of hit
-            if(gameBoard.get(step.getRank(), step.getFile()) != -1){
-
-                removedHumanPieces.add(
-                        gameBoard.get(step.getRank(), step.getFile()));
-            }
-            
-            sourceStepHistory.add(new Step("standard", 
-                    pieceId, selectedPiece.getRank(), 
-                    selectedPiece.getFile(), selectedPiece.getValue(),
-                    0, selectedPiece.getValue()));
-            
-            selectedPiece.setRank(step.getRank());
-            selectedPiece.setFile(step.getFile());
-            gameBoard.set(selectedPiece.getRank(), selectedPiece.getFile(), 
-                    selectedPiece.getPieceId());
-        }
-        
-        // TASK) shift tree with one level, throw root away (root displacement)
-        
-        // set the actual root as source position        
-        stepSequences.setNewRootByKey(levelKeys.get(maxI));
-        
-        targetStepHistory.add(stepSequences.getByKey(levelKeys.get(maxI)));
-        
-        // TASK) rename step node keys/identifiers (cyclic renaming)
-        //       in order to limit the key length (comparison optimization)
-        stepSequences.trimKeys();
-        
-        machineScore += targetStepHistory.get(targetStepHistory.size() - 1).getValue();
-        
-        ++stepId;
-        
-        // TASK) yield control to human player (asynchronous tasks)
-    }
-
-    /**
      * Provides the source step sequence history for further processing
      * @return Returns the recent status of source step sequence history container
      */
@@ -1305,45 +649,89 @@ public class Game implements IGame{
     }
     
     /**
-     * This method is a getter to provide machine player specific available removed
-     * player pieces to be used again. It is used at visual piece selection.
-     * @return Returns the player dependent removed pieces from the game table
-     */
-    @Override
-    public Stack<String> getMachinePromotionTypeNames(){
-    
-        Stack<String> removedMachinePiecesTypeNames = new Stack<>();
-        
-        int sizeOfRemovedMachinePieces = removedMachinePieces.size();
-        
-        for(int i = 0; i < sizeOfRemovedMachinePieces; ++i){
-        
-            removedMachinePiecesTypeNames.add(
-                    pieces.get(removedMachinePieces.get(i)).getTypeName());
-        }
-        
-        return removedMachinePiecesTypeNames;
-    }
-    
-    /**
-     * This method is a getter to provide human player specific available removed 
-     * player pieces to be used again. It is used at visual piece selection.
-     * @return Returns the player dependent removed pieces from the game table
+     * It is a mediator method that fulfills requests from external modules 
+     * using HumanPlayer class
+     * @return Available pieces that are removed earlier
      */
     @Override
     public Stack<String> getHumanPromotionTypeNames(){
     
-        Stack<String> removedHumanPiecesTypeNames = new Stack<>();
-        
-        int sizeOfRemovedHumanPieces = removedHumanPieces.size();
-        
-        for(int i = 0; i < sizeOfRemovedHumanPieces; ++i){
-        
-            removedHumanPiecesTypeNames.add(
-                    pieces.get(removedHumanPieces.get(i)).getTypeName());
-        }
-        
-        return removedHumanPiecesTypeNames;
+        return humanPlayer.getPromotionTypeNames();
+    }
+    
+    /**
+     * It is a mediator method that fulfills requests from external modules
+     * using MachinePlayer class
+     * @return Available pieces that are removed earlier
+     */
+    @Override
+    public Stack<String> getMachinePromotionTypeNames(){
+    
+        return machinePlayer.getPromotionTypeNames();
+    }
+    
+    /**
+     * Make machine player win the game play.
+     */
+    @Override
+    
+    
+    @Override
+    public void setGamePlayStatus(String gamePlayStatus){
+    
+        playGame.set(false);
+        this.gamePlayStatus = gamePlayStatus;
+
+        gameUI.stop();
+        gameUI.updateGameStatus(gamePlayStatus);
+    }
+    
+    @Override
+    public String readPlayerAction() throws Exception{
+    
+        return gameUI.readPlayerAction();
+    }
+    
+    @Override
+    public String selectPawnReplacement() throws Exception{
+    
+        return gameUI.selectPawnReplacement();
+    }
+    
+    @Override
+    public void addSourceStep(Step newStep){
+    
+        sourceStepHistory.add(newStep);
+    }
+    
+    @Override
+    public void addTargetStep(Step newStep){
+    
+        targetStepHistory.add(newStep);
+    }
+    
+    @Override
+    public Step getSourceStep(int id) throws Exception{
+    
+        return sourceStepHistory.get(id);
+    }
+    
+    @Override
+    public Step getTargetStep(int id) throws Exception{
+    
+        return targetStepHistory.get(id);
+    }
+    
+    @Override
+    public int getSourceStepHistorySize(){
+    
+        return sourceStepHistory.size();
+    }
+    
+    @Override
+    public int getTargetStepHistorySize(){
+    
+        return targetStepHistory.size();
     }
     
     /**
@@ -1384,19 +772,5 @@ public class Game implements IGame{
     public void signalForDataSave() throws InterruptedException{
     
         statusSaveLock.signal();
-    }
-    
-    /**
-     * Make machine player win the game play.
-     */
-    @Override
-    public void giveUpHumanPlayer(){
-    
-        giveUpHumanPlayerGameController.set(true);
-        playGame.set(false);
-        gamePlayStatus = "LOSE";
-     
-        gameUI.stop();
-        gameUI.updateGameStatus(gamePlayStatus);
     }
 }

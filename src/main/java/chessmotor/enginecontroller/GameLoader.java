@@ -131,14 +131,10 @@ public class GameLoader implements Runnable{
                     reader, Boolean.class));
             savedGame.setMachineComes(deserializer.fromJson(
                     reader, Boolean.class));
-            savedGame.setMachineTime(deserializer.fromJson(
-                    reader, Duration.class));
-            savedGame.setHumanTime(deserializer.fromJson(
-                    reader, Duration.class));
-            savedGame.setMachineIsInCheck(deserializer.fromJson(
-                    reader, Boolean.class));
-            savedGame.setHumanIsInCheck(deserializer.fromJson(
-                    reader, Boolean.class));
+            savedGame.setHumanPlayer(deserializer.fromJson(
+                    reader, HumanPlayer.class));
+            savedGame.setMachinePlayer(deserializer.fromJson(
+                    reader, MachinePlayer.class));
             savedGame.setGamePlayStatus(deserializer.fromJson(
                     reader, String.class));
             savedGame.setPieces(deserializer.fromJson(
@@ -208,10 +204,8 @@ public class GameLoader implements Runnable{
 
             serializer.toJson(savedGame.getMachineBegins(), writer);
             serializer.toJson(savedGame.getMachineComes(), writer);
-            serializer.toJson(savedGame.getMachineTime(), writer);
-            serializer.toJson(savedGame.getHumanTime(), writer);
-            serializer.toJson(savedGame.getMachineIsInCheck(), writer);
-            serializer.toJson(savedGame.getHumanIsInCheck(), writer);
+            serializer.toJson(savedGame.getHumanPlayer(), writer);
+            serializer.toJson(savedGame.getMachinePlayer(), writer);
             serializer.toJson(savedGame.getGamePlayStatus(), writer);
             serializer.toJson(savedGame.getPieces(), writer);
             serializer.toJson(savedGame.getGameBoard(), writer);
