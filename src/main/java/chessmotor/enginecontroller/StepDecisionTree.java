@@ -1023,7 +1023,7 @@ public class StepDecisionTree implements Runnable, ModularObject{
      * @throws Exception
      *         Initial tree generation has not been performed
      */
-    public void continueMachineStepSequences() throws Exception{
+    public void continueStepSequences() throws Exception{
     
         if(stepDecisionTree.size() < 1){
         
