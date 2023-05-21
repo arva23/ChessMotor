@@ -40,5 +40,4 @@ public interface IGame extends StatusSavable {
     
     public void signalForDataSave() throws Exception;
 
-    public void giveUpHumanPlayer();
 }

@@ -366,11 +366,7 @@ public class Game implements IGame{
             
             if(timeLimit.compareTo(machinePlayer.getTime()) <= 0){
             
-                playGame.set(false);
-                gamePlayStatus = "WIN";
-                
-                gameUI.stop();
-                gameUI.updateGameStatus(gamePlayStatus);
+                setGamePlayStatus("WIN");
             }
             
             gameUI.switchPlayerClock();
@@ -398,11 +394,7 @@ public class Game implements IGame{
             
             if(timeLimit.compareTo(humanPlayer.getTime()) <= 0){
             
-                playGame.set(false);
-                gamePlayStatus = "LOSE";
-                
-                gameUI.stop();
-                gameUI.updateGameStatus(gamePlayStatus);
+                setGamePlayStatus("LOSE");
             }
             
             gameUI.switchPlayerClock();
@@ -430,11 +422,7 @@ public class Game implements IGame{
             
             if(timeLimit.compareTo(machinePlayer.getTime()) <= 0){
             
-                playGame.set(false);
-                gamePlayStatus = "WIN";
-                
-                gameUI.stop();
-                gameUI.updateGameStatus(gamePlayStatus);
+                setGamePlayStatus("WIN");
             }
             
             gameUI.switchPlayerClock();
@@ -464,11 +452,7 @@ public class Game implements IGame{
             
             if(timeLimit.compareTo(humanPlayer.getTime()) <= 0){
             
-                playGame.set(false);
-                gamePlayStatus = "LOSE";
-            
-                gameUI.stop();
-                gameUI.updateGameStatus(gamePlayStatus);
+                setGamePlayStatus("LOSE");
             }
             
             gameUI.switchPlayerClock();
@@ -495,10 +479,7 @@ public class Game implements IGame{
             
             signalForDataRead();
             
-            if(timeLimit.compareTo(machineTime) <= 0){
-            
-                playGame.set(false);
-                gamePlayStatus = "WIN";
+            if(timeLimit.compareTo(machinePlayer.getTime()) <= 0){
             
                 setGamePlayStatus("WIN");
             }
@@ -526,11 +507,7 @@ public class Game implements IGame{
             signalForDataRead();
             if(timeLimit.compareTo(humanPlayer.getTime()) <= 0){
             
-                playGame.set(false);
-                gamePlayStatus = "LOSE";
-                
-                gameUI.stop();
-                gameUI.updateGameStatus(gamePlayStatus);
+                setGamePlayStatus("LOSE");
                 break;
             }
             
@@ -555,11 +532,7 @@ public class Game implements IGame{
             signalForDataRead();
             if(timeLimit.compareTo(machinePlayer.getTime()) <= 0){
             
-                playGame.set(false);
-                gamePlayStatus = "WIN";
-                
-                gameUI.stop();
-                gameUI.updateGameStatus(gamePlayStatus);
+                setGamePlayStatus("WIN");
                 break;
             }
             
@@ -674,7 +647,11 @@ public class Game implements IGame{
      * Make machine player win the game play.
      */
     @Override
+    public void giveUpHumanPlayer(){
     
+        humanPlayer.setGiveUpHumanPlayerGameController(true);
+        setGamePlayStatus("LOSE");
+    }
     
     @Override
     public void setGamePlayStatus(String gamePlayStatus){
