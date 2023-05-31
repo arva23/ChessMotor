@@ -1,4 +1,4 @@
-package chessmotor.enginecontroller;
+package chessmotor.enginecontroller.interfaces;
 
 import java.time.Duration;
 import java.util.Stack;

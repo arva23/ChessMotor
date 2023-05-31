@@ -1,5 +1,7 @@
 package chessmotor.enginecontroller;
 
+import chessmotor.enginecontroller.interfaces.IVisualGameStatus;
+
 public class ComplexGameStatus extends GameStatus implements IVisualGameStatus{
     
     private String[][] boardSquareStatus;
@@ -19,7 +21,6 @@ public class ComplexGameStatus extends GameStatus implements IVisualGameStatus{
     
         return boardSquareStatus;
     }
-    
     
     @Override
     public int getWhitePlayerTime(){
@@ -44,5 +45,4 @@ public class ComplexGameStatus extends GameStatus implements IVisualGameStatus{
     
         this.boardSquareStatus = boardSquareStatus;
     }
-    
 }

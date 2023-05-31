@@ -1,5 +1,8 @@
 package chessmotor.enginecontroller;
 
+import chessmotor.enginecontroller.interfaces.IInterOperationCalls;
+import chessmotor.enginecontroller.interfaces.IGame;
+import chessmotor.enginecontroller.interfaces.IGameController;
 import chessmotor.view.ConsoleManager;
 import chessmotor.view.GUIView;
 import chessmotor.view.IConsoleUI;

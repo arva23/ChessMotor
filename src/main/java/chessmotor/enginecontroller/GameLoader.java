@@ -1,5 +1,6 @@
 package chessmotor.enginecontroller;
 
+import chessmotor.enginecontroller.interfaces.IGame;
 import chessmotor.view.IConsoleUI;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

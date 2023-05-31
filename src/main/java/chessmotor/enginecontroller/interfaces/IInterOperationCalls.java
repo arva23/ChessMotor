@@ -1,4 +1,4 @@
-package chessmotor.enginecontroller;
+package chessmotor.enginecontroller.interfaces;
 
 public interface IInterOperationCalls {
     

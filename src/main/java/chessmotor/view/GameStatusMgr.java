@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import chessmotor.enginecontroller.IInterOperationCalls;
+import chessmotor.enginecontroller.interfaces.IInterOperationCalls;
 
 /**
  * A game status manager class that handles game start, load previously saved game 

@@ -1,4 +1,6 @@
-package chessmotor.enginecontroller;
+package chessmotor.enginecontroller.interfaces;
+
+import chessmotor.enginecontroller.GenericSaveStatus;
 
 public interface StatusSavable {
 

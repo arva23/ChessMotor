@@ -1,4 +1,6 @@
-package chessmotor.enginecontroller;
+package chessmotor.enginecontroller.interfaces;
+
+import chessmotor.enginecontroller.GameLoader;
 
 public interface IGameController{
 

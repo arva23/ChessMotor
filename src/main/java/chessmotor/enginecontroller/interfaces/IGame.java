@@ -1,5 +1,6 @@
-package chessmotor.enginecontroller;
+package chessmotor.enginecontroller.interfaces;
 
+import chessmotor.enginecontroller.Step;
 import java.util.Stack;
 
 public interface IGame extends StatusSavable {

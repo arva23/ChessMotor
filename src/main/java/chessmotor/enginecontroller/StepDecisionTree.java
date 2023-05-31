@@ -1,5 +1,6 @@
 package chessmotor.enginecontroller;
 
+import chessmotor.enginecontroller.interfaces.ModularObject;
 import chessmotor.view.IConsoleUI;
 import genmath.IncArbTree;
 import genmath.LinTreeMultiMap;

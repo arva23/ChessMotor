@@ -1,5 +1,7 @@
 package chessmotor.enginecontroller;
 
+import chessmotor.enginecontroller.interfaces.IPlayer;
+import chessmotor.enginecontroller.interfaces.IGame;
 import chessmotor.enginecontroller.piecetypes.GenPiece;
 import genmath.genmathexceptions.IllConditionedDataException;
 import genmath.genmathexceptions.NoObjectFoundException;

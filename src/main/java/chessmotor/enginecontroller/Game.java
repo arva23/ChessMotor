@@ -1,5 +1,6 @@
 package chessmotor.enginecontroller;
 
+import chessmotor.enginecontroller.interfaces.IGame;
 import chessmotor.enginecontroller.piecetypes.Bishop;
 import chessmotor.enginecontroller.piecetypes.King;
 import chessmotor.enginecontroller.piecetypes.Knight;

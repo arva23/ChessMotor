@@ -2,7 +2,7 @@ package chessmotor.view;
 
 
 import chessmotor.enginecontroller.ComplexGameStatus;
-import chessmotor.enginecontroller.IGame;
+import chessmotor.enginecontroller.interfaces.IGame;
 import genmath.genmathexceptions.ValueOutOfRangeException;
 import java.awt.Container;
 import java.util.Stack;
@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JFrame;
-import chessmotor.enginecontroller.IInterOperationCalls;
+import chessmotor.enginecontroller.interfaces.IInterOperationCalls;
 
 /**
  * It is an version of implementation of a graphical user interface based on 
