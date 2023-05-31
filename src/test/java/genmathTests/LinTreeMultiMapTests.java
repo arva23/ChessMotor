@@ -43,10 +43,13 @@ public class LinTreeMultiMapTests {
         // TODO
         
         // Empty constructor
+        //  todo
         
         // Constructor with provided key and value
+        //  todo
         
         // compareTo method
+        //  todo
     }
     
     @Test
@@ -55,9 +58,10 @@ public class LinTreeMultiMapTests {
         // TODO
         
         // Empty constructor
+        //  todo
         
         // Copy constructor
-        
+        //  todo
     }
     
     @Test
@@ -67,22 +71,29 @@ public class LinTreeMultiMapTests {
         
         // add method
         // Insert a pair into empty container, nominal case
+        //  todo
         
         // Insert a pair into a container that contains one element, nominal case
+        //  todo
         
         // Insert a pair into a container that contains multiple elements, nominal case
+        //  todo
         
         //   insert left side
+        //    todo
         
         //   insert right side
-    
+        //    todo
+        
         // Nominal case of insertion using a Pair argument
-    
+        //  todo
+        
         // setOrAddByKey method
         // modify entry
+        //  todo
         
         // inset new entry
-        
+        //  todo
     }
     
     @Test
@@ -120,10 +131,12 @@ public class LinTreeMultiMapTests {
         // TODO
         
         // existing key and valid occurrence
+        //  todo
         
         // invalid, non-existing key
+        //  todo
         
         // occurrence number is out of range, unsatisfiable presence quantity
-        
+        //  todo
     }
 }
