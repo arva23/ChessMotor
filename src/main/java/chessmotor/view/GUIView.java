@@ -30,7 +30,6 @@ public class GUIView implements IGameUI, IInterOperationCalls{
     private int windowY;
     private int windowWidth;
     private int windowHeight;
-    private double boardRatio;
     
     private AtomicBoolean giveUpHumanPlayerVisual;
     
@@ -139,8 +138,8 @@ public class GUIView implements IGameUI, IInterOperationCalls{
         
         int boardX = 0;
         int boardY = 0;
-        int boardWidth = (int)((double)windowWidth * boardRatio);
-        int boardHeight = (int)((double)windowHeight * boardRatio);
+        int boardWidth = (int)((double)windowWidth);
+        int boardHeight = (int)((double)windowHeight);
         
         // default initialization of game board status
         String[][] boardSquareStatus = new String[8][8];
