@@ -9,6 +9,8 @@ public interface IGame extends StatusSavable {
 
     public boolean machineComes();
     
+    public String getGamePlayStatus();
+    
     public Stack<String> getMachinePromotionTypeNames();
     
     public Stack<String> getHumanPromotionTypeNames();
