@@ -24,9 +24,16 @@ public class GenStepKey extends ComparableKey<GenStepKey> {
     }
 
     @Override
-    public GenStepKey min(GenStepKey key) {
+    public GenStepKey less(GenStepKey key) {
 
         if(val.compareTo(key.val) < 0) return this;
+        else return key;
+    }
+    
+    @Override
+    public GenStepKey greater(GenStepKey key){
+
+        if(val.compareTo(key.val) > 0) return this;
         else return key;
     }
 

@@ -24,13 +24,19 @@ public class GenTmpStepKey extends ComparableKey<GenTmpStepKey> {
     }
 
     @Override
-    public GenTmpStepKey min(GenTmpStepKey key) {
+    public GenTmpStepKey less(GenTmpStepKey key) {
 
         if(val < key.val) return this;
         else return key;
     }
 
-
+    @Override
+    public GenTmpStepKey greater(GenTmpStepKey key){
+    
+        if( val > key.val) return this;
+        else return key;
+    }
+    
     @Override
     public int sgn() {
 
