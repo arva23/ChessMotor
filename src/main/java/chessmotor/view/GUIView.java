@@ -249,12 +249,6 @@ public class GUIView implements IGameUI, IInterOperationCalls{
     
         operateGUI.set(false);
     }
-
-    @Override
-    public void printErr(String errMsg) {
-     
-        // todo
-    }
     
     /**
      * It delegates method for game status loading
