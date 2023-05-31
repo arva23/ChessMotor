@@ -134,7 +134,7 @@ public class Game implements IGame{
                 LocalDateTime.now());
         
         playGame.set(true);
-        gamePlayStatus = "OK";
+        gamePlayStatus = "PLAYING";
 
         pieces = new PieceContainer();
         gameBoard = new GameBoardData();
@@ -279,7 +279,7 @@ public class Game implements IGame{
      */
     @Override
     public GenericSaveStatus getStatus() throws Exception{
-    
+        
         ComplexGameStatus gameStatus = new ComplexGameStatus();
     
         gameStatus.setMachineBegins(machineBegins);
@@ -332,8 +332,6 @@ public class Game implements IGame{
         
         if(!initialized) throw new RuntimeException("Uninitialized game.");
         
-        //gamePlayStatus = 0;
-        //playGame = true;
         Step sourceStep;
         Step targetStep;
         
@@ -631,6 +629,12 @@ public class Game implements IGame{
     public Stack<String> getHumanPromotionTypeNames(){
     
         return humanPlayer.getPromotionTypeNames();
+    }
+    
+    @Override
+    public String getGamePlayStatus(){
+    
+        return gamePlayStatus;
     }
     
     /**
