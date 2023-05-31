@@ -256,6 +256,11 @@ public class Game implements IGame{
     @Override
     public void setStatus(GenericSaveStatus saveStatus) throws Exception{
     
+        if(saveStatus == null){
+        
+            throw new NullPointerException("Save status is null.");
+        }
+        
         GameStatus gameStatus = (GameStatus)saveStatus;
         
         machineBegins = gameStatus.getMachineBegins();
