@@ -44,6 +44,8 @@ public class StepDecisionTree implements Runnable, ModularObject{
     private ArrayList<Step> leafHumanSteps;
     private ArrayList<String> leafHumanKeys;
     
+    private double maxPlayerPieceScore;
+    
     private ArrayList<ArrayList<Integer>> gameBoardHistoryContinuation;
     
     private int fracs;
@@ -51,7 +53,6 @@ public class StepDecisionTree implements Runnable, ModularObject{
     
     private TreeMap<String, Stack<Integer>> removedHumanPiecesContinuation;
     private TreeMap<String, Stack<Integer>> removedMachinePiecesContinuation;
-    
     
     /**
      * Constructor for initialization of step decision tree object
@@ -63,6 +64,8 @@ public class StepDecisionTree implements Runnable, ModularObject{
      *        point
      * @param gameBoard The game board storage object
      * @param depth The maximum size of step sequence starting from the actual step
+     * @param maxPlayerPieceScore maximum score of player piece that can be achieved 
+     *        at a single step
      * @param cumulativeNegativeChangeThreshold Number of consecutive negative 
      *        general player score change
      * @param minConvThreshold Threshold of negative tendency trigger
@@ -72,8 +75,8 @@ public class StepDecisionTree implements Runnable, ModularObject{
      */
     public StepDecisionTree(IConsoleUI consoleUI, boolean machineBegins, 
             PieceContainer pieces, Stack<Step> stepHistory, GameBoardData gameBoard, 
-            int depth, int cumulativeNegativeChangeThreshold, double minConvThreshold, 
-            int fracs, int no, long memLimit){
+            int depth, double maxPlayerPieceScore, int cumulativeNegativeChangeThreshold,
+            double minConvThreshold, int fracs, int no, long memLimit){
     
         super();
         
@@ -119,6 +122,14 @@ public class StepDecisionTree implements Runnable, ModularObject{
         
         // +1 for 0th start step, initiate board positions
         this.depth = depth;
+        
+        if(maxPlayerPieceScore <= 0){
+        
+            throw new RuntimeException("Provided maximum score of player "
+                    + "piece is less than or equal to 0.");
+        }
+        
+        this.maxPlayerPieceScore = maxPlayerPieceScore;
         
         // TODO limit maximum depth according to available resources
         //      (mostly memory and response time by computation speed)
@@ -182,6 +193,7 @@ public class StepDecisionTree implements Runnable, ModularObject{
         this.stepHistoryRef = orig.stepHistoryRef;
         this.gameBoardRef = orig.gameBoardRef;
         this.depth = orig.depth;
+        this.maxPlayerPieceScore = orig.maxPlayerPieceScore;
         this.cumulativeNegativeChangeThreshold = orig.cumulativeNegativeChangeThreshold;
         this.minConvThreshold = orig.minConvThreshold;
         
@@ -560,8 +572,8 @@ public class StepDecisionTree implements Runnable, ModularObject{
                                 0, 
                                 step.getCumulativeValue());
 
-                        // 1000 - value due to reversed order (decreasing values)
-                        value = 1000.0 - allocatedGeneratedStep.getValue();
+                        // maxPlayerPieceScore - value due to reversed order (decreasing values)
+                        value = maxPlayerPieceScore - allocatedGeneratedStep.getValue();
                         sortedGeneratedSteps.add(new GenTmpStepKey(value), 
                             allocatedGeneratedStep);
                     }
@@ -585,8 +597,8 @@ public class StepDecisionTree implements Runnable, ModularObject{
                                 piecesRef.get(11).getValue(), 0,
                                 step.getCumulativeValue());
 
-                        // 1000 - value due to reversed order (decreasing values)
-                        value = 1000.0 - allocatedGeneratedStep.getValue();
+                        // maxPlayerPieceScore - value due to reversed order (decreasing values)
+                        value = maxPlayerPieceScore - allocatedGeneratedStep.getValue();
                         sortedGeneratedSteps.add(new GenTmpStepKey(value), 
                             allocatedGeneratedStep);
                     }
@@ -619,8 +631,8 @@ public class StepDecisionTree implements Runnable, ModularObject{
                                 step.getCumulativeChangeCount(), 
                                 piecesRef.get(currRemovedHumanPieces.get(i)).getValue());
 
-                        // 1000 - value due to reversed order (decreasing values)
-                        value = 1000.0 - allocatedGeneratedStep.getValue();
+                        // maxPlayerPieceScore - value due to reversed order (decreasing values)
+                        value = maxPlayerPieceScore - allocatedGeneratedStep.getValue();
                         sortedGeneratedSteps.add(new GenTmpStepKey(value), 
                             allocatedGeneratedStep);
                     }
@@ -643,8 +655,8 @@ public class StepDecisionTree implements Runnable, ModularObject{
                                 step.getCumulativeChangeCount(),
                                 piecesRef.get(currRemovedMachinePieces.get(i)).getValue());
 
-                        // 1000 - value due to reversed order (decreasing values)
-                        value = 1000.0 - allocatedGeneratedStep.getValue();
+                        // maxPlayerPieceScore - value due to reversed order (decreasing values)
+                        value = maxPlayerPieceScore - allocatedGeneratedStep.getValue();
                         sortedGeneratedSteps.add(new GenTmpStepKey(value), 
                             allocatedGeneratedStep);
                     }
@@ -715,14 +727,14 @@ public class StepDecisionTree implements Runnable, ModularObject{
                     try{
 
                         allocatedGeneratedStep = new Step(
-                        step.getStepType(),
-                        step.getPieceId(), generatedStep.getRank(), 
-                        generatedStep.getFile(), piecesRef.get(pieceInd).getValue(),
-                        cumulativeNegativeChange,  
-                        cumulativeValue + piecesRef.get(pieceInd).getValue());
+                            "hit",
+                            step.getPieceId(), generatedStep.getRank(), 
+                            generatedStep.getFile(), piecesRef.get(pieceInd).getDynamicValue(),
+                            cumulativeNegativeChange,  
+                        cumulativeValue + piecesRef.get(pieceInd).getDynamicValue());
 
-                        // 1000 - value due to reversed order (decreasing values)
-                        value = 1000.0 - piecesRef.get(pieceInd).getValue();
+                        // maxPlayerPieceScore - value due to reversed order (decreasing values)
+                        value = maxPlayerPieceScore - piecesRef.get(pieceInd).getDynamicValue();
                         sortedGeneratedSteps.add(new GenTmpStepKey(value), 
                             allocatedGeneratedStep);
 
@@ -754,16 +766,16 @@ public class StepDecisionTree implements Runnable, ModularObject{
                 }
             }
             else{
-
+                
                 try{
-
+                    
                     allocatedGeneratedStep = new Step(
-                    "standard", step.getPieceId(), 
-                    generatedStep.getRank(), generatedStep.getFile(), 
-                    0, cumulativeNegativeChange, 
-                    cumulativeValue + 0.0);
+                        "standard", step.getPieceId(), 
+                        generatedStep.getRank(), generatedStep.getFile(), 
+                        0, cumulativeNegativeChange, 
+                        cumulativeValue + 0.0);
 
-                    sortedGeneratedSteps.add(new GenTmpStepKey(1000.0), 
+                    sortedGeneratedSteps.add(new GenTmpStepKey(maxPlayerPieceScore), 
                     allocatedGeneratedStep);
                 }
                 catch(Exception e){

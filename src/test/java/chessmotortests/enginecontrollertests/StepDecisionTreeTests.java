@@ -64,6 +64,7 @@ public class StepDecisionTreeTests {
         Stack<Step> stepHistory = new Stack<Step>();
         GameBoardData gameBoard = new GameBoardData();
         int depth = 10;
+        double maxPlayerPieceScore = 1000.0;
         int cumulativeNegativeChangeThreshold = 2;
         double minConvThreshold = 0.5;
         
@@ -75,8 +76,9 @@ public class StepDecisionTreeTests {
         try{
         
             testObject = new StepDecisionTree(consoleUI, true, null, 
-                stepHistory, gameBoard, depth, cumulativeNegativeChangeThreshold, 
-                minConvThreshold, 4, 0, 1024);
+                stepHistory, gameBoard, depth, maxPlayerPieceScore, 
+                cumulativeNegativeChangeThreshold, minConvThreshold, 
+                4, 0, 1024);
             Assertions.fail();
         }
         catch(Exception e){ }
@@ -89,8 +91,9 @@ public class StepDecisionTreeTests {
         try{
         
             testObject = new StepDecisionTree(consoleUI, true, pieces, 
-                stepHistory, gameBoard, depth, cumulativeNegativeChangeThreshold, 
-                minConvThreshold, 4, 0, 1024);
+                stepHistory, gameBoard, depth, maxPlayerPieceScore, 
+                cumulativeNegativeChangeThreshold, minConvThreshold, 
+                4, 0, 1024);
             Assertions.fail();
         }
         catch(Exception e){ }
@@ -102,8 +105,9 @@ public class StepDecisionTreeTests {
         try{
         
             testObject = new StepDecisionTree(consoleUI, true, pieces, 
-                stepHistory, gameBoard, depth, cumulativeNegativeChangeThreshold, 
-                minConvThreshold, 4, 0, 1024);
+                stepHistory, gameBoard, depth, maxPlayerPieceScore, 
+                cumulativeNegativeChangeThreshold, minConvThreshold, 
+                4, 0, 1024);
             Assertions.fail();
         }
         catch(Exception e){ }
@@ -115,8 +119,9 @@ public class StepDecisionTreeTests {
         try{
         
             testObject = new StepDecisionTree(consoleUI, true, pieces, 
-                stepHistory, gameBoard, depth, cumulativeNegativeChangeThreshold, 
-                minConvThreshold, 4, 0, 1024);
+                stepHistory, gameBoard, depth, maxPlayerPieceScore, 
+                cumulativeNegativeChangeThreshold, minConvThreshold, 
+                4, 0, 1024);
             Assertions.fail();
         }
         catch(Exception e){ }
@@ -128,8 +133,9 @@ public class StepDecisionTreeTests {
         try{
         
             testObject = new StepDecisionTree(consoleUI, true, pieces, 
-                stepHistory, gameBoard, depth, cumulativeNegativeChangeThreshold, 
-                minConvThreshold, 4, 0, 1024);
+                stepHistory, gameBoard, depth, maxPlayerPieceScore, 
+                cumulativeNegativeChangeThreshold, minConvThreshold,
+                4, 0, 1024);
             Assertions.fail();
         }
         catch(Exception e){ }
@@ -141,8 +147,9 @@ public class StepDecisionTreeTests {
         try{
         
             testObject = new StepDecisionTree(consoleUI, true, pieces, 
-                stepHistory, gameBoard, depth, cumulativeNegativeChangeThreshold, 
-                minConvThreshold, 4, 0, 1024);
+                stepHistory, gameBoard, depth, maxPlayerPieceScore, 
+                cumulativeNegativeChangeThreshold, minConvThreshold, 
+                4, 0, 1024);
             Assertions.fail();
         }
         catch(Exception e){ }
@@ -150,8 +157,9 @@ public class StepDecisionTreeTests {
         // copy consuctor
         cumulativeNegativeChangeThreshold = 10;
         testObject =  new StepDecisionTree(consoleUI, true, pieces, 
-                stepHistory, gameBoard, depth, cumulativeNegativeChangeThreshold, 
-                minConvThreshold, 4, 0, 1024);
+                stepHistory, gameBoard, depth, maxPlayerPieceScore, 
+                cumulativeNegativeChangeThreshold, minConvThreshold, 
+                4, 0, 1024);
         
         StepDecisionTree testObject2;
         
@@ -243,11 +251,13 @@ public class StepDecisionTreeTests {
         }
         
         int depth = 10;
+        double maxPlayerPieceScore = 1000.0;
         int cumulativeNegativeChangeThreshold = 2;
         double minConvThreshold = 0.5;
-        StepDecisionTree testObject = new StepDecisionTree(consoleUI, true, pieces,
-            stepHistory, gameBoard, depth, cumulativeNegativeChangeThreshold, 
-            minConvThreshold, 4, 0, 1024);
+        StepDecisionTree testObject = new StepDecisionTree(consoleUI, true,
+            pieces, stepHistory, gameBoard, depth, maxPlayerPieceScore, 
+            cumulativeNegativeChangeThreshold, minConvThreshold, 4, 0,
+            1024);
         
         // Generate lookAhead(1) step decision tree
         // Compare the stepDecisionTree container with the manually created results
@@ -275,7 +285,7 @@ public class StepDecisionTreeTests {
         for(int i = 0; i < sizeOfTree; ++i){
         
             Assertions.assertTrue(
-                    testObjectTree.getByLevelOrdInd(i).equals(testObject2Tree.getByLevelOrdInd(i)));
+                testObjectTree.getByLevelOrdInd(i).equals(testObject2Tree.getByLevelOrdInd(i)));
         }
         
         

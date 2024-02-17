@@ -166,7 +166,7 @@ public class Game implements IGame{
         }
 
         stepSequences = new StepDecisionTree(consoleUI, machineBegins, pieces,
-            targetStepHistory, gameBoard, stepsToLookAhead, 
+            targetStepHistory, gameBoard, stepsToLookAhead, 1000.0, 
             cumulativeNegativeChangeThreshold, minConvThreshold, 0, 0, 
                 memLimit);
 
