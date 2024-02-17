@@ -240,12 +240,13 @@ public class HumanPlayer implements IPlayer{
         // case of castling
         boolean castlingOccurred = false;
         boolean pawnReplacementOccurred = false;
-        GenPiece selectedSecondPiece = new GenPiece();
+        
+        GenPiece selectedSecondPiece = piecesRef.get(
+                gameBoardRef.get(targetSelectedRank, targetSelectedFile));
         
         if(selectedPiece.getTypeName().contains("king") 
-                && (selectedSecondPiece = piecesRef.get(gameBoardRef.get(targetSelectedRank, targetSelectedFile)))
-                        .getTypeName().contains("rook") 
-                && selectedPiece.getRank() == 7 && selectedSecondPiece.getRank() == 7){
+            && selectedSecondPiece.getTypeName().contains("rook") 
+            && selectedPiece.getRank() == 7 && selectedSecondPiece.getRank() == 7){
         
             // suboptimal condition tests
             
