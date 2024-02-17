@@ -75,6 +75,12 @@ public class GameBoardView implements IGameBoardView {
         
         try {
             
+            /**
+             * Source of images: https://www.pngegg.com/en/png-bsylj
+             */
+            
+            String srcPath = "gui_src";
+            
             // loading square backgrounds textures
             squareBgs = new ImageIcon[4];
             squareBgs[0] = new ImageIcon(ImageIO.read(
@@ -89,31 +95,31 @@ public class GameBoardView implements IGameBoardView {
             // loading piece textures
             pieceTypes = new HashMap<>();
             pieceTypes.put("empty", new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "emptyPiece.png").toString()))));
+                    new File(Paths.get(srcPath, "emptyPiece.png").toString()))));
             pieceTypes.put("whitepawn", new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "whitepawn.png").toString()))));
+                    new File(Paths.get(srcPath, "whitePawn.png").toString()))));
             pieceTypes.put("whiterook", new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "whiterook.png").toString()))));
+                    new File(Paths.get(srcPath, "whiteRook.png").toString()))));
             pieceTypes.put("whiteknight", new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "whiteknight.png").toString()))));
+                    new File(Paths.get(srcPath, "whiteKnight.png").toString()))));
             pieceTypes.put("whitebishop", new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "whitebishop.png").toString()))));
+                    new File(Paths.get(srcPath, "whiteBishop.png").toString()))));
             pieceTypes.put("whiteking", new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "whiteking.png").toString()))));
+                    new File(Paths.get(srcPath, "whiteKing.png").toString()))));
             pieceTypes.put("whitequeen", new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "whitequeen.png").toString()))));
+                    new File(Paths.get(srcPath, "whiteQueen.png").toString()))));
             pieceTypes.put("blackpawn", new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "blackpawn.png").toString()))));
+                    new File(Paths.get(srcPath, "blackPawn.png").toString()))));
             pieceTypes.put("blackrook", new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "blackrook.png").toString()))));
+                    new File(Paths.get(srcPath, "blackRook.png").toString()))));
             pieceTypes.put("blackknight", new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "blackknight.png").toString()))));
+                    new File(Paths.get(srcPath, "blackKnight.png").toString()))));
             pieceTypes.put("blackbishop", new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "blackbishop.png").toString()))));
+                    new File(Paths.get(srcPath, "blackBishop.png").toString()))));
             pieceTypes.put("blackking", new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "blackking.png").toString()))));
+                    new File(Paths.get(srcPath, "blackKing.png").toString()))));
             pieceTypes.put("blackqueen", new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "blackqueen.png").toString()))));
+                    new File(Paths.get(srcPath, "blackQueen.png").toString()))));
         } 
         catch (IOException ex) {
             
