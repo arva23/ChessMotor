@@ -20,4 +20,22 @@ public interface IGameUI{
     
     public void applyGenPlayerAction(String pieceType, int sourceRank, int sourceFile,
             int targetRank, int targetFile) throws Exception;
+
+    /**
+    * Function sets square background highlighted or not by a switch
+    * @param rank Rank coordinate of square
+    * @param file File coordinate of square
+    * @throws java.lang.Exception See inherited exceptions in called functions.
+    */
+   public void setSquareHighlighted(int rank, int file) throws Exception;
+
+   /**
+    * Function removes highlighted square background, it sets default background 
+    * to desired square, provided by its position coordinates
+    * @param rank Rank coordinate of square
+    * @param file File coordinate of square
+    * @throws java.lang.Exception See inherited exceptions in called functions.
+    */
+   public void removeSquareHighlighted(int rank, int file) throws Exception;
+
 }

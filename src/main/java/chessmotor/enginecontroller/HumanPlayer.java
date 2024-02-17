@@ -351,6 +351,11 @@ public class HumanPlayer implements IPlayer{
                     selectedPiece.getFile(), selectedSecondPiece.getRank(), 
                     selectedSecondPiece.getFile(), 0.0, 0,
                     0.0);
+            
+            gameRef.setSquareHighlighted(selectedPiece.getRank(),
+                    selectedPiece.getFile());
+            gameRef.setSquareHighlighted(selectedSecondPiece.getRank(),
+                selectedSecondPiece.getFile());
         }
         else if(pawnReplacementOccurred){
         
@@ -359,12 +364,20 @@ public class HumanPlayer implements IPlayer{
                     sourceSelectedFile, targetSelectedRank, 
                     targetSelectedFile, 0.0, 0,
                     0.0);
+            
+            gameRef.setSquareHighlighted(selectedPiece.getRank(),
+                    selectedPiece.getFile());
+            gameRef.setSquareHighlighted(selectedSecondPiece.getRank(),
+                    selectedSecondPiece.getFile());
         }
         else{
             
             currStep  = new Step("standard", selectedPiece.getPieceId(), 
                     targetSelectedRank, targetSelectedFile, 0.0,
                     0, 0.0);// comparing currently created step
+            
+            gameRef.setSquareHighlighted(selectedPiece.getRank(),
+                    selectedPiece.getFile());
         }
         
         Step selectedStep;

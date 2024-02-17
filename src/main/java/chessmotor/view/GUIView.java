@@ -464,6 +464,31 @@ public class GUIView implements IGameUI, IInterOperationCalls{
     }
     
     /**
+     * Function sets square background highlighted or not by a switch
+     * @param rank Rank coordinate of square
+     * @param file File coordinate of square
+     * @throws java.lang.Exception See inherited exceptions in called functions.
+     */
+    @Override
+    public void setSquareHighlighted(int rank, int file) throws Exception{
+    
+        board.addSquareHighlight(rank, file);
+    }
+    
+    /**
+     * Function removes highlighted square background, it sets default background 
+     * to desired square, provided by its position coordinates
+     * @param rank Rank coordinate of square
+     * @param file File coordinate of square
+     * @throws java.lang.Exception See inherited exceptions in called functions.
+     */
+    @Override
+    public void removeSquareHighlighted(int rank, int file) throws Exception{
+    
+        board.removeSquareHighlight(rank, file);
+    }
+    
+    /**
      * It provides an option for human player give up and make the machine 
      * win the game
      */

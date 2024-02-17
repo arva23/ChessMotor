@@ -27,6 +27,10 @@ public interface IGame extends StatusSavable {
     
     public void addTargetStep(Step newStep);
     
+    public void setSquareHighlighted(int rank, int file) throws Exception;
+    
+    public void removeSquareHighlighted() throws Exception;
+    
     public Step getSourceStep(int id) throws Exception;
     
     public Step getTargetStep(int id) throws Exception;

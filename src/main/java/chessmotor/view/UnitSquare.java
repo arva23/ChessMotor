@@ -20,6 +20,8 @@ public class UnitSquare extends JPanel{
     // through reference (black or white background or else with two significantly 
     //  differentiable colors or textures)
     private ImageIcon baseTexture;
+    // in case of selected, marked square, use this texture
+    private ImageIcon highlightedBaseTexture;
     private JLabel baseLabel;
 
     private JPanel squarePiece;
@@ -36,16 +38,19 @@ public class UnitSquare extends JPanel{
      * @param width Visual width of square
      * @param height Visual height of square
      * @param base Base image of square (black or white)
+     * @param highlighted Base highlighted background image
      * @param piece Piece image identifier
      */
-    public UnitSquare(int player, String pieceTypeName, int x, int y,
-            int width, int height, ImageIcon base, ImageIcon piece){
+    public UnitSquare(int player, String pieceTypeName, int x, int y, int width, 
+            int height, ImageIcon base, ImageIcon highlighted, ImageIcon piece){
     
         this.player = player;
         this.pieceTypeName = pieceTypeName;
         
         squareBase = new JPanel();
         squareBase.setBounds(x, y, width, height);
+        baseTexture = base;
+        highlightedBaseTexture = highlighted;
         baseLabel = new JLabel(baseTexture);
         baseLabel.setBounds(x, y, width, height);
         squareBase.add(baseLabel);
@@ -59,15 +64,22 @@ public class UnitSquare extends JPanel{
         squareBase.add(squarePiece);
     }
     
-    // if cursor is over field, set square highlighted
+    // if cursor is over field and left clicked, set square highlighted
+    /**
+     * Function sets square highlighted, therefore the selected piece highlighted
+     */
     public void setHighlighted(){
         
-        // todo
+        baseLabel.setIcon(highlightedBaseTexture);
     }
     
+    /**
+     * Function removes highlight from square, if another square action is performed,
+     * therefore highlight from selected, piece is removed
+     */
     public void removeHighlighted(){
     
-        // todo
+        baseLabel.setIcon(baseTexture);
     }
     
     // if cursor is over field and left click has occured

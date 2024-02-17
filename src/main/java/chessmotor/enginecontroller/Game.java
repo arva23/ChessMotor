@@ -1,6 +1,7 @@
 package chessmotor.enginecontroller;
 
 import chessmotor.enginecontroller.interfaces.IGame;
+import chessmotor.enginecontroller.interfaces.IPlayer;
 import chessmotor.enginecontroller.piecetypes.Bishop;
 import chessmotor.enginecontroller.piecetypes.King;
 import chessmotor.enginecontroller.piecetypes.Knight;
@@ -9,6 +10,7 @@ import chessmotor.enginecontroller.piecetypes.Queen;
 import chessmotor.enginecontroller.piecetypes.Rook;
 import chessmotor.view.IConsoleUI;
 import chessmotor.view.IGameUI;
+import genmath.genmathexceptions.NoObjectFoundException;
 import genmath.genmathexceptions.ValueOutOfRangeException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -39,6 +41,10 @@ public class Game implements IGame{
     
     private HumanPlayer humanPlayer;
     private MachinePlayer machinePlayer;
+    
+    // for visual square highlight feature
+    Stack<Integer> highlightRankHistory;
+    Stack<Integer> highlightFileHistory;
     
     private Duration timeLimit;
     
@@ -323,6 +329,87 @@ public class Game implements IGame{
     }
     
     /**
+     * Function implements a nested routine that handles game operations in control level
+     * @param firstPlayer First arbitrary player
+     * @param secondPlayer Second arbitrary player
+     * @throws Exception See parent caller function exceptions
+     */
+    public void operateGameLoop(IPlayer firstPlayer, IPlayer secondPlayer) throws Exception{
+    
+        Step sourceStep;
+        Step targetStep;
+        
+        String firstCaseEndGameStatus;
+        String secondCaseEndGameStatus;
+        
+        if(!machineComes){
+        
+            firstCaseEndGameStatus = "LOSE";
+            secondCaseEndGameStatus = "WIN";
+        }
+        else{
+            
+            firstCaseEndGameStatus = "WIN";
+            secondCaseEndGameStatus = "LOSE";
+        }
+        
+        while(playGame.get()){
+        
+            firstPlayer.startClock();
+            waitForDataSave();
+            machineComes = !machineComes;
+            firstPlayer.getNextStep();
+
+            firstPlayer.stopClock();
+            
+            secondPlayer.validateStatus();
+            
+            sourceStep = sourceStepHistory.lastElement();
+            targetStep = targetStepHistory.lastElement();
+            gameUI.applyGenPlayerAction(
+                    pieces.get(targetStep.getPieceId()).getTypeName(), 
+                    sourceStep.getRank(), sourceStep.getFile(),
+                    targetStep.getRank(), targetStep.getFile());
+            signalForDataRead();
+            if(timeLimit.compareTo(firstPlayer.getDuration()) <= 0){
+            
+                setGamePlayStatus(firstCaseEndGameStatus);
+                break;
+            }
+            
+            gameUI.switchPlayerClock();
+            
+            secondPlayer.startClock();
+            waitForDataSave();
+            machineComes = !machineComes;
+            stepSequences.continueStepSequences();
+            secondPlayer.getNextStep();
+            
+            secondPlayer.stopClock();
+            
+            removeSquareHighlighted();
+            removeSquareHighlighted();
+            
+            firstPlayer.validateStatus();
+        
+            sourceStep = sourceStepHistory.lastElement();
+            targetStep = targetStepHistory.lastElement();
+            gameUI.applyGenPlayerAction(
+                    pieces.get(targetStep.getPieceId()).getTypeName(),
+                    sourceStep.getRank(), sourceStep.getFile(),
+                    targetStep.getRank(), targetStep.getFile());
+            signalForDataRead();
+            if(timeLimit.compareTo(secondPlayer.getDuration()) <= 0){
+            
+                setGamePlayStatus(secondCaseEndGameStatus);
+                break;
+            }
+            
+            gameUI.switchPlayerClock();
+        }
+    }
+    
+    /**
      * Entry point of this game handler controller class.
      * The main game operator method that manages the high level game events in 
      * business logic and triggers requests toward external modules such as GUI
@@ -356,6 +443,9 @@ public class Game implements IGame{
             machinePlayer.generateFirstMachineStep();
             machinePlayer.getNextStep();
             
+            // a priori strategy build
+            machinePlayer.buildStrategy();
+            
             machinePlayer.stopClock();
             
             humanPlayer.validateStatus();
@@ -385,6 +475,9 @@ public class Game implements IGame{
             
             humanPlayer.stopClock();
             
+            removeSquareHighlighted();
+            removeSquareHighlighted();
+            
             machinePlayer.validateStatus();
             
             sourceStep = sourceStepHistory.lastElement();
@@ -402,34 +495,9 @@ public class Game implements IGame{
             }
             
             gameUI.switchPlayerClock();
-            
-            machinePlayer.startClock();
-            
-            waitForDataSave();
+        
             machineComes = true;
-            
-            machinePlayer.buildStrategy();
-            machinePlayer.getNextStep();
-            
-            machinePlayer.stopClock();
-            
-            humanPlayer.validateStatus();
-
-            sourceStep = sourceStepHistory.lastElement();
-            targetStep = targetStepHistory.lastElement();
-            gameUI.applyGenPlayerAction(
-                    pieces.get(targetStep.getPieceId()).getTypeName(),
-                    sourceStep.getRank(), sourceStep.getFile(),
-                    targetStep.getRank(), targetStep.getFile());
-            
-            signalForDataRead();
-            
-            if(timeLimit.compareTo(machinePlayer.getDuration()) <= 0){
-            
-                setGamePlayStatus("WIN");
-            }
-            
-            gameUI.switchPlayerClock();
+            operateGameLoop(machinePlayer, humanPlayer);
         }
         else{
             
@@ -468,10 +536,15 @@ public class Game implements IGame{
             
             machinePlayer.generateFirstMachineStep();
             machinePlayer.getNextStep();
+            
+            // a priori strategy build
             machinePlayer.buildStrategy();
             
             machinePlayer.stopClock();
             
+            removeSquareHighlighted();
+            removeSquareHighlighted();
+            
             humanPlayer.validateStatus();
             
             sourceStep = sourceStepHistory.lastElement();
@@ -489,58 +562,9 @@ public class Game implements IGame{
             }
             
             gameUI.switchPlayerClock();
-        }
-        
-        while(playGame.get()){
-        
-            humanPlayer.startClock();
-            waitForDataSave();
+            
             machineComes = false;
-            humanPlayer.getNextStep();
-
-            humanPlayer.stopClock();
-            
-            machinePlayer.validateStatus();
-            
-            sourceStep = sourceStepHistory.lastElement();
-            targetStep = targetStepHistory.lastElement();
-            gameUI.applyGenPlayerAction(
-                    pieces.get(targetStep.getPieceId()).getTypeName(), 
-                    sourceStep.getRank(), sourceStep.getFile(),
-                    targetStep.getRank(), targetStep.getFile());
-            signalForDataRead();
-            if(timeLimit.compareTo(humanPlayer.getDuration()) <= 0){
-            
-                setGamePlayStatus("LOSE");
-                break;
-            }
-            
-            gameUI.switchPlayerClock();
-            
-            machinePlayer.startClock();
-            waitForDataSave();
-            machineComes = true;
-            stepSequences.continueStepSequences();
-            machinePlayer.getNextStep();
-            
-            machinePlayer.stopClock();
-            
-            humanPlayer.validateStatus();
-        
-            sourceStep = sourceStepHistory.lastElement();
-            targetStep = targetStepHistory.lastElement();
-            gameUI.applyGenPlayerAction(
-                    pieces.get(targetStep.getPieceId()).getTypeName(),
-                    sourceStep.getRank(), sourceStep.getFile(),
-                    targetStep.getRank(), targetStep.getFile());
-            signalForDataRead();
-            if(timeLimit.compareTo(machinePlayer.getDuration()) <= 0){
-            
-                setGamePlayStatus("WIN");
-                break;
-            }
-            
-            gameUI.switchPlayerClock();
+            operateGameLoop(humanPlayer, machinePlayer);
         }
 
         if(gamePlayStatus.compareTo("WIN") == 0){
@@ -697,6 +721,41 @@ public class Game implements IGame{
         targetStepHistory.add(newStep);
     }
     
+    /**
+     * Function invokes GUI highlight setter method, mediator accessor method
+     * @param rank Rank of selected square
+     * @param file File of selected square
+     * @throws java.lang.Exception See inherited in called functions.
+     */
+    @Override
+    public void setSquareHighlighted(int rank, int file) throws Exception{
+        
+        highlightRankHistory.add(rank);
+        highlightFileHistory.add(file);
+        gameUI.setSquareHighlighted(rank, file);
+    }
+    
+    /**
+     * Function invokes GUI highlight removal setter method, mediator accessor 
+     * method
+     * @throws Exception java.lang.Exception See inherited in called functions.
+     */
+    @Override
+    public void removeSquareHighlighted() throws Exception{
+        
+        if(highlightRankHistory.size() < 1){
+        
+            throw new NoObjectFoundException("No rank history has been found.");
+        }
+        
+        if(highlightFileHistory.size() < 1){
+        
+            throw new NoObjectFoundException("No file history has been found.");
+        }
+        
+        gameUI.removeSquareHighlighted(highlightRankHistory.pop(), 
+                highlightFileHistory.pop());
+    }
     @Override
     public Step getSourceStep(int id) throws Exception{
     

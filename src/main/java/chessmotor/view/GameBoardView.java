@@ -77,12 +77,15 @@ public class GameBoardView implements IGameBoardView {
         try {
             
             // loading square backgrounds textures
-            squareBgs = new ImageIcon[3];
+            squareBgs = new ImageIcon[4];
             squareBgs[0] = new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "blackSquareBg.png").toString())));
+                    new File(Paths.get(srcPath, "blackSquareBg.png").toString())));
             squareBgs[1] = new ImageIcon(ImageIO.read(
-                    new File(Paths.get("board", "whiteSquareBg.png").toString())));
-            squareBgs[2] = squareBgs[0];
+                    new File(Paths.get(srcPath, "whiteSquareBg.png").toString())));
+            squareBgs[2] = new ImageIcon(ImageIO.read(
+                    new File(Paths.get(srcPath, "blackHighlightedSquareBg.png").toString())));
+            squareBgs[3] = new ImageIcon(ImageIO.read(
+                    new File(Paths.get(srcPath, "whiteHighlightedSquareBg.png").toString())));
         
             // loading piece textures
             pieceTypes = new HashMap<>();
@@ -152,11 +155,16 @@ public class GameBoardView implements IGameBoardView {
         this.machineComes = machineComes;
         this.machineBegins = machineComes;
         
+        
         if(!machineComes){
         
+            ImageIcon tmp = squareBgs[0];
             squareBgs[0] = squareBgs[1];
-            squareBgs[1] = squareBgs[2];
-            squareBgs[2] = squareBgs[0];
+            squareBgs[1] = tmp;
+            
+            tmp = squareBgs[2];
+            squareBgs[2] = squareBgs[3];
+            squareBgs[3] = tmp;
         }
         
         // default initialization of game board
@@ -174,7 +182,8 @@ public class GameBoardView implements IGameBoardView {
                         machineBegins ? 1 : 0,
                         this.boardSquareStatus[rankInd][fileInd],
                         fileInd * squareWidth, rankInd * squareHeight,
-                        squareWidth, squareHeight, squareBgs[squareTypeId],
+                        squareWidth, squareHeight, 
+                        squareBgs[squareTypeId], squareBgs[squareTypeId + 2],
                         pieceTypes.get(this.boardSquareStatus[rankInd][fileInd]));
             }
         }
@@ -187,7 +196,8 @@ public class GameBoardView implements IGameBoardView {
                 board[rankInd][fileInd] = new UnitSquare(0, 
                         this.boardSquareStatus[rankInd][fileInd],
                         fileInd * squareWidth, rankInd * squareHeight, 
-                        squareWidth, squareHeight, squareBgs[squareTypeId],
+                        squareWidth, squareHeight, 
+                        squareBgs[squareTypeId], squareBgs[squareTypeId + 2],
                         pieceTypes.get(this.boardSquareStatus[rankInd][fileInd]));
             }
         }
@@ -200,7 +210,8 @@ public class GameBoardView implements IGameBoardView {
                 board[rankInd][fileInd] = new UnitSquare(
                         machineBegins ? 0 : 1, this.boardSquareStatus[rankInd][fileInd],
                         fileInd * squareWidth, rankInd * squareHeight,
-                        squareWidth, squareHeight, squareBgs[squareTypeId],
+                        squareWidth, squareHeight, 
+                        squareBgs[squareTypeId], squareBgs[squareTypeId + 2],
                         pieceTypes.get(this.boardSquareStatus[rankInd][fileInd]));
             }
         }
@@ -282,7 +293,8 @@ public class GameBoardView implements IGameBoardView {
                 board[rankInd][fileInd] = new UnitSquare(
                         player, typeName, fileInd * squareWidth, 
                         rankInd * squareHeight, squareWidth, 
-                        squareHeight, squareBgs[squareTypeId],
+                        squareHeight, squareBgs[squareTypeId], 
+                        squareBgs[squareTypeId + 2],
                         pieceTypes.get(typeName));
             }
         }
@@ -388,6 +400,52 @@ public class GameBoardView implements IGameBoardView {
         
         board[rank][file].setNewPiece((isAlly ? -1 : 1), 
                 pieceTypes.get(pieceType));
+    }
+    
+    /**
+     * It updates square background according to its selection status. If the 
+     * square can be found on the given coordinates, the function updates its 
+     * background to its visual highlighted status.
+     * @param rank Rank of selected square
+     * @param file File of selected square
+     * @throws Exception ValueOutOfRangeException
+     */
+    public void addSquareHighlight(int rank, int file) throws Exception{
+    
+        if(rank < 0 || rank > 7){
+        
+            throw new ValueOutOfRangeException("Rank is out of range.");
+        }
+        
+        if(file < 0 || file > 7){
+        
+            throw new ValueOutOfRangeException("File is out of range.");
+        }
+        
+        board[rank][file].setHighlighted();
+    }
+    
+    /**
+     * It updates removes highlighted square background according to its selection 
+     * status. If the square can be found on the given coordinates, the function 
+     * removes its visual highlight status.
+     * @param rank Rank of selected square
+     * @param file File of selected square
+     * @throws Exception ValueOutOfRangeException
+     */
+    public void removeSquareHighlight(int rank, int file) throws Exception{
+    
+        if(rank < 0 || rank > 7){
+        
+            throw new ValueOutOfRangeException("Rank is out of range.");
+        }
+        
+        if(file < 0 || file > 7){
+        
+            throw new ValueOutOfRangeException("File is out of range.");
+        }
+        
+        board[rank][file].removeHighlighted();
     }
     
     /**

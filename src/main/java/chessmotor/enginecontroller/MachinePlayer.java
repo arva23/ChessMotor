@@ -270,6 +270,10 @@ public class MachinePlayer implements IPlayer{
                         selectedPiece.getRank(), selectedPiece.getFile(), 
                         selectedSecondPiece.getRank(), selectedSecondPiece.getFile(), 
                         0.0, 0, 0.0));
+                gameRef.setSquareHighlighted(selectedPiece.getRank(),
+                        selectedPiece.getFile());
+                gameRef.setSquareHighlighted(selectedSecondPiece.getRank(),
+                        selectedSecondPiece.getFile());
                 
                 gameBoardRef.set(selectedPiece.getRank(), 
                         selectedPiece.getFile(), -1);
@@ -296,6 +300,10 @@ public class MachinePlayer implements IPlayer{
                         selectedPiece.getRank(), selectedPiece.getFile(), 
                         selectedSecondPiece.getRank(), selectedSecondPiece.getFile(), 
                         0.0, 0, 0.0));
+                gameRef.setSquareHighlighted(selectedPiece.getRank(), 
+                        selectedPiece.getFile());
+                gameRef.setSquareHighlighted(selectedSecondPiece.getRank(), 
+                        selectedSecondPiece.getFile());
                 
                 selectedPiece.setRank(dualStep.getRank());
                 selectedPiece.setFile(dualStep.getFile());
@@ -315,12 +323,16 @@ public class MachinePlayer implements IPlayer{
 
                 removedHumanPiecesRef.add(
                         gameBoardRef.get(step.getRank(), step.getFile()));
+                gameRef.setSquareHighlighted(selectedPiece.getRank(), selectedPiece.getRank());
             }
+            else{
             
             gameRef.addSourceStep(new Step("standard", 
                     pieceId, selectedPiece.getRank(), 
                     selectedPiece.getFile(), selectedPiece.getValue(),
                     0, selectedPiece.getValue()));
+                gameRef.setSquareHighlighted(selectedPiece.getRank(), selectedPiece.getRank());
+            }
             
             selectedPiece.setRank(step.getRank());
             selectedPiece.setFile(step.getFile());
@@ -334,6 +346,7 @@ public class MachinePlayer implements IPlayer{
         stepSequencesRef.setNewRootByKey(levelKeys.get(maxI));
         
         gameRef.addTargetStep(stepSequencesRef.getByKey(levelKeys.get(maxI)));
+        gameRef.setSquareHighlighted(sourceStep.getRank(), sourceStep.getFile());
         
         // TASK) rename step node keys/identifiers (cyclic renaming)
         //       in order to limit the key length (comparison optimization)
