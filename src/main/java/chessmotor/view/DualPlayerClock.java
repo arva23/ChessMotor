@@ -6,9 +6,17 @@ import genmath.genmathexceptions.ValueOutOfRangeException;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class PlayerClock implements Runnable{
+/**
+ * Class represents a dual player clock for counting elapsed time visually for the 
+ * players
+ * @author arva
+ */
+public class DualPlayerClock implements Runnable{
 
     private IConsoleUI consoleUI;
+    
+    // Timeout for action in milliseconds
+    private final int oneSecond = 1000;
     
     private int clockX;
     private int clockY;
@@ -31,6 +39,7 @@ public class PlayerClock implements Runnable{
     
     /**
      * Parameterized constructor for PlayerClock
+     * @param consoleUI Console line message printer for errors especially
      * @param clockX Top left x coordinate component
      * @param clockY Top left y coordinate component
      * @param clockWidth Width of dual clock
@@ -40,27 +49,29 @@ public class PlayerClock implements Runnable{
      *         with is out of range
      *         height if out of range
      */
-    public PlayerClock(IConsoleUI consoleUI, int clockX, int clockY, int clockWidth, 
+    public DualPlayerClock(IConsoleUI consoleUI, int clockX, int clockY, int clockWidth, 
             int clockHeight) throws Exception{
     
         if(clockX < 0 || clockY < 0){
         
-            throw new ValueOutOfRangeException("Clock position coordinates are out of range.");
+            throw new ValueOutOfRangeException("Clock position coordinates "
+                    + "are out of range (lower bound violation).");
         }
-        
-        this.clockX = clockX;
-        this.clockY = clockY;
         
         if(clockWidth < 0 || clockWidth > 600){
             
             throw new ValueOutOfRangeException("Clock width is out of range.");
         }
         
-        this.clockWidth = clockWidth;
-        
         if(clockHeight < 0 || clockHeight > 300){
             
             throw new ValueOutOfRangeException("Clock height is out of range.");
+        }
+        
+        if(clockX > clockWidth || clockY > clockHeight){
+        
+            throw new ValueOutOfRangeException("Clock position coordinates "
+                    + "are out of range (upper bound violation).");
         }
         
         this.clockHeight = clockHeight;
@@ -88,6 +99,12 @@ public class PlayerClock implements Runnable{
         whitePlayerComes = true;
     }
     
+    /**
+     * Function sets player clocks in case of previously saved game status
+     * @param whitePlayerTime Time of white player
+     * @param blackPlayerTime Time of black player
+     * @param whitePlayerComes Whether the white player comes or not
+     */
     public void setPlayersClock(int whitePlayerTime, int blackPlayerTime, 
             boolean whitePlayerComes){
     
@@ -97,21 +114,33 @@ public class PlayerClock implements Runnable{
         blackPlayerTimeValue.setText("" + blackPlayerTime);
     }
     
+    /**
+     * Function starts player clock
+     */
     public void start(){
     
         operateClock = true;
     }
     
+    /**
+     * Function switches between player clock alternately
+     */
     public void switchPlayer(){
     
         switchPlayer = true;
     }
     
+    /**
+     * Function stops player clock
+     */
     public void stop(){
         
         operateClock = false;
     }
     
+    /**
+     * Run function that is responsible for parallel execution
+     */
     @Override
     public void run(){
     
@@ -120,7 +149,7 @@ public class PlayerClock implements Runnable{
         
             try {
                 
-                Thread.sleep(1000);
+                Thread.sleep(oneSecond);
             } 
             catch (InterruptedException ex) {
             
@@ -135,7 +164,7 @@ public class PlayerClock implements Runnable{
         
                 try {
 
-                    Thread.sleep(1000);
+                    Thread.sleep(oneSecond);
                     if(whitePlayerComes){
                     
                         ++whitePlayerTime;
@@ -158,6 +187,10 @@ public class PlayerClock implements Runnable{
         }
     }
     
+    /**
+     * Function returns main panel of dual player clock object
+     * @return Main panel
+     */
     public JPanel getMainPanel(){
     
         return baseClockPanel;
