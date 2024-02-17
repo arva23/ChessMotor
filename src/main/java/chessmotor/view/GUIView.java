@@ -44,7 +44,7 @@ public class GUIView implements IGameUI, IInterOperationCalls{
     private GameBoardView board;
 
     // PLAYER CLOCK MANAGEMENT
-    private PlayerClock playerClocks;
+    private DualPlayerClock playerClocks;
     private ExecutorService playerClocksExecutor;
     
     // GAME STATUS MANAGEMENT
@@ -194,7 +194,7 @@ public class GUIView implements IGameUI, IInterOperationCalls{
         int playerClocksY = 0;
         int playerClocksWidth = 300;
         int playerClocksHeight = 150;
-        playerClocks = new PlayerClock(consoleUI, playerClocksX,
+        playerClocks = new DualPlayerClock(consoleUI, playerClocksX,
                 playerClocksY, playerClocksWidth, 
                 playerClocksHeight);
         elementContainer.add(playerClocks.getMainPanel());
