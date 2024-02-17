@@ -11,7 +11,7 @@ public interface IPlayer {
     
     public void stopClock();
     
-    public Duration getTime();
+    public Duration getDuration();
     
     public void getNextStep() throws Exception;
     

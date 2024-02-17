@@ -368,7 +368,7 @@ public class Game implements IGame{
                     targetStep.getRank(), targetStep.getFile());
             signalForDataRead();
             
-            if(timeLimit.compareTo(machinePlayer.getTime()) <= 0){
+            if(timeLimit.compareTo(machinePlayer.getDuration()) <= 0){
             
                 setGamePlayStatus("WIN");
             }
@@ -396,7 +396,7 @@ public class Game implements IGame{
             
             signalForDataRead();
             
-            if(timeLimit.compareTo(humanPlayer.getTime()) <= 0){
+            if(timeLimit.compareTo(humanPlayer.getDuration()) <= 0){
             
                 setGamePlayStatus("LOSE");
             }
@@ -424,7 +424,7 @@ public class Game implements IGame{
             
             signalForDataRead();
             
-            if(timeLimit.compareTo(machinePlayer.getTime()) <= 0){
+            if(timeLimit.compareTo(machinePlayer.getDuration()) <= 0){
             
                 setGamePlayStatus("WIN");
             }
@@ -454,7 +454,7 @@ public class Game implements IGame{
             
             signalForDataRead();
             
-            if(timeLimit.compareTo(humanPlayer.getTime()) <= 0){
+            if(timeLimit.compareTo(humanPlayer.getDuration()) <= 0){
             
                 setGamePlayStatus("LOSE");
             }
@@ -483,7 +483,7 @@ public class Game implements IGame{
             
             signalForDataRead();
             
-            if(timeLimit.compareTo(machinePlayer.getTime()) <= 0){
+            if(timeLimit.compareTo(machinePlayer.getDuration()) <= 0){
             
                 setGamePlayStatus("WIN");
             }
@@ -509,7 +509,7 @@ public class Game implements IGame{
                     sourceStep.getRank(), sourceStep.getFile(),
                     targetStep.getRank(), targetStep.getFile());
             signalForDataRead();
-            if(timeLimit.compareTo(humanPlayer.getTime()) <= 0){
+            if(timeLimit.compareTo(humanPlayer.getDuration()) <= 0){
             
                 setGamePlayStatus("LOSE");
                 break;
@@ -534,7 +534,7 @@ public class Game implements IGame{
                     sourceStep.getRank(), sourceStep.getFile(),
                     targetStep.getRank(), targetStep.getFile());
             signalForDataRead();
-            if(timeLimit.compareTo(machinePlayer.getTime()) <= 0){
+            if(timeLimit.compareTo(machinePlayer.getDuration()) <= 0){
             
                 setGamePlayStatus("WIN");
                 break;

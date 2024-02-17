@@ -73,8 +73,12 @@ public class MachinePlayer implements IPlayer{
             intervalStart, ChronoUnit.SECONDS), ChronoUnit.SECONDS);
     }
     
+    /**
+     * Function returns machine player's consumed time
+     * @return Consumed duration from provided duration
+     */
     @Override
-    public Duration getTime(){
+    public Duration getDuration(){
     
         return time;
     }
