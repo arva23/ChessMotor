@@ -74,9 +74,7 @@ public class HumanPlayer implements IPlayer{
         this.stepIdRef = stepIdRef;
         this.time = time;
         this.intervalStart = intervalStart;
-        this.giveUpHumanPlayerGameController.set(
-                giveUpHumanPlayerGameController);
-
+        this.giveUpHumanPlayerGameController.set(giveUpHumanPlayerGameController);
     }
     
     /**
@@ -263,7 +261,7 @@ public class HumanPlayer implements IPlayer{
                 if(emptyInterFiles){
                 
                     // perform castling
-                    gameRef.addSourceStep(new DualStep("castling", 
+                    gameRef.addTargetStep(new DualStep("castling", 
                             11 + 16, 15 + 16, 7, 4, 7, 
                             7, 0.0, 0,
                             0.0));
@@ -288,7 +286,7 @@ public class HumanPlayer implements IPlayer{
                 if(emptyInterFiles){
                 
                     // perform castling
-                    gameRef.addSourceStep(new DualStep("castling", 
+                    gameRef.addTargetStep(new DualStep("castling", 
                             16 + 11, 8 + 16, 7, 4, 7, 
                             0, 0.0, 0,
                             0.0));
@@ -337,7 +335,7 @@ public class HumanPlayer implements IPlayer{
                     
                     selectedSecondPiece = piecesRef.get(removedPiecesRef.get(i));
                     
-                    gameRef.addSourceStep(new DualStep(
+                    gameRef.addTargetStep(new DualStep(
                             "promotion", selectedPiece.getPieceId(), 
                             selectedSecondPiece.getPieceId(),
                             sourceSelectedRank, sourceSelectedFile, 
@@ -368,7 +366,7 @@ public class HumanPlayer implements IPlayer{
             gameBoardRef.set(targetSelectedRank, targetSelectedFile, 
                 gameBoardRef.get(sourceSelectedRank, sourceSelectedFile));
 
-            gameRef.addSourceStep(new Step("hit", 
+            gameRef.addTargetStep(new Step("hit", 
                     gameBoardRef.get(sourceSelectedRank, 
                     sourceSelectedFile), sourceSelectedRank, 
                     sourceSelectedFile, 0.0,
@@ -393,9 +391,9 @@ public class HumanPlayer implements IPlayer{
         else if(pawnReplacementOccurred){
         
             currStep = new DualStep("promotion", selectedPiece.getPieceId(),
-                    selectedSecondPiece.getPieceId(), sourceSelectedRank,
-                    sourceSelectedFile, targetSelectedRank, 
-                    targetSelectedFile, 0.0, 0,
+                    selectedSecondPiece.getPieceId(), selectedPiece.getRank(),
+                    selectedPiece.getFile(), selectedSecondPiece.getRank(), 
+                    selectedSecondPiece.getFile(), 0.0, 0,
                     0.0);
             
             gameRef.setSquareHighlighted(selectedPiece.getRank(),
@@ -406,7 +404,7 @@ public class HumanPlayer implements IPlayer{
         else{
             
             currStep  = new Step("standard", selectedPiece.getPieceId(), 
-                    targetSelectedRank, targetSelectedFile, 0.0,
+                    selectedPiece.getRank(), selectedPiece.getFile(), 0.0,
                     0, 0.0);// comparing currently created step
             
             gameRef.setSquareHighlighted(selectedPiece.getRank(),
@@ -447,11 +445,28 @@ public class HumanPlayer implements IPlayer{
         }
         else{
             
-            selectedStep = new Step("standard",
+            // piece removal in case of hit
+            // direct use without lookup due to initial step
+            if(gameBoardRef.get(targetSelectedRank, targetSelectedFile) != -1){
+
+                removedMachinePiecesRef.add(
+                    gameBoardRef.get(targetSelectedRank, targetSelectedFile));
+            
+                selectedStep = new Step("hit",
                     gameBoardRef.get(targetSelectedRank, targetSelectedFile), 
                     targetSelectedRank, targetSelectedFile, 
-                    selectedPiece.getValue(), 0,
-                    selectedPiece.getValue());
+                    selectedPiece.getDynamicValue(), 0,
+                    selectedPiece.getDynamicValue());
+            }
+            else{
+                
+                selectedStep = new Step("standard",
+                    gameBoardRef.get(targetSelectedRank, targetSelectedFile), 
+                    targetSelectedRank, targetSelectedFile, 
+                    selectedPiece.getDynamicValue(), 0,
+                    selectedPiece.getDynamicValue());
+            }
+            
             if(machineBegins){
                 
                 stepSequencesRef.addOne(new GenStepKey("a"), 
@@ -468,15 +483,8 @@ public class HumanPlayer implements IPlayer{
             }
             
             gameRef.addTargetStep(selectedStep);
-        
+            
             //humanScore = 0.0;// initial step has taken
-        }
-        
-        // piece removal in case of hit
-        if(gameBoardRef.get(targetSelectedRank, targetSelectedFile) != -1){
-        
-            removedMachinePiecesRef.add(
-                    gameBoardRef.get(targetSelectedRank, targetSelectedFile));
         }
         
         ++stepIdRef;

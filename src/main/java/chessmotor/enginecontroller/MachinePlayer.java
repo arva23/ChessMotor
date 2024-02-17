@@ -285,15 +285,16 @@ public class MachinePlayer implements IPlayer{
             }
         }
         
-        Step step = stepSequencesRef.getByKey(levelKeys.get(maxI));
+        Step sourceStep = stepSequencesRef.getRootStep();
+        Step targetStep = stepSequencesRef.getByKey(levelKeys.get(maxI));
         
-        int pieceId = step.getPieceId();
+        int pieceId = targetStep.getPieceId();
         GenPiece selectedPiece = piecesRef.get(pieceId);
         GenPiece selectedSecondPiece;
         
-        if(step instanceof DualStep){
+        if(targetStep instanceof DualStep){
         
-            DualStep dualStep = (DualStep)step;
+            DualStep dualStep = (DualStep)targetStep;
             selectedSecondPiece = piecesRef.get(dualStep.getSecondPieceId());
             
             if((selectedPiece.getTypeName().contains("king") 
@@ -356,23 +357,28 @@ public class MachinePlayer implements IPlayer{
         else{
             
             // piece removal in case of hit
-            if(gameBoardRef.get(step.getRank(), step.getFile()) != -1){
+            if(gameBoardRef.get(targetStep.getRank(), targetStep.getFile()) != -1){
 
                 removedHumanPiecesRef.add(
-                        gameBoardRef.get(step.getRank(), step.getFile()));
+                        gameBoardRef.get(targetStep.getRank(), targetStep.getFile()));
+            
+                gameRef.addSourceStep(new Step("hit", 
+                    pieceId, selectedPiece.getRank(), 
+                    selectedPiece.getFile(), selectedPiece.getDynamicValue(),
+                    0, selectedPiece.getDynamicValue()));
                 gameRef.setSquareHighlighted(selectedPiece.getRank(), selectedPiece.getRank());
             }
             else{
             
-            gameRef.addSourceStep(new Step("standard", 
+                gameRef.addSourceStep(new Step("standard", 
                     pieceId, selectedPiece.getRank(), 
-                    selectedPiece.getFile(), selectedPiece.getValue(),
-                    0, selectedPiece.getValue()));
+                    selectedPiece.getFile(), selectedPiece.getDynamicValue(),
+                    0, selectedPiece.getDynamicValue()));
                 gameRef.setSquareHighlighted(selectedPiece.getRank(), selectedPiece.getRank());
             }
             
-            selectedPiece.setRank(step.getRank());
-            selectedPiece.setFile(step.getFile());
+            selectedPiece.setRank(targetStep.getRank());
+            selectedPiece.setFile(targetStep.getFile());
             gameBoardRef.set(selectedPiece.getRank(), selectedPiece.getFile(), 
                     selectedPiece.getPieceId());
         }
@@ -382,7 +388,7 @@ public class MachinePlayer implements IPlayer{
         // set the actual root as source position        
         stepSequencesRef.setNewRootByKey(levelKeys.get(maxI));
         
-        gameRef.addTargetStep(stepSequencesRef.getByKey(levelKeys.get(maxI)));
+        gameRef.addTargetStep(sourceStep);
         gameRef.setSquareHighlighted(sourceStep.getRank(), sourceStep.getFile());
         
         // TASK) rename step node keys/identifiers (cyclic renaming)
