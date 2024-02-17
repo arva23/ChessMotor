@@ -660,6 +660,10 @@ public class Game implements IGame{
         return humanPlayer.getPromotionTypeNames();
     }
     
+    /**
+     * Obtain game play status
+     * @return Game play status
+     */
     @Override
     public String getGamePlayStatus(){
     
@@ -678,7 +682,7 @@ public class Game implements IGame{
     }
     
     /**
-     * Make machine player win the game play.
+     * Make machine player win the game play
      */
     @Override
     public void giveUpHumanPlayer(){
@@ -687,6 +691,10 @@ public class Game implements IGame{
         setGamePlayStatus("LOSE");
     }
     
+    /**
+     * Function sets game play status for user interface
+     * @param gamePlayStatus current game play status to be used for update of GUI
+     */
     @Override
     public void setGamePlayStatus(String gamePlayStatus){
     
@@ -697,24 +705,43 @@ public class Game implements IGame{
         gameUI.updateGameStatus(gamePlayStatus);
     }
     
+    /**
+     * Reads player action, wait for player action
+     * @return Returns generic player action for further play
+     * @throws Exception 
+     */
     @Override
     public String readPlayerAction() throws Exception{
     
         return gameUI.readPlayerAction();
     }
     
+    /**
+     * Selects pawn replacement, promotion figure
+     * @return Figure identifier that is chosen for promotion
+     * @throws Exception
+     *         InterruptedException
+     */
     @Override
     public String selectPawnReplacement() throws Exception{
     
         return gameUI.selectPawnReplacement();
     }
     
+    /**
+     * Adds source step to linear source step history
+     * @param newStep Step to be added to source step history
+     */
     @Override
     public void addSourceStep(Step newStep){
     
         sourceStepHistory.add(newStep);
     }
     
+    /**
+     * Adds target step to linear target step history
+     * @param newStep Step to be added to target step history
+     */
     @Override
     public void addTargetStep(Step newStep){
     
@@ -756,24 +783,45 @@ public class Game implements IGame{
         gameUI.removeSquareHighlighted(highlightRankHistory.pop(), 
                 highlightFileHistory.pop());
     }
+    
+    /**
+     * Function returns source step by its id
+     * @param id Identifier of source step that is being returned
+     * @return Source step
+     * @throws Exception No source step has been found
+     */
     @Override
     public Step getSourceStep(int id) throws Exception{
     
         return sourceStepHistory.get(id);
     }
     
+    /**
+     * Function returns target step by its id
+     * @param id Identifier of target step that is being returned
+     * @return Required target step
+     * @throws Exception No target step has been found
+     */
     @Override
     public Step getTargetStep(int id) throws Exception{
     
         return targetStepHistory.get(id);
     }
     
+    /**
+     * Function returns size of source step history
+     * @return Size of source step history
+     */
     @Override
     public int getSourceStepHistorySize(){
     
         return sourceStepHistory.size();
     }
     
+    /**
+     * Function returns size of target step history
+     * @return Target step history
+     */
     @Override
     public int getTargetStepHistorySize(){
     

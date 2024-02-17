@@ -32,6 +32,9 @@ public class GenPiece {
     protected int rank;
     protected int file;
     
+    /**
+     * Default constructor
+     */
     public GenPiece(){
     
     }
@@ -91,7 +94,11 @@ public class GenPiece {
      * @throws Exception Generation exceptions (see extended, child classes, types)
      */
     public ArrayList<Pair> generateSteps(GameBoardData gameBoard) throws Exception{
-    
+        
+        // CRTP should be applied for implicit dynamic value modification
+        //  In this first version, explict, manually invoked functions are used 
+        //  in child classes
+        
         // It generates steps according to the limitations of other piece barriers 
         //  and gamefield boundaries.
         // Hit steps are also included.
@@ -103,11 +110,19 @@ public class GenPiece {
         return steps;
     }
     
+    /**
+     * Obtains piece identifier
+     * @return Identifier of current piece object
+     */
     public int getPieceId(){
     
         return pieceId;
     }
     
+    /**
+     * Obtains type of piece
+     * @return Returns type of piece
+     */
     public String getTypeName(){
     
         return typeName;
@@ -123,6 +138,10 @@ public class GenPiece {
         return rank;
     }
     
+    /**
+     * Obtains file coordinate of piece
+     * @return File value
+     */
     public int getFile(){
     
         return file;

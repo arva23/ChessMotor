@@ -339,29 +339,49 @@ public class GameBoardView implements IGameBoardView {
         }
     }
     
+    /**
+     * Function return board game status
+     * @return Board game status in matrix literal form
+     */
     public String[][] getBoardSquareStatus(){
     
         return boardSquareStatus;
     }
     
+    /**
+     * Function returns main panel of game board view object
+     * @return Main panel
+     */
     @Override
     public JPanel getMainPanel(){
     
         return eventHandlerPanel;
     }
     
+    /**
+     * Function switches current player to other player for providing alternating 
+     * play
+     */
     @Override
     public void alternateActivePlayer(){
     
         machineComes = !machineComes;
     }
     
+    /**
+     * Function returns result of player action
+     * @return Returns the executed, commanded coordinate with the given piece
+     */
     @Override
     public String getPlayerActionResult(){
     
         return "" + recentRank + recentFile;
     }
     
+    /**
+     * Function returns the player action square for further processing
+     * @return Player action square
+     */
     @Override
     public UnitSquare getPlayerActionSquare(){
     

@@ -31,7 +31,24 @@ public class HumanPlayer implements IPlayer{
     
     private AtomicBoolean giveUpHumanPlayerGameController;
     
-    
+    /**
+     * Parameterized constructor
+     * @param gameRef reference to game handler object
+     * @param piecesRef reference to pieces container
+     * @param gameBoardRef reference to game board
+     * @param stepSequencesRef reference to step generation tree
+     * @param isInCheck whether player is in check
+     * @param removedPiecesRef reference to removed machine player pieces
+     * @param removedMachinePiecesRef reference to human player pieces
+     * @param score aggregated score that was gathered, achieved during current 
+     *              status of play, this value is required for status initialization 
+     *              (also for status load)
+     * @param stepIdRef reference to step identifier
+     * @param time recently consumed, elapsed time from available provided player 
+     *             time
+     * @param intervalStart auxiliary, helper time point to time value calculation
+     * @param giveUpHumanPlayerGameController human player status of give up property
+     */
     public HumanPlayer(
             IGame gameRef,
             PieceContainer piecesRef,
@@ -62,18 +79,29 @@ public class HumanPlayer implements IPlayer{
 
     }
     
+    /**
+     * Returns score of human player
+     * @return Current score
+     */
     @Override
     public double getScore(){
     
         return score;
     }
     
+    /**
+     * It starts human player clock in order to count its "thinking", computation 
+     * time
+     */
     @Override
     public void startClock(){
     
         intervalStart = LocalDateTime.now();
     }
     
+    /**
+     * It stops human player's clock
+     */
     @Override
     public void stopClock(){
     
@@ -91,6 +119,10 @@ public class HumanPlayer implements IPlayer{
         return time;
     }
     
+    /**
+     * Sets give up status of human player
+     * @param status status of give up property
+     */
     public void setGiveUpHumanPlayerGameController(boolean status){
     
         giveUpHumanPlayerGameController.set(status);

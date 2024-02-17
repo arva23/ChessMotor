@@ -305,7 +305,7 @@ public class GUIView implements IGameUI, IInterOperationCalls{
         }
         
         action += board.getPlayerActionResult();
-
+        
         while(operateGUI.get()){
         
             board.signalForBoard();

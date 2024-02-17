@@ -7,17 +7,38 @@ import java.util.ArrayList;
 
 public class Rook extends GenPiece{
     
+    /**
+     * Default constructor
+     */
     public Rook(){
     
         super();
     }
     
     public Rook(int pieceId, boolean isWhite, double value, int rank, int file)
+    /**
+     * Parameterized constructor for generic piece object
+     * @param pieceId Piece identifier in range of [0, 32)
+     * @param isWhite Whether piece is white or not
+     * @param staticValue Static value of strength of piece
+     * @param rank Rank of piece position
+     * @param file File of piece position
+     * @throws ValueOutOfRangeException 
+     *         IllConditionedDataException 
+     */
             throws Exception{
     
         super(pieceId, isWhite ? "whiterook" : "blackrook",  value, rank, file);
     }
     
+    /**
+     * Generates available following rook steps
+     * @param gameBoard The game board of the used game play that is used as a 
+     * starting position for generation (occupied pice identifications)
+     * @return It returns the generic pair values that stores the available further
+     * steps for the rook piece object at certain position
+     * @throws ValueOutOfRangeException
+     */
     @Override
     public ArrayList<Pair> generateSteps(GameBoardData gameBoard) throws ValueOutOfRangeException{
     

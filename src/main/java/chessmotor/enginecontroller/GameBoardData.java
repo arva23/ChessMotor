@@ -4,11 +4,18 @@ public class GameBoardData {
 
     private Integer[][] gameBoard;
     
+    /**
+     * Default constructor
+     */
     public GameBoardData(){
     
         gameBoard = new Integer[8][8];
     }
     
+    /**
+     * Copy constructor
+     * @param orig object to be copied
+     */
     public GameBoardData(GameBoardData orig){
     
         for(int i = 0; i < 8; ++i){

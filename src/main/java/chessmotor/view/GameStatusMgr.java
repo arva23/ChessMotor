@@ -28,8 +28,19 @@ public class GameStatusMgr {
     private JButton loadLastSavedGameButton;
     private JButton playGameButton;
     
-    
-    
+    /**
+     * Parameterized constructor of game status manager
+     * @param consoleUI Console manager object
+     * @param gameGUI Graphical user interface handler uppermost layer object that 
+     *                stores this lower level graphical panel as well
+     * @param statusMgrX Up left corner x position
+     * @param statusMgrY Up left corner y position
+     * @param statusMgrWidth Width of panel
+     * @param statusMgrHeight Height of panel
+     * @throws Exception 
+     *         NullPointerException
+     *         ValueOutOfRangeException
+     */
     public GameStatusMgr(IConsoleUI consoleUI, IInterOperationCalls gameGUI, 
             int statusMgrX, int statusMgrY,
             int statusMgrWidth, int statusMgrHeight) throws Exception{
@@ -154,15 +165,21 @@ public class GameStatusMgr {
                 }
             }
         });
-        
-        
     }
     
+    /**
+     * Function returns main panel of game status manager
+     * @return Main panel
+     */
     public JPanel getMainPanel(){
     
         return gameStatusPanel;
     }
     
+    /**
+     * Function updates status of game in sense of human readable status
+     * @param gameStatus Game status to be set
+     */
     public void setGameStatus(String gameStatus){
     
         gameStatusValue.setText(gameStatus);

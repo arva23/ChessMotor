@@ -28,6 +28,23 @@ public class MachinePlayer implements IPlayer{
     private Duration time;
     private LocalDateTime intervalStart;
 
+    /**
+     * Parameterized constructor
+     * @param gameRef reference to game handler object
+     * @param piecesRef reference to pieces container
+     * @param gameBoardRef reference to game board
+     * @param stepSequencesRef reference to step generation tree
+     * @param isInCheck whether player is in check
+     * @param removedPiecesRef reference to removed machine player pieces
+     * @param removedHumanPiecesRef reference to human player pieces
+     * @param score aggregated score that was gathered, achieved during current 
+     *              status of play, this value is required for status initialization 
+     *              (also for status load)
+     * @param stepIdRef reference to step identifier
+     * @param time recently consumed, elapsed time from available provided player 
+     *             time
+     * @param intervalStart auxiliary, helper time point to time value calculation
+     */
     public MachinePlayer(
             IGame gameRef,
             PieceContainer piecesRef,
@@ -54,18 +71,29 @@ public class MachinePlayer implements IPlayer{
         this.intervalStart = intervalStart;
     }
     
+    /**
+     * Returns score of machine player
+     * @return Current score
+     */
     @Override
     public double getScore(){
     
         return score;
     }
     
+    /**
+     * It starts machine player clock in order to count its "thinking", computation 
+     * time
+     */
     @Override
     public void startClock(){
     
         intervalStart = LocalDateTime.now();
     }
     
+    /**
+     * It stops machine player's clock
+     */
     @Override
     public void stopClock(){
     
@@ -83,6 +111,15 @@ public class MachinePlayer implements IPlayer{
         return time;
     }
     
+    /**
+     * It generates first step of machine
+     * @throws Exception 
+     *         Rank or file is out of range, 
+     *         Addition error (index out of bound),
+     *         Index out of bounds at LinTreeMap,
+     *         Key-value is null, no parent key has been found, 
+     *         Key duplication/redundancy/preexisting key
+     */
     public void generateFirstMachineStep() throws Exception{
     
         stepSequencesRef.generateFirstMachineStep();

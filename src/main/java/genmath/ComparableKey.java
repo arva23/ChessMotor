@@ -1,5 +1,10 @@
 package genmath;
 
+/**
+ * Abstract class for taking constraints on comparable types
+ * @author arva
+ * @param <K> Key type
+ */
 public abstract class ComparableKey<K>{
 
     public abstract K less(K key);

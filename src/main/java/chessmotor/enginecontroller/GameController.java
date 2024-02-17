@@ -186,7 +186,11 @@ public class GameController implements IGameController, IInterOperationCalls{
     
         return gameLogMgr;
     }
-
+    
+    /**
+     * Obtains recently loaded game status
+     * @return Recent game status
+     */
     @Override
     public String getRecentlyLoadedGameName(){
     

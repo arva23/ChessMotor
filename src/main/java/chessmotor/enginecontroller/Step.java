@@ -60,42 +60,74 @@ public class Step{
 
         this.cumulativeValue = cumulativeValue;
     }
-    
+
+    /**
+     * Obtains step type
+     * @return Step type
+     */
     public String getStepType(){
     
         return stepType;
     }
 
+    /**
+     * Obtains piece identifier
+     * @return Piece identifier
+     */
     public int getPieceId(){
 
         return pieceId;
     }
 
+    /**
+     * Obtains rank of piece
+     * @return Rank
+     */
     public int getRank(){
 
         return rank;
     }
 
+    /**
+     * Obtains file of piece
+     * @return File
+     */
     public int getFile(){
 
         return file;
     }
 
+    /**
+     * Obtains value of piece
+     * @return Value
+     */
     public double getValue(){
 
         return value;
     }
     
+    /**
+     * Sets piece identifier
+     * @param pieceId new identifier of piece
+     */
     public void setPieceId(int pieceId){
     
         this.pieceId = pieceId;
     }
 
+    /**
+     * Sets cumulative change counter
+     * @return new value of cumulative change count
+     */
     public int getCumulativeChangeCount(){
 
         return cumulativeChangeCount;
     }
 
+    /**
+     * Sets cumulative value
+     * @return Cumulative value
+     */
     public double getCumulativeValue(){
 
         return cumulativeValue;

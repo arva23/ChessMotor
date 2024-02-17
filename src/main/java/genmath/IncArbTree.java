@@ -6,45 +6,52 @@ import genmath.genmathexceptions.AmbiguousObjectException;
 import genmath.genmathexceptions.CapacityUnderloadException;
 import java.util.ArrayList;
 
-// linearized tree Vs nested object oriented tree
-//  nested version (reference):
-//    + Low cost of insertion of new node [no previous element shift, arbitrary 
-//      (system defined memory alloction] simple allocation and reference creation)
-//    + Logarithmic key lookup requires less command (no index offsets)
-//      (time complexity is the same with the other version)
-//    + Root displacement is cheap (simple reference dislocation)
-//    + Node removal is cheap (just detach the certain object from reference 
-//      likage chain)
-//    - Node obtain by direct, specialized order based sort index is logarithmic 
-//      instead of constant
-//    - Whole level obtain requires entire traversal of tree (including leaf level)
-//    ? Leaf level direct access could be available in case of a <recent leaf 
-//      node> container if at least one traversal has performed at arbitrary 
-//      method that contains traversal, This would cause slower add method (
-//    - Insertion cost is high due to ad-hoc memory allocation
-//
-//  linearized version (ArrayList):
-//    - High cost of insertion of new node [previous element shift occurs and 
-//      allocation of new array in case of run out of enough memory] advanced 
-//      allocation and reference creation)
-//    - Logarithmmic key lookup requires more command (index offsets)
-//      (time complexity is the same with the other version)
-//    - Root displacement is expensive (array modification occurs as at the insertion)
-//    - Node removal is expensive (detachment of node requires offset indexing shifts)
-//    + Node obtain by direct, specialized order based sort index is constant instead 
-//      of logarithmic or else
-//    + Whole level obtain requires forward index offset jump traversal on array
-//    + Leaf level obtain requires backward traversal on container array 
-//      (the more the node number and equated [homogeneous] leaf level[s], the 
-//      less the level obtainment)
-//    + Option for preallocation in order to save allocation cost at insertion
-
+/** 
+ * linearized tree Vs nested object oriented tree
+ *  nested version (reference):
+ *    + Low cost of insertion of new node [no previous element shift, arbitrary 
+ *      (system defined memory allocation] simple allocation and reference creation)
+ *    + Logarithmic key lookup requires less command (no index offsets)
+ *      (time complexity is the same with the other version)
+ *    + Root displacement is cheap (simple reference dislocation)
+ *    + Node removal is cheap (just detach the certain object from reference 
+ *      linkage chain)
+ *    - Node obtain by direct, specialized order based sort index is logarithmic 
+ *      instead of constant
+ *    - Whole level obtain requires entire traversal of tree (including leaf level)
+ *    ? Leaf level direct access could be available in case of a <recent leaf 
+ *      node> container if at least one traversal has performed at arbitrary 
+ *      method that contains traversal, This would cause slower add method (
+ *    - Insertion cost is high due to ad-hoc memory allocation
+ *
+ *  linearized version (ArrayList):
+ *    - High cost of insertion of new node [previous element shift occurs and 
+ *      allocation of new array in case of run out of enough memory] advanced 
+ *      allocation and reference creation)
+ *    - Logarithmic key lookup requires more command (index offsets)
+ *      (time complexity is the same with the other version)
+ *    - Root displacement is expensive (array modification occurs as at the insertion)
+ *    - Node removal is expensive (detachment of node requires offset indexing shifts)
+ *    + Node obtain by direct, specialized order based sort index is constant instead 
+ *      of logarithmic or else
+ *    + Whole level obtain requires forward index offset jump traversal on array
+ *    + Leaf level obtain requires backward traversal on container array 
+ *      (the more the node number and equated [homogeneous] leaf level[s], the 
+ *      less the level obtainment)
+ *    + Option for pre-allocation in order to save allocation cost at insertion
+ */
 
 // The required implementation depends on purpose
 //  insertion time (overwhelmingly modification of tree)
 //  ability to faster conversion to other formats (e.g. graph matrix)
 //  subgraph operation speeds, etc..
 
+/**
+ * Class presents an incomplete n-ary tree
+ * @author arva
+ * @param <K> Key type
+ * @param <V> Value type
+ */
 public class IncArbTree<K extends ComparableKey<K>, V> {
     
     // pair auxiliary type
@@ -564,6 +571,13 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         container.set(i, modPair);
     }
     
+    /**
+     * Function sets value by index of key-value pair according to linearized 
+     * container order in memory
+     * @param i Index of key-value pair
+     * @param value Value to be assigned to a specific key that is located in the 
+     *              desired index in the linearized container
+     */
     public void setValByInd(int i, V value){
     
         // todo, recursive procedure, computation heavy
@@ -657,6 +671,12 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         throw new NoObjectFoundException("Given key has not been found.");
     }
     
+    /**
+     * Function returns index of key-value pair by key, in accordance with 
+     * linearized container traversal
+     * @param key Search key
+     * @return Index that belongs to the key-value pair
+     */
     public int getIndByKey(K key){
     
         // todo, recursive procedure, computation heavy
@@ -680,6 +700,12 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return container.get(ind).key;
     }
     
+    /**
+     * Function return key by certain index in the linearized container 
+     * (by linear traversal)
+     * @param ind
+     * @return key by index
+     */
     public K getKeyByInd(int ind){
     
         // todo, recursive procedure, computation heavy
@@ -713,6 +739,11 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         throw new NoObjectFoundException("No key has been found with given value.");
     }
     
+    /**
+     * Function returns infimum key of provided key
+     * @param key Provided key for infimum search
+     * @return Returns infimum key
+     */
     public K lowerKey(K key){
     
         
@@ -720,18 +751,32 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return null;
     }
     
+    /**
+     * Function returnss supremum key of provided key
+     * @param key Provided key for supremum search
+     * @return Returns supremum key
+     */
     public K upperKey(K key){
     
         // todo
         return null;
     }
     
+    /**
+     * Function returns specific level that where the provided key belongs
+     * @param key Provided key for level search
+     * @return Level that where the key is on
+     */
     public int getLevelByKey(K key){
     
         // todo
         return 0;
     }
     
+    /**
+     * Function return the number inserted elements in the linearized container
+     * @return Number of inserted elements
+     */
     public int size(){
     
         return size;
@@ -741,7 +786,7 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
      * It changes the allocated memory capacity of container.
      * @param resSize New memory size in terms of objects
      * @throws Exception 
-     *         Capacity underflow due to underdefined memory size allocation
+     *         Capacity underflow due to under-defined memory size allocation
      */
     public void reserve(int resSize) throws Exception{
     
@@ -795,11 +840,19 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         size = newSize;
     }
     
+    /**
+     * Function returns the raw used underlying container of this advanced data 
+     * type class
+     * @return Underlying linear container
+     */
     public ArrayList<Pair<K, V>> getContainer(){
     
         return container;
     }
     
+    /**
+     * Function removes all inserted elements from the container
+     */
     public void removeAll(){
     
         cumulativeChildNodeOffsetRegistry.clear();
@@ -808,6 +861,9 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
     }
     
     // DFS methods
+    /**
+     * Function executes the preprocessing steps of Depth First Search
+     */
     public void initDFS(){
     
         nodeIndHist = new ArrayList<>();
@@ -827,7 +883,11 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         numOfCumulatedStepBacks = 0;
     }
     
-    
+    /**
+     * Function obtains the next element by DFS mechanism if exists, if not, 
+     * then returns empty key-value pair
+     * @return Next element
+     */
     public Pair<K, V> getNextItemDFS(){
 
         if(size == 0){
@@ -911,16 +971,30 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return container.get(retI);
     }
     
+    /**
+     * Function returns the whether there is next element or not in the tree
+     * @return True if next element exists
+     */
     public boolean hasNextDFS(){
     
         return !nodeIndHist.isEmpty();
     }
     
+    /**
+     * Function obtains the information about whether the recent element that was 
+     * provided was on the leaf level, therefore ends the trace, step back is 
+     * required or not
+     * @return 
+     */
     public boolean wasRecentLeaf(){
     
         return wasStepBack;
     }
     
+    /**
+     * Function returns the number of step back in a row
+     * @return Number of step backs
+     */
     public int getNumOfRecentStepBacks(){
         
         return numOfCumulatedStepBacks;
@@ -994,6 +1068,11 @@ public class IncArbTree<K extends ComparableKey<K>, V> {
         return leafLevelKeys;
     }
     
+    /**
+     * Function returns the aggregated size of leaf level. Different level of 
+     * leafs are also included.
+     * @return Size of leaf level
+     */
     public int getLeafLevelSize(){
     
         int leafLevelSize = 0;
