@@ -224,6 +224,18 @@ public class StepDecisionTree implements Runnable, ModularObject{
     }
     
     /**
+     * Obtains root node step of step decision tree.Zero length is handles in 
+     * generation mechanism.
+     * @return Root step, source step
+     * @throws java.lang.Exception See inherited exceptions by called functions.
+     * 
+     */
+    public Step getRootStep() throws Exception{
+        
+        return stepDecisionTree.getByLevelOrdInd(0);
+    }
+    
+    /**
      * Get step related keys on specified level
      * @param levelId Level identifier
      * @return Level specific keys
