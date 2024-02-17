@@ -277,7 +277,7 @@ public class GUIView implements IGameUI, IInterOperationCalls{
      * @throws InterruptedException 
      */
     @Override
-    public String readPlayerAction() throws InterruptedException, Exception {
+    public String readHumanPlayerAction() throws InterruptedException, Exception {
         
         String action = "";
         board.alternateActivePlayer();

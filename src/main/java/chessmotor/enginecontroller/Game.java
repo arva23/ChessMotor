@@ -711,9 +711,9 @@ public class Game implements IGame{
      * @throws Exception 
      */
     @Override
-    public String readPlayerAction() throws Exception{
+    public String readHumanPlayerAction() throws Exception{
     
-        return gameUI.readPlayerAction();
+        return gameUI.readHumanPlayerAction();
     }
     
     /**

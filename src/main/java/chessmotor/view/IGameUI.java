@@ -37,13 +37,13 @@ public interface IGameUI{
      */
     public void switchPlayerClock();
     
-    public String readPlayerAction() throws Exception;    
     /**
      * Function obtains player action from engine
      * @return Player action in literal form
      * @throws Exception 
      *         Derived exceptions
      */
+    public String readHumanPlayerAction() throws Exception;    
     
     /**
      * Aid function for selecting pawn replacement if this option is activated and 

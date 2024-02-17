@@ -19,7 +19,7 @@ public interface IGame extends StatusSavable {
     
     public void setGamePlayStatus(String gamePlayStatus);
 
-    public String readPlayerAction() throws Exception;
+    public String readHumanPlayerAction() throws Exception;
     
     public String selectPawnReplacement() throws Exception;
     

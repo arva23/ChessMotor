@@ -152,7 +152,7 @@ public class HumanPlayer implements IPlayer{
     public void getNextStep() throws Exception{
         
         String action;
-        action = gameRef.readPlayerAction();
+        action = gameRef.readHumanPlayerAction();
         
         if(action.isEmpty()){
         
