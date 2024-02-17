@@ -481,11 +481,11 @@ public class StepDecisionTree implements Runnable, ModularObject{
             if(!(piecesRef.get(i).generateSteps(gameBoardRef)).isEmpty()){
 
                 step = new Step("standard", i, 1 - (int)Math.floor(i / 8), i % 8,
-                piecesRef.get(i).getValue(), 0,
-                piecesRef.get(i).getValue());
+                piecesRef.get(i).getDynamicValue(), 0,
+                piecesRef.get(i).getDynamicValue());
 
                 sortedGeneratedSteps.add(
-                        new GenTmpStepKey(piecesRef.get(i).getValue()), step);
+                        new GenTmpStepKey(piecesRef.get(i).getDynamicValue()), step);
             }
         }
 
@@ -568,7 +568,7 @@ public class StepDecisionTree implements Runnable, ModularObject{
                                 "castling", 11, 
                                 0, playerPosRank, 
                                 4, playerPosRank, 7, 
-                                piecesRef.get(11).getValue(), 
+                                piecesRef.get(11).getDynamicValue(), 
                                 0, 
                                 step.getCumulativeValue());
 
@@ -594,7 +594,7 @@ public class StepDecisionTree implements Runnable, ModularObject{
                                 "castling", 11, 
                                 8, playerPosRank, 4, 
                                 playerPosRank, 7,
-                                piecesRef.get(11).getValue(), 0,
+                                piecesRef.get(11).getDynamicValue(), 0,
                                 step.getCumulativeValue());
 
                         // maxPlayerPieceScore - value due to reversed order (decreasing values)
@@ -627,9 +627,9 @@ public class StepDecisionTree implements Runnable, ModularObject{
                                 currRemovedHumanPieces.get(i),
                                 step.getRank(), step.getFile(), 
                                 step.getRank(), step.getFile(), 
-                                piecesRef.get(currRemovedHumanPieces.get(i)).getValue(),
+                                piecesRef.get(currRemovedHumanPieces.get(i)).getDynamicValue(),
                                 step.getCumulativeChangeCount(), 
-                                piecesRef.get(currRemovedHumanPieces.get(i)).getValue());
+                                piecesRef.get(currRemovedHumanPieces.get(i)).getDynamicValue());
 
                         // maxPlayerPieceScore - value due to reversed order (decreasing values)
                         value = maxPlayerPieceScore - allocatedGeneratedStep.getValue();
@@ -651,9 +651,9 @@ public class StepDecisionTree implements Runnable, ModularObject{
                                 currRemovedMachinePieces.get(i),
                                 step.getRank(), step.getFile(),
                                 step.getRank(), step.getFile(),
-                                piecesRef.get(currRemovedMachinePieces.get(i)).getValue(),
+                                piecesRef.get(currRemovedMachinePieces.get(i)).getDynamicValue(),
                                 step.getCumulativeChangeCount(),
-                                piecesRef.get(currRemovedMachinePieces.get(i)).getValue());
+                                piecesRef.get(currRemovedMachinePieces.get(i)).getDynamicValue());
 
                         // maxPlayerPieceScore - value due to reversed order (decreasing values)
                         value = maxPlayerPieceScore - allocatedGeneratedStep.getValue();
@@ -710,18 +710,31 @@ public class StepDecisionTree implements Runnable, ModularObject{
             // machine piecesRef are filtered out at step generation
             if(pieceInd != -1){
 
+                /**
+                 * Potential improvement for next version: functor based score evaluation
+                 */
+                /**
+                 * Technical debt: No dynamic multivariate statistical distribution 
+                 * based pruning is used
+                 */
                 // human score addition comes
+                // Taking cut of possible negative tendency series by a priori 
+                //  termination with one step
                 if(humanSide &&
-                    (-1.0) * step.getValue() + minConvThreshold < piecesRef.get(pieceInd).getValue()){
+                    (-1.0) * step.getValue() + minConvThreshold < piecesRef.get(pieceInd).getDynamicValue()){
 
                     ++cumulativeNegativeChange;
                 }
 
                 // TASK) use alpha-beta pruning to throw/cut negative tendency subtrees away
-                // suboptimal: this is evaluated multiple times during 
-                //  execution until the current parent node is actively 
-                //  contribute at node generation (not removed from the tree)
-                //  See else case
+                // suboptimal: 
+                
+                
+                /**
+                 * Technical debt: This is evaluated multiple times during execution
+                 * unit the current parent node is actively contribute at node
+                 * generation (not removed from the tree), see else case
+                 */
                 if(cumulativeNegativeChange <= cumulativeNegativeChangeThreshold){
 
                     try{
@@ -1078,7 +1091,7 @@ public class StepDecisionTree implements Runnable, ModularObject{
         Stack<Integer> currRemovedHumanPieces = new Stack<>();
         Stack<Integer> currRemovedMachinePieces = new Stack<>();
         
-        //if(gameBoardHistoryContinuation.size() > 0)
+        // loop condition: if(gameBoardHistoryContinuation.size() > 0)
         for(; lvl < lvlLimit; ++lvl){
             
             for(int i = 0; i < sizeOfLeafLevel; ++i){

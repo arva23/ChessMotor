@@ -234,8 +234,8 @@ public class MachinePlayer implements IPlayer{
         
         int sizeOfLeafSteps = levelKeys.size();
         int maxI = 0;
-        double currCumulativeValue;
-        double maxCumulativeValue = stepSequencesRef.getByKey(
+        double currCumulativeDynamicValue;
+        double maxCumulativeDynamicValue = stepSequencesRef.getByKey(
                 levelKeys.get(maxI)).getCumulativeValue();
         
         // machine check defense
@@ -249,12 +249,12 @@ public class MachinePlayer implements IPlayer{
                 
                     foundNextStep = true;
                     
-                    currCumulativeValue = stepSequencesRef.getByKey(
+                    currCumulativeDynamicValue = stepSequencesRef.getByKey(
                     levelKeys.get(i)).getCumulativeValue();
             
-                    if(maxCumulativeValue < currCumulativeValue){
+                    if(maxCumulativeDynamicValue < currCumulativeDynamicValue){
 
-                        maxCumulativeValue = currCumulativeValue;
+                        maxCumulativeDynamicValue = currCumulativeDynamicValue;
                         maxI = i;
                     }
                 }
@@ -274,12 +274,12 @@ public class MachinePlayer implements IPlayer{
         
             for(int i = 1; i < sizeOfLeafSteps; ++i){
 
-                currCumulativeValue = stepSequencesRef.getByKey(
+                currCumulativeDynamicValue = stepSequencesRef.getByKey(
                     levelKeys.get(i)).getCumulativeValue();
             
-                if(maxCumulativeValue < currCumulativeValue){
+                if(maxCumulativeDynamicValue < currCumulativeDynamicValue){
 
-                    maxCumulativeValue = currCumulativeValue;
+                    maxCumulativeDynamicValue = currCumulativeDynamicValue;
                     maxI = i;
                 }
             }

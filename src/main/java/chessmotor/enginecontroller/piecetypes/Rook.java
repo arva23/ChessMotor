@@ -15,7 +15,6 @@ public class Rook extends GenPiece{
         super();
     }
     
-    public Rook(int pieceId, boolean isWhite, double value, int rank, int file)
     /**
      * Parameterized constructor for generic piece object
      * @param pieceId Piece identifier in range of [0, 32)
@@ -26,9 +25,10 @@ public class Rook extends GenPiece{
      * @throws ValueOutOfRangeException 
      *         IllConditionedDataException 
      */
+    public Rook(int pieceId, boolean isWhite, double staticValue, int rank, int file)
             throws Exception{
     
-        super(pieceId, isWhite ? "whiterook" : "blackrook",  value, rank, file);
+        super(pieceId, isWhite ? "whiterook" : "blackrook",  staticValue, rank, file);
     }
     
     /**
@@ -121,6 +121,9 @@ public class Rook extends GenPiece{
         
             steps.add(new Pair(sRank, sFile));
         }
+        
+        // Implicit conversion of size of array as a dynamic value of given piece
+        this.setDynamicValue(steps.size());
         
         return steps;
     }

@@ -15,7 +15,6 @@ public class Knight extends GenPiece{
         super();
     }
     
-    public Knight(int pieceId, boolean isWhite, double value, int rank, int file) 
     /**
      * Parameterized constructor for generic piece object
      * @param pieceId Piece identifier in range of [0, 32)
@@ -26,9 +25,10 @@ public class Knight extends GenPiece{
      * @throws ValueOutOfRangeException 
      *         IllConditionedDataException 
      */
+    public Knight(int pieceId, boolean isWhite, double staticValue, int rank, int file) 
             throws Exception{
     
-        super(pieceId, isWhite ? "whiteknight" : "blackknight", value, rank, file);
+        super(pieceId, isWhite ? "whiteknight" : "blackknight", staticValue, rank, file);
     }
     
     /**
@@ -124,6 +124,9 @@ public class Knight extends GenPiece{
         
             steps.add(new Pair(rank + 2, file - 1));
         }
+        
+        // Implicit conversion of size of array as a dynamic value of given piece
+        this.setDynamicValue(steps.size());
         
         return steps;
     }

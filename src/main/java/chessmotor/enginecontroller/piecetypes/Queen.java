@@ -15,7 +15,6 @@ public class Queen extends GenPiece{
         super();
     }
     
-    public Queen(int pieceId, boolean isWhite, double value, int rank, int file)
     /**
      * Parameterized constructor for generic piece object
      * @param pieceId Piece identifier in range of [0, 32)
@@ -26,9 +25,10 @@ public class Queen extends GenPiece{
      * @throws ValueOutOfRangeException 
      *         IllConditionedDataException 
      */
+    public Queen(int pieceId, boolean isWhite, double staticValue, int rank, int file)
             throws Exception{
     
-        super(pieceId, isWhite ? "whitequeen" : "blackquen", value, rank, file);
+        super(pieceId, isWhite ? "whitequeen" : "blackquen", staticValue, rank, file);
     }
 
     /**
@@ -192,6 +192,9 @@ public class Queen extends GenPiece{
         
             steps.add(new Pair(sRank, sFile));
         }
+        
+        // Implicit conversion of size of array as a dynamic value of given piece
+        this.setDynamicValue(steps.size());
         
         return steps;
     }

@@ -28,7 +28,14 @@ public class GenPiece {
     
     private int pieceId;
     private String typeName;
-    private double value;// penalty value for machine
+    // Dynamic penalty value for machine, this is a static, initial value that is set 
+    //  before the game begins
+    private double staticValue;
+    
+    // Dynamic penalty value for machine, this is a dynamic, gameboard status 
+    //  dependent value, that is set during ocurring game
+    protected double dynamicValue;
+    
     protected int rank;
     protected int file;
     
@@ -44,13 +51,13 @@ public class GenPiece {
      * Parameterized constructor for generic piece object
      * @param pieceId Piece identifier in range of [0, 32)
      * @param typeName Piece literal identifier
-     * @param value Value of strength of piece
+     * @param staticValue Static value of strength of piece
      * @param rank Rank of piece position
      * @param file File of piece position
      * @throws ValueOutOfRangeException 
      *         IllConditionedDataException 
      */
-    public GenPiece(int pieceId, String typeName, double value, int rank, int file) 
+    public GenPiece(int pieceId, String typeName, double staticValue, int rank, int file) 
             throws Exception{
     
         if(pieceId < 0 || pieceId >= 32){
@@ -68,7 +75,7 @@ public class GenPiece {
         this.typeName = typeName;
         
         
-        this.value = value;
+        this.staticValue = staticValue;
         
         if(rank < 0 || rank > 7){
         
@@ -128,11 +135,28 @@ public class GenPiece {
         return typeName;
     }
     
-    public double getValue(){
+    /**
+     * Obtains static value of piece
+     * @return Piece static value, strength, score of it
+     */
+    public double getStaticValue(){
     
-        return value;
+        return staticValue;
     }
     
+    /**
+     * Function returns dynamic game status dependent value of piece
+     * @return Dynamic value of piece
+     */
+    public double getDynamicValue(){
+    
+        return dynamicValue;
+    }
+    
+    /**
+     * Obtains rank coordinate of piece
+     * @return Rank value
+     */
     public int getRank(){
     
         return rank;
@@ -175,5 +199,15 @@ public class GenPiece {
         }
         
         this.file = file;
+    }
+    
+    /**
+     * Function sets dynamic value that depends on specific piece object status in 
+     * accordance with game board status
+     * @param dynamicValue new dynamic value that is going to be added to static value
+     */
+    public void setDynamicValue(double dynamicValue){
+    
+        this.dynamicValue = staticValue + dynamicValue;
     }
 }
