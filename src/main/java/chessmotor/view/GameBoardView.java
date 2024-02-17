@@ -33,10 +33,6 @@ public class GameBoardView implements IGameBoardView {
     
     private int squareWidth;
     private int squareHeight;
-    private int boardX;
-    private int boardY;
-    private int boardWidth;
-    private int boardHeight;
     
     private String[][] boardSquareStatus;
     private UnitSquare[][] board;// strictly 8 x 8 board
@@ -60,6 +56,8 @@ public class GameBoardView implements IGameBoardView {
      * @param y Upper left corner y coordinate component
      * @param width Width of the game table
      * @param height Height of the game table
+     * @param displayWidth horizontal resolution of display
+     * @param displayHeight vertical resolution of display
      * @param machineComes Whether machine is the next player or not
      * @param boardSquareStatus A 2D array that stores all the field/square 
      *        status containment
@@ -70,7 +68,8 @@ public class GameBoardView implements IGameBoardView {
      *         height range violation
      */
     public GameBoardView(IConsoleUI consoleUI, int x, int y, int width, int height, 
-            boolean machineComes, String[][] boardSquareStatus) throws Exception{
+            int displayWidth, int displayHeight, boolean machineComes, 
+            String[][] boardSquareStatus) throws Exception{
     
         this.consoleUI = consoleUI;
         
@@ -121,33 +120,26 @@ public class GameBoardView implements IGameBoardView {
             consoleUI.println("Error at loading gameboard textures.");
         }    
         
-        if(width < 0 || width > 1366){
+        if(width < 0 || width > displayWidth){
         
             throw new ValueOutOfRangeException("Width parameter is out range.");
         }
         
-        this.boardWidth = width;
-        
-        if(height < 0 || height > 768){
+        if(height < 0 || height > displayHeight){
         
             throw new ValueOutOfRangeException("Height parameter is out of range.");
         }
         
-        this.boardHeight = height;
-        
-        if(x < 0 || x > 1366 - width){
+        if(x < 0 || x > displayWidth - width){
         
             throw new ValueOutOfRangeException("X coordinate is out of range.");
         }
         
-        this.boardX = x;
         
-        if(y < 0 || y > 768 - height){
+        if(y < 0 || y > displayHeight - height){
         
             throw new ValueOutOfRangeException("Y coordinate is out of range.");
         }
-        
-        this.boardY = y;
         
         eventHandlerPanel = new JPanel();
         eventHandlerPanel.setBounds(x, y, width, height);

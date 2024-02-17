@@ -30,6 +30,11 @@ public class GUIView implements IGameUI, IInterOperationCalls{
     private int windowY;
     private int windowWidth;
     private int windowHeight;
+    /**
+     * Technical debt: display resolution shall be obtains via hardware properties
+     */
+    private final int displayWidth = 1366;
+    private final int displayHeight = 768;
     
     private AtomicBoolean giveUpHumanPlayerVisual;
     
@@ -99,28 +104,28 @@ public class GUIView implements IGameUI, IInterOperationCalls{
         
         this.gameInstance = gameInstance;
         
-        if(windowWidth < 0 || windowWidth > 1366){
+        if(windowWidth < 0 || windowWidth > displayWidth){
         
             throw new ValueOutOfRangeException("Window width is out of range.");
         }
         
         this.windowWidth = windowWidth;
         
-        if(windowHeight < 0 || windowHeight > 768){
+        if(windowHeight < 0 || windowHeight > displayHeight){
         
             throw new ValueOutOfRangeException("Window height is out of range.");
         }
         
         this.windowHeight = windowHeight;
         
-        if(windowX < 0 || windowX > 1366 - windowWidth){
+        if(windowX < 0 || windowX > displayWidth - windowWidth){
         
             throw new ValueOutOfRangeException("Start x position is out of range.");
         }
         
         this.windowX = windowX;
         
-        if(windowY < 0 || windowY > 768 - windowHeight){
+        if(windowY < 0 || windowY > displayHeight - windowHeight){
         
             throw  new ValueOutOfRangeException("Start y position is out of range.");
         }
@@ -187,7 +192,8 @@ public class GUIView implements IGameUI, IInterOperationCalls{
         }
         
         board = new GameBoardView(consoleUI, boardX, boardY, boardWidth, 
-                boardHeight, machineBegins, boardSquareStatus);
+                boardHeight, displayWidth, displayHeight, 
+                machineBegins, boardSquareStatus);
         elementContainer.add(board.getMainPanel());
         
         int playerClocksX = boardWidth + 1;
